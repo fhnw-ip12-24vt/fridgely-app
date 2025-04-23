@@ -1,0 +1,337 @@
+package ch.primeo.fridgely.view.util;
+
+import ch.primeo.fridgely.model.PenguinFacialExpression;
+import ch.primeo.fridgely.model.PenguinHPState;
+import ch.primeo.fridgely.util.ImageLoader;
+
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.Toolkit;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * A reusable dialog box with animated arrow that displays a sequence of messages
+ * using the dialog box background images.
+ */
+public class DialogBox extends JPanel {
+
+    private final JFrame frame;
+
+    private final List<String> messages;
+    private int currentMessageIndex = 0;
+    private final PenguinFacialExpression penguinExpression;
+    private final PenguinHPState penguinHPState;
+    private BufferedImage penguinImage;
+    private BufferedImage penguinHPImage;
+    private BufferedImage dialogArrowUp;
+    private BufferedImage dialogArrowDown;
+    private boolean showArrowUp = true;
+    private final Timer arrowAnimationTimer;
+    private final Runnable onCompleteCallback;
+    private final JLabel messageLabel;
+
+    private static final int ARROW_ANIMATION_DELAY = 500; // milliseconds
+    private static final int DIALOG_PADDING = 20;
+    private static final int PENGUIN_SIZE = 150;
+    private static final int HP_IMAGE_SIZE = 600; // New constant for HP image size
+
+    // Font size for dialog text - easily changeable
+    private static final int DIALOG_FONT_SIZE = 24; // Increased from 18 to 24
+    private static final Font DIALOG_FONT = new Font("SansSerif", Font.PLAIN, DIALOG_FONT_SIZE);
+
+    /**
+     * Creates a dialog box with a sequence of messages, penguin expression, HP state, and a callback.
+     * @param msgs the list of messages to display
+     * @param expression the penguin facial expression to show
+     * @param state the penguin HP state to show
+     * @param callback the callback to run when dialog is complete
+     */
+    public DialogBox(List<String> msgs, PenguinFacialExpression expression, PenguinHPState state, Runnable callback) {
+        this.frame = new JFrame();
+        this.frame.setUndecorated(true);
+        this.frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        this.frame.setVisible(true);
+
+        this.messages = new ArrayList<>(msgs);
+        this.penguinExpression = expression;
+        this.penguinHPState = state;
+        this.onCompleteCallback = callback;
+
+        setLayout(null); // Use absolute positioning
+        setOpaque(false);
+
+        // Load images
+        loadImages();
+
+        // Create the message label
+        messageLabel = new JLabel();
+        messageLabel.setFont(DIALOG_FONT);
+        messageLabel.setHorizontalAlignment(SwingConstants.LEFT);
+        messageLabel.setVerticalAlignment(SwingConstants.CENTER);
+        messageLabel.setForeground(Color.BLACK);
+        add(messageLabel);
+        updateMessage();
+
+        // Set up the animation timer
+        arrowAnimationTimer = new Timer(ARROW_ANIMATION_DELAY, e -> {
+            showArrowUp = !showArrowUp;
+            repaint(); // Repaint the entire dialog box with the new arrow position
+        });
+        arrowAnimationTimer.start();
+
+        // Add click listener to advance messages
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                nextMessage();
+            }
+        });
+    }
+
+    /**
+     * Loads images for the dialog box, penguin, HP, and arrows.
+     */
+    private void loadImages() {
+        // Load Penguin image
+        String spritePath = penguinExpression.getSprite();
+        penguinImage = ImageLoader.loadBufferedImage(spritePath, getClass());
+        if (penguinImage == null) {
+            System.err.println("Could not find Penguin sprite: " + spritePath);
+        }
+
+        // Load HP image
+        String hpSpritePath = penguinHPState.getSpritePath();
+        penguinHPImage = ImageLoader.loadBufferedImage(hpSpritePath, getClass());
+        if (penguinHPImage == null) {
+            System.err.println("Could not find HP sprite: " + hpSpritePath);
+        }
+
+        // Load dialog box background images with arrows
+        String arrowUpPath = "/ch/primeo/fridgely/vectors/dialog_arrow_up.png";
+        dialogArrowUp = ImageLoader.loadBufferedImage(arrowUpPath, getClass());
+        if (dialogArrowUp == null) {
+            System.err.println("Could not find dialog_arrow_up.png");
+        }
+
+        String arrowDownPath = "/ch/primeo/fridgely/vectors/dialog_arrow_down.png";
+        dialogArrowDown = ImageLoader.loadBufferedImage(arrowDownPath, getClass());
+        if (dialogArrowDown == null) {
+            System.err.println("Could not find dialog_arrow_down.png");
+        }
+    }
+
+    /**
+     * Updates the message label with the current message.
+     */
+    private void updateMessage() {
+        if (currentMessageIndex < messages.size()) {
+            String text = messages.get(currentMessageIndex);
+            // Wrap the text to fit dialog width by using HTML
+            messageLabel.setText("<html><body style='width: 700px'>" + text + "</body></html>");
+        }
+    }
+
+    /**
+     * Advances to the next message or completes the dialog.
+     */
+    private void nextMessage() {
+        currentMessageIndex++;
+        if (currentMessageIndex < messages.size()) {
+            updateMessage();
+        } else {
+            arrowAnimationTimer.stop();
+            onCompleteCallback.run();
+            frame.dispose();
+        }
+    }
+
+    /**
+     * Paints the dialog box, penguin, HP image, and arrow.
+     * @param g the Graphics context
+     */
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2d = (Graphics2D) g.create();
+
+        int width = getWidth();
+        int height = getHeight();
+
+        // Enable anti-aliasing
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        // Draw the dialog box background based on which arrow to show
+        BufferedImage dialogBackground = showArrowUp ? dialogArrowUp : dialogArrowDown;
+        if (dialogBackground != null) {
+            // Draw the dialog background stretched to fit the panel
+            g2d.drawImage(dialogBackground, 0, 0, width, height, null);
+        } else {
+            // Fallback if dialog background not loaded
+            g2d.setColor(new Color(240, 240, 250, 230));
+            g2d.fillRoundRect(0, 0, width, height, 20, 20);
+            g2d.setColor(new Color(100, 100, 200));
+            g2d.setStroke(new BasicStroke(3f));
+            g2d.drawRoundRect(0, 0, width - 1, height - 1, 20, 20);
+        }
+
+        // Draw Penguin image if available
+        if (penguinImage != null) {
+            // Calculate scaled dimensions while maintaining aspect ratio
+            double scale = (double) PENGUIN_SIZE / Math.max(penguinImage.getWidth(), penguinImage.getHeight());
+            int scaledWidth = (int) (penguinImage.getWidth() * scale);
+            int scaledHeight = (int) (penguinImage.getHeight() * scale);
+
+            // Draw the image with more right padding (increased from DIALOG_PADDING)
+            int penguinXPosition = DIALOG_PADDING * 3; // Increased horizontal position
+            g2d.drawImage(penguinImage, penguinXPosition, (height - scaledHeight) / 2,
+                    scaledWidth, scaledHeight, null);
+        }
+
+        // Draw HP image if available
+        if (penguinHPImage != null) {
+            // Get the frame dimensions for proper centering
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            int frameWidth = screenSize.width;
+
+            // Calculate position to center the HP image in the frame
+            int hpXPosition = (frameWidth - penguinHPImage.getWidth()) / 2;
+            int hpYPosition = 50; // Fixed position from top of screen
+
+            g2d.drawImage(penguinHPImage, hpXPosition, hpYPosition, null);
+        }
+
+        g2d.dispose();
+    }
+
+    /**
+     * Returns the preferred size of the dialog box.
+     * @return the preferred Dimension
+     */
+    @Override
+    public Dimension getPreferredSize() {
+        // Full width, reasonable height for dialog
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        return new Dimension(screenSize.width - 100, 200);
+    }
+
+    /**
+     * Lays out the dialog box components.
+     */
+    @Override
+    public void doLayout() {
+        super.doLayout();
+
+        int width = getWidth();
+        int height = getHeight();
+
+        // Position the message label with increased padding to respect the inner border of the PNG
+        int penguinAreaWidth = PENGUIN_SIZE + (DIALOG_PADDING * 2);
+        int horizontalPadding = DIALOG_PADDING * 2; // Increased horizontal padding
+        int verticalPadding = DIALOG_PADDING * 2;   // Increased vertical padding
+
+        messageLabel.setBounds(
+                penguinAreaWidth + horizontalPadding,
+                verticalPadding,
+                width - penguinAreaWidth - (horizontalPadding * 2) - 80, // Leave more space on the right for the arrow
+                height - (verticalPadding * 2)
+        );
+    }
+
+    /**
+     * Shows the dialog box with the specified messages and callback.
+     */
+    public void showDialog() {
+        Component oldGlassPane = frame.getGlassPane();
+
+        // Create a glass pane that positions the dialog at the bottom
+        JPanel glassPane = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                // This makes the glass pane transparent
+            }
+
+            @Override
+            public boolean isOpaque() {
+                return false;
+            }
+        };
+        glassPane.setLayout(null);
+
+        // Add the dialog to the glass pane, positioned at the bottom
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int dialogWidth = screenSize.width - 100;
+        int dialogHeight = 200;
+        int xPos = 50; // 50px from left
+        int yPos = screenSize.height - dialogHeight - 100; // 100px from bottom
+
+        setBounds(xPos, yPos, dialogWidth, dialogHeight);
+        glassPane.add(this);
+
+        // Add HP image if available - now it will be drawn behind the dialog
+        if (penguinHPImage != null) {
+            // Calculate scaled dimensions while maintaining aspect ratio
+            double scale = (double) HP_IMAGE_SIZE / Math.max(penguinHPImage.getWidth(), penguinHPImage.getHeight());
+            int scaledWidth = (int) (penguinHPImage.getWidth() * scale);
+            int scaledHeight = (int) (penguinHPImage.getHeight() * scale);
+
+            // Create a scaled version of the image
+            BufferedImage scaledHPImage = new BufferedImage(scaledWidth, scaledHeight, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2d = scaledHPImage.createGraphics();
+            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g2d.drawImage(penguinHPImage, 0, 0, scaledWidth, scaledHeight, null);
+            g2d.dispose();
+
+            JLabel hpLabel = new JLabel(new ImageIcon(scaledHPImage));
+            int hpX = (screenSize.width - scaledWidth) / 2;
+            int hpY = yPos - scaledHeight - 20; // Position above the dialog with some padding
+            hpLabel.setBounds(hpX, hpY, scaledWidth, scaledHeight);
+            hpLabel.setOpaque(false);
+            glassPane.add(hpLabel);
+        }
+
+        frame.setGlassPane(glassPane);
+        glassPane.setVisible(true);
+
+        // Store original callback
+        final Runnable originalCallback = onCompleteCallback;
+
+        // Create new callback that restores the glass pane and then calls the original
+        Runnable combinedCallback = () -> {
+            glassPane.setVisible(false);
+            frame.setGlassPane(oldGlassPane);
+            frame.dispose();
+            // Ensure we run this in the EDT to prevent timing issues
+            SwingUtilities.invokeLater(originalCallback);
+        };
+
+        // Replace this instance's callback
+        try {
+            java.lang.reflect.Field field = DialogBox.class.getDeclaredField("onCompleteCallback");
+            field.setAccessible(true);
+            field.set(this, combinedCallback);
+        } catch (Exception e) {
+            System.err.println("Failed to update callback: " + e.getMessage());
+        }
+
+        // Ensure the dialog gets focus so the user can click it
+        this.requestFocusInWindow();
+    }
+}

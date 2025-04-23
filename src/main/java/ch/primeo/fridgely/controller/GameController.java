@@ -1,0 +1,116 @@
+package ch.primeo.fridgely.controller;
+
+import ch.primeo.fridgely.model.FridgeStockModel;
+import ch.primeo.fridgely.model.GameStateModel;
+import ch.primeo.fridgely.model.PenguinModel;
+import ch.primeo.fridgely.model.RecipeModel;
+import ch.primeo.fridgely.service.ProductRepository;
+import ch.primeo.fridgely.service.RecipeRepository;
+
+/**
+ * Main controller for the multiplayer game mode.
+ * Coordinates between the player controllers and manages the game flow.
+ */
+public class GameController {
+    
+    private final GameStateModel gameStateModel;
+    private final PenguinModel penguinModel;
+    private final FridgeStockModel fridgeStockModel;
+    private final RecipeModel recipeModel;
+    private final Player1Controller player1Controller;
+    private final Player2Controller player2Controller;
+    private final ProductRepository productRepository;
+    
+    /**
+     * Constructs a new game controller.
+     * 
+     * @param productRepository the repository for accessing products
+     * @param recipeRepository the repository for accessing recipes
+     */
+    public GameController(ProductRepository productRepository, RecipeRepository recipeRepository) {
+        this.productRepository = productRepository;
+        // Initialize models
+        this.gameStateModel = new GameStateModel();
+        this.penguinModel = new PenguinModel();
+        this.fridgeStockModel = new FridgeStockModel();
+        this.recipeModel = new RecipeModel(recipeRepository);
+        
+        // Initialize controllers
+        this.player1Controller = new Player1Controller(
+                fridgeStockModel, gameStateModel, penguinModel, productRepository);
+        this.player2Controller = new Player2Controller(
+                fridgeStockModel, gameStateModel, penguinModel, recipeModel);
+    }
+    
+    /**
+     * Gets the game state model.
+     * 
+     * @return the game state model
+     */
+    public GameStateModel getGameStateModel() {
+        return gameStateModel;
+    }
+    
+    /**
+     * Gets the penguin model.
+     * 
+     * @return the penguin model
+     */
+    public PenguinModel getPenguinModel() {
+        return penguinModel;
+    }
+    
+    /**
+     * Gets the fridge stock model.
+     * 
+     * @return the fridge stock model
+     */
+    public FridgeStockModel getFridgeStockModel() {
+        return fridgeStockModel;
+    }
+    
+    /**
+     * Gets the recipe model.
+     * 
+     * @return the recipe model
+     */
+    public RecipeModel getRecipeModel() {
+        return recipeModel;
+    }
+    
+    /**
+     * Gets the Player 1 controller.
+     * 
+     * @return the Player 1 controller
+     */
+    public Player1Controller getPlayer1Controller() {
+        return player1Controller;
+    }
+    
+    /**
+     * Gets the Player 2 controller.
+     * 
+     * @return the Player 2 controller
+     */
+    public Player2Controller getPlayer2Controller() {
+        return player2Controller;
+    }
+    
+    /**
+     * Gets the product repository.
+     * @return the product repository
+     */
+    public ProductRepository getProductRepository() {
+        return productRepository;
+    }
+    
+    /**
+     * Starts a new game.
+     */
+    public void startNewGame() {
+        gameStateModel.resetGame();
+        penguinModel.resetHP();
+        fridgeStockModel.clear();
+        recipeModel.selectRecipe(null);
+    }
+}
