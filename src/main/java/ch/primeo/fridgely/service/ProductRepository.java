@@ -4,7 +4,6 @@ import ch.primeo.fridgely.model.Product;
 import ch.primeo.fridgely.model.QProduct; // Import the generated Q-class
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +22,6 @@ public class ProductRepository {
     private final JPAQueryFactory queryFactory;
     private final QProduct qProduct = QProduct.product;
 
-    @Autowired
     public ProductRepository(ProductJpaRepository productJpaRepository, EntityManager entityManager) {
         this.productJpaRepository = productJpaRepository;
         this.queryFactory = new JPAQueryFactory(entityManager);

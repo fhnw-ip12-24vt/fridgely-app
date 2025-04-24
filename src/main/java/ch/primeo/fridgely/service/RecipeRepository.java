@@ -6,7 +6,6 @@ import ch.primeo.fridgely.model.Recipe;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +29,8 @@ public class RecipeRepository {
 
     // Define Q-classes
     private final QRecipe qRecipe = QRecipe.recipe;
-    private final QRecipeIngredient qRecipeIngredient = QRecipeIngredient.recipeIngredient;    @Autowired
+    private final QRecipeIngredient qRecipeIngredient = QRecipeIngredient.recipeIngredient;
+
     public RecipeRepository(AppLocalizationService localizationService,
                           FridgeStockRepository fridgeStockRepository,
                           ProductRepository productRepository, // Add ProductRepository

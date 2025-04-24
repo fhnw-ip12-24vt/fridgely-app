@@ -2,7 +2,6 @@ package ch.primeo.fridgely.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
@@ -20,7 +19,6 @@ public class DataLoader implements CommandLineRunner {
     
     private final DataSource dataSource;
     
-    @Autowired
     public DataLoader(DataSource dataSource) {
         this.dataSource = dataSource;
     }

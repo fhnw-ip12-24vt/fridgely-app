@@ -4,7 +4,6 @@ import ch.primeo.fridgely.model.FridgeStock;
 import ch.primeo.fridgely.model.QFridgeStock; // Import generated Q-class
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service; // Change from @Component to @Service for consistency
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +24,7 @@ public class FridgeStockRepository {
     /**
      * Initializes a new FridgeStockRepository with JPA dependencies.
      */
-    @Autowired
+
     public FridgeStockRepository(FridgeStockJpaRepository fridgeStockJpaRepository, EntityManager entityManager) {
         this.fridgeStockJpaRepository = fridgeStockJpaRepository;
         this.queryFactory = new JPAQueryFactory(entityManager);
