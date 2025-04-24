@@ -26,7 +26,7 @@ import java.util.List;
 @Component
 @Scope("singleton")
 public class ChooseGameModeController implements BaseController {
-
+    
     private final AppLocalizationService localizationService;
     private final ChooseGameModeView view;
     private final MultiplayerGameLauncher multiplayerGameLauncher;
@@ -166,11 +166,6 @@ public class ChooseGameModeController implements BaseController {
      * Starts the single player game after the tutorial.
      */
     private void startSinglePlayerGame() {
-        /*SwingUtilities.invokeLater(() -> {
-            // Create and start the single player game controller
-            SinglePlayerController singlePlayerController = new SinglePlayerController();
-            singlePlayerController.startGame();
-        });*/
     }
 
     /**
