@@ -1,8 +1,8 @@
-package ch.primeo.fridgely;
+package ch.primeo.fridgely.gamelaunchers;
 
-import ch.primeo.fridgely.controller.GameController;
-import ch.primeo.fridgely.view.GameView;
 import ch.primeo.fridgely.view.ScannedItemsView;
+import ch.primeo.fridgely.view.multiplayer.MultiplayerGameView;
+import ch.primeo.fridgely.controller.multiplayer.MultiplayerGameController;
 import ch.primeo.fridgely.service.ProductRepository;
 import ch.primeo.fridgely.service.RecipeRepository;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
@@ -44,7 +44,7 @@ public class MultiplayerGameLauncher {
     public void launchGame() {
         SwingUtilities.invokeLater(() -> {
             // Create the game controller
-            GameController gameController = new GameController(productRepository, recipeRepository);
+            MultiplayerGameController gameController = new MultiplayerGameController(productRepository, recipeRepository);
             
             // Create the main game frame fullscreen and undecorated
             JFrame gameFrame = new JFrame("Fridgely - Multiplayer Game");
@@ -53,7 +53,7 @@ public class MultiplayerGameLauncher {
             gameFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); // Fullscreen
             
             // Create the game view
-            new GameView(gameController, localizationService, gameFrame);
+            new MultiplayerGameView(gameController, localizationService, gameFrame);
             
             // Create a second frame for displaying scanned items - also fullscreen and undecorated
             JFrame scannedItemsFrame = new JFrame("Fridgely - Scanned Items");

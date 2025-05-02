@@ -1,12 +1,12 @@
-package ch.primeo.fridgely.view;
+package ch.primeo.fridgely.view.multiplayer;
 
 import ch.primeo.fridgely.config.GameConfig;
-import ch.primeo.fridgely.controller.GameController;
-import ch.primeo.fridgely.controller.Player1Controller;
+import ch.primeo.fridgely.controller.multiplayer.MultiplayerGameController;
+import ch.primeo.fridgely.controller.multiplayer.MultiplayerPlayer1Controller;
 import ch.primeo.fridgely.model.FridgeStockModel;
-import ch.primeo.fridgely.model.GameStateModel;
 import ch.primeo.fridgely.model.PenguinFacialExpression;
 import ch.primeo.fridgely.model.Product;
+import ch.primeo.fridgely.model.multiplayer.MultiplayerGameStateModel;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
 
 import javax.swing.BorderFactory;
@@ -30,10 +30,10 @@ import java.awt.event.KeyEvent;
  * Shows the barcode scanning interface.
  * The scanned items are now displayed in a separate window.
  */
-public class Player1View extends JPanel implements PropertyChangeListener {
+public class MultiplayerPlayer1View extends JPanel implements PropertyChangeListener {
     
-    private final GameController gameController;
-    private final Player1Controller player1Controller;
+    private final MultiplayerGameController gameController;
+    private final MultiplayerPlayer1Controller player1Controller;
     private final AppLocalizationService localizationService;
     
     private JLabel scanPromptLabel;
@@ -50,7 +50,7 @@ public class Player1View extends JPanel implements PropertyChangeListener {
      * @param gameController the main game controller
      * @param localizationService the service for text localization
      */
-    public Player1View(GameController gameController, AppLocalizationService localizationService) {
+    public MultiplayerPlayer1View(MultiplayerGameController gameController, AppLocalizationService localizationService) {
         this.gameController = gameController;
         this.player1Controller = gameController.getPlayer1Controller();
         this.localizationService = localizationService;
@@ -208,10 +208,10 @@ public class Player1View extends JPanel implements PropertyChangeListener {
      * Updates the enabled/disabled state of components based on the current game state.
      */
     private void updateComponentStates() {
-        GameStateModel gameStateModel = gameController.getGameStateModel();
+        MultiplayerGameStateModel gameStateModel = gameController.getGameStateModel();
         FridgeStockModel fridgeStockModel = gameController.getFridgeStockModel();
         
-        boolean isPlayer1Turn = gameStateModel.getCurrentPlayer() == GameStateModel.Player.PLAYER1;
+        boolean isPlayer1Turn = gameStateModel.getCurrentPlayer() == MultiplayerGameStateModel.Player.PLAYER1;
         boolean isGameOver = gameStateModel.isGameOver();
         boolean hasEnoughProducts = fridgeStockModel.getProductCount() >= GameConfig.MIN_PRODUCTS_PER_ROUND;
         
@@ -270,7 +270,7 @@ public class Player1View extends JPanel implements PropertyChangeListener {
             updateComponentStates();
         }
         
-        if (evt.getSource() instanceof GameStateModel) {
+        if (evt.getSource() instanceof MultiplayerGameStateModel) {
             updateComponentStates();
         }
     }

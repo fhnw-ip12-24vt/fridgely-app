@@ -1,20 +1,20 @@
-package ch.primeo.fridgely.controller;
+package ch.primeo.fridgely.controller.multiplayer;
 
 import ch.primeo.fridgely.config.GameConfig;
 import ch.primeo.fridgely.model.FridgeStockModel;
-import ch.primeo.fridgely.model.GameStateModel;
 import ch.primeo.fridgely.model.PenguinModel;
 import ch.primeo.fridgely.model.Product;
+import ch.primeo.fridgely.model.multiplayer.MultiplayerGameStateModel;
 import ch.primeo.fridgely.service.ProductRepository;
 
 /**
  * Controller for Player 1 (Scanner) in the multiplayer game mode.
  * Handles scanning products and updating the fridge stock.
  */
-public class Player1Controller {
+public class MultiplayerPlayer1Controller {
     
     private final FridgeStockModel fridgeStockModel;
-    private final GameStateModel gameStateModel;
+    private final MultiplayerGameStateModel gameStateModel;
     private final PenguinModel penguinModel;
     private final ProductRepository productRepository;
     
@@ -26,9 +26,9 @@ public class Player1Controller {
      * @param penguinModel the model for the penguin HP
      * @param productRepository the repository for accessing products
      */
-    public Player1Controller(
+    public MultiplayerPlayer1Controller(
             FridgeStockModel fridgeStockModel,
-            GameStateModel gameStateModel,
+            MultiplayerGameStateModel gameStateModel,
             PenguinModel penguinModel,
             ProductRepository productRepository) {
         this.fridgeStockModel = fridgeStockModel;
@@ -47,7 +47,7 @@ public class Player1Controller {
      */
     public Product scanProduct(String barcode) {
         // Check if it's player 1's turn
-        if (gameStateModel.getCurrentPlayer() != GameStateModel.Player.PLAYER1) {
+        if (gameStateModel.getCurrentPlayer() != MultiplayerGameStateModel.Player.PLAYER1) {
             return null;
         }
         
@@ -88,7 +88,7 @@ public class Player1Controller {
      */
     public boolean removeProduct(Product product) {
         // Check if it's player 1's turn
-        if (gameStateModel.getCurrentPlayer() != GameStateModel.Player.PLAYER1) {
+        if (gameStateModel.getCurrentPlayer() != MultiplayerGameStateModel.Player.PLAYER1) {
             return false;
         }
         
@@ -158,7 +158,7 @@ public class Player1Controller {
      */
     public boolean finishTurn() {
         // Check if it's player 1's turn
-        if (gameStateModel.getCurrentPlayer() != GameStateModel.Player.PLAYER1) {
+        if (gameStateModel.getCurrentPlayer() != MultiplayerGameStateModel.Player.PLAYER1) {
             return false;
         }
         

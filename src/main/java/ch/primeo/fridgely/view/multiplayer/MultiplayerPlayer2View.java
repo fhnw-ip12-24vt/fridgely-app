@@ -1,9 +1,9 @@
-package ch.primeo.fridgely.view;
+package ch.primeo.fridgely.view.multiplayer;
 
-import ch.primeo.fridgely.controller.GameController;
-import ch.primeo.fridgely.controller.Player2Controller;
-import ch.primeo.fridgely.model.GameStateModel;
+import ch.primeo.fridgely.controller.multiplayer.MultiplayerGameController;
+import ch.primeo.fridgely.controller.multiplayer.MultiplayerPlayer2Controller;
 import ch.primeo.fridgely.model.RecipeModel;
+import ch.primeo.fridgely.model.multiplayer.MultiplayerGameStateModel;
 import ch.primeo.fridgely.model.Recipe;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import ch.primeo.fridgely.view.component.UnifiedRecipePanel;
@@ -17,10 +17,10 @@ import java.beans.PropertyChangeListener;
  * View for Player 2 (Chef) in the multiplayer game mode.
  * Shows available recipes with their ingredients in a unified display.
  */
-public class Player2View extends JPanel implements PropertyChangeListener {
+public class MultiplayerPlayer2View extends JPanel implements PropertyChangeListener {
     
-    private final GameController gameController;
-    private final Player2Controller player2Controller;
+    private final MultiplayerGameController gameController;
+    private final MultiplayerPlayer2Controller player2Controller;
     private final AppLocalizationService localizationService;
     
     private UnifiedRecipePanel unifiedRecipePanel;
@@ -33,7 +33,7 @@ public class Player2View extends JPanel implements PropertyChangeListener {
      * @param gameController the main game controller
      * @param localizationService the service for text localization
      */
-    public Player2View(GameController gameController, AppLocalizationService localizationService) {
+    public MultiplayerPlayer2View(MultiplayerGameController gameController, AppLocalizationService localizationService) {
         this.gameController = gameController;
         this.player2Controller = gameController.getPlayer2Controller();
         this.localizationService = localizationService;
@@ -131,10 +131,10 @@ public class Player2View extends JPanel implements PropertyChangeListener {
      * Updates the enabled/disabled state of components based on the current game state.
      */
     private void updateComponentStates() {
-        GameStateModel gameStateModel = gameController.getGameStateModel();
+        MultiplayerGameStateModel gameStateModel = gameController.getGameStateModel();
         RecipeModel recipeModel = gameController.getRecipeModel();
         
-        boolean isPlayer2Turn = gameStateModel.getCurrentPlayer() == GameStateModel.Player.PLAYER2;
+        boolean isPlayer2Turn = gameStateModel.getCurrentPlayer() == MultiplayerGameStateModel.Player.PLAYER2;
         boolean isGameOver = gameStateModel.isGameOver();
         boolean hasSelectedRecipe = recipeModel.getSelectedRecipe() != null;
         
@@ -161,7 +161,7 @@ public class Player2View extends JPanel implements PropertyChangeListener {
     
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getSource() instanceof GameStateModel) {
+        if (evt.getSource() instanceof MultiplayerGameStateModel) {
             updateComponentStates();
         } else if (evt.getSource() instanceof RecipeModel && 
                 RecipeModel.PROP_AVAILABLE_RECIPES.equals(evt.getPropertyName())) {

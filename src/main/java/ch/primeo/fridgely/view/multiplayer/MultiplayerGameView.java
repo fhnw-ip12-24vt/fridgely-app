@@ -1,9 +1,9 @@
-package ch.primeo.fridgely.view;
+package ch.primeo.fridgely.view.multiplayer;
 
 import ch.primeo.fridgely.Fridgely;
-import ch.primeo.fridgely.controller.GameController;
-import ch.primeo.fridgely.model.GameStateModel;
+import ch.primeo.fridgely.controller.multiplayer.MultiplayerGameController;
 import ch.primeo.fridgely.model.PenguinModel;
+import ch.primeo.fridgely.model.multiplayer.MultiplayerGameStateModel;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import ch.primeo.fridgely.util.ImageLoader;
 
@@ -16,9 +16,9 @@ import java.beans.PropertyChangeListener;
  * Main view for the multiplayer game mode.
  * Integrates the Player1View and Player2View with shared game information display.
  */
-public class GameView extends JPanel implements PropertyChangeListener {
+public class MultiplayerGameView extends JPanel implements PropertyChangeListener {
     
-    private final GameController gameController;
+    private final MultiplayerGameController gameController;
     private final AppLocalizationService localizationService;
     
     private JPanel mainPanel;
@@ -37,8 +37,8 @@ public class GameView extends JPanel implements PropertyChangeListener {
     private JButton exitButton;
     
     private CardLayout playerCardLayout;
-    private Player1View player1View;
-    private Player2View player2View;
+    private MultiplayerPlayer1View player1View;
+    private MultiplayerPlayer2View player2View;
     
     /**
      * Constructs a new game view.
@@ -47,7 +47,7 @@ public class GameView extends JPanel implements PropertyChangeListener {
      * @param localizationService the service for text localization
      * @param frame the parent JFrame for this view
      */
-    public GameView(GameController gameController, AppLocalizationService localizationService, JFrame frame) {
+    public MultiplayerGameView(MultiplayerGameController gameController, AppLocalizationService localizationService, JFrame frame) {
         this.gameController = gameController;
         this.localizationService = localizationService;
         
@@ -73,8 +73,8 @@ public class GameView extends JPanel implements PropertyChangeListener {
         controlPanel = new JPanel();
         
         // Create the player views
-        player1View = new Player1View(gameController, localizationService);
-        player2View = new Player2View(gameController, localizationService);
+        player1View = new MultiplayerPlayer1View(gameController, localizationService);
+        player2View = new MultiplayerPlayer2View(gameController, localizationService);
         
         // Create the player panel with card layout
         playerCardLayout = new CardLayout();
@@ -166,8 +166,8 @@ public class GameView extends JPanel implements PropertyChangeListener {
      * Shows the view for the current player.
      */
     private void showCurrentPlayerView() {
-        GameStateModel.Player currentPlayer = gameController.getGameStateModel().getCurrentPlayer();
-        if (currentPlayer == GameStateModel.Player.PLAYER1) {
+        MultiplayerGameStateModel.Player currentPlayer = gameController.getGameStateModel().getCurrentPlayer();
+        if (currentPlayer == MultiplayerGameStateModel.Player.PLAYER1) {
             playerCardLayout.show(playerPanel, "player1");
         } else {
             playerCardLayout.show(playerPanel, "player2");
@@ -178,7 +178,7 @@ public class GameView extends JPanel implements PropertyChangeListener {
      * Updates the game information display.
      */
     private void updateGameInfo() {
-        GameStateModel gameState = gameController.getGameStateModel();
+        MultiplayerGameStateModel gameState = gameController.getGameStateModel();
         PenguinModel penguinModel = gameController.getPenguinModel();
         
         // Update round label
@@ -206,10 +206,10 @@ public class GameView extends JPanel implements PropertyChangeListener {
         
         // If game is over, show game result
         if (gameState.isGameOver()) {
-            GameStateModel.Player winner = gameState.getWinner();
-            if (winner == GameStateModel.Player.PLAYER1) {
+            MultiplayerGameStateModel.Player winner = gameState.getWinner();
+            if (winner == MultiplayerGameStateModel.Player.PLAYER1) {
                 JOptionPane.showMessageDialog(this, "Game Over! Player 1 wins!");
-            } else if (winner == GameStateModel.Player.PLAYER2) {
+            } else if (winner == MultiplayerGameStateModel.Player.PLAYER2) {
                 JOptionPane.showMessageDialog(this, "Game Over! Player 2 wins!");
             } else {
                 JOptionPane.showMessageDialog(this, "Game Over! It's a tie!");
@@ -253,8 +253,8 @@ public class GameView extends JPanel implements PropertyChangeListener {
     
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getSource() instanceof GameStateModel) {
-            if (GameStateModel.PROP_CURRENT_PLAYER.equals(evt.getPropertyName())) {
+        if (evt.getSource() instanceof MultiplayerGameStateModel) {
+            if (MultiplayerGameStateModel.PROP_CURRENT_PLAYER.equals(evt.getPropertyName())) {
                 showCurrentPlayerView();
             }
             updateGameInfo();

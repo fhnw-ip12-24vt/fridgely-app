@@ -1,4 +1,4 @@
-package ch.primeo.fridgely.model;
+package ch.primeo.fridgely.model.multiplayer;
 
 import ch.primeo.fridgely.config.GameConfig;
 
@@ -9,7 +9,7 @@ import java.beans.PropertyChangeSupport;
  * Model for tracking the overall game state in the multiplayer game mode.
  * Manages round number, current player, and scores.
  */
-public class GameStateModel {
+public class MultiplayerGameStateModel {
     
     /**
      * Enum representing the current player in the game.
@@ -62,7 +62,7 @@ public class GameStateModel {
     /**
      * Constructs a new game state model with the default number of rounds.
      */
-    public GameStateModel() {
+    public MultiplayerGameStateModel() {
         this(GameConfig.DEFAULT_ROUNDS);
     }
     
@@ -71,7 +71,7 @@ public class GameStateModel {
      * 
      * @param totalRounds the total number of rounds in the game
      */
-    public GameStateModel(int totalRounds) {
+    public MultiplayerGameStateModel(int totalRounds) {
         this.currentRound = 1;
         this.currentPlayer = Player.PLAYER1;
         this.player1Score = 0;

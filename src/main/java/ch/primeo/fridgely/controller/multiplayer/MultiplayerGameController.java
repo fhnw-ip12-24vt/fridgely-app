@@ -1,9 +1,9 @@
-package ch.primeo.fridgely.controller;
+package ch.primeo.fridgely.controller.multiplayer;
 
 import ch.primeo.fridgely.model.FridgeStockModel;
-import ch.primeo.fridgely.model.GameStateModel;
 import ch.primeo.fridgely.model.PenguinModel;
 import ch.primeo.fridgely.model.RecipeModel;
+import ch.primeo.fridgely.model.multiplayer.MultiplayerGameStateModel;
 import ch.primeo.fridgely.service.ProductRepository;
 import ch.primeo.fridgely.service.RecipeRepository;
 
@@ -11,14 +11,14 @@ import ch.primeo.fridgely.service.RecipeRepository;
  * Main controller for the multiplayer game mode.
  * Coordinates between the player controllers and manages the game flow.
  */
-public class GameController {
+public class MultiplayerGameController {
     
-    private final GameStateModel gameStateModel;
+    private final MultiplayerGameStateModel gameStateModel;
     private final PenguinModel penguinModel;
     private final FridgeStockModel fridgeStockModel;
     private final RecipeModel recipeModel;
-    private final Player1Controller player1Controller;
-    private final Player2Controller player2Controller;
+    private final MultiplayerPlayer1Controller player1Controller;
+    private final MultiplayerPlayer2Controller player2Controller;
     private final ProductRepository productRepository;
     
     /**
@@ -27,18 +27,18 @@ public class GameController {
      * @param productRepository the repository for accessing products
      * @param recipeRepository the repository for accessing recipes
      */
-    public GameController(ProductRepository productRepository, RecipeRepository recipeRepository) {
+    public MultiplayerGameController(ProductRepository productRepository, RecipeRepository recipeRepository) {
         this.productRepository = productRepository;
         // Initialize models
-        this.gameStateModel = new GameStateModel();
+        this.gameStateModel = new MultiplayerGameStateModel();
         this.penguinModel = new PenguinModel();
         this.fridgeStockModel = new FridgeStockModel();
         this.recipeModel = new RecipeModel(recipeRepository);
         
         // Initialize controllers
-        this.player1Controller = new Player1Controller(
+        this.player1Controller = new MultiplayerPlayer1Controller(
                 fridgeStockModel, gameStateModel, penguinModel, productRepository);
-        this.player2Controller = new Player2Controller(
+        this.player2Controller = new MultiplayerPlayer2Controller(
                 fridgeStockModel, gameStateModel, penguinModel, recipeModel);
     }
     
@@ -47,7 +47,7 @@ public class GameController {
      * 
      * @return the game state model
      */
-    public GameStateModel getGameStateModel() {
+    public MultiplayerGameStateModel getGameStateModel() {
         return gameStateModel;
     }
     
@@ -83,7 +83,7 @@ public class GameController {
      * 
      * @return the Player 1 controller
      */
-    public Player1Controller getPlayer1Controller() {
+    public MultiplayerPlayer1Controller getPlayer1Controller() {
         return player1Controller;
     }
     
@@ -92,7 +92,7 @@ public class GameController {
      * 
      * @return the Player 2 controller
      */
-    public Player2Controller getPlayer2Controller() {
+    public MultiplayerPlayer2Controller getPlayer2Controller() {
         return player2Controller;
     }
     

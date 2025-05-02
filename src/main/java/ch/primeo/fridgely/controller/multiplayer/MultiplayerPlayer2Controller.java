@@ -1,20 +1,20 @@
-package ch.primeo.fridgely.controller;
+package ch.primeo.fridgely.controller.multiplayer;
 
 import ch.primeo.fridgely.config.GameConfig;
 import ch.primeo.fridgely.model.FridgeStockModel;
-import ch.primeo.fridgely.model.GameStateModel;
 import ch.primeo.fridgely.model.PenguinModel;
 import ch.primeo.fridgely.model.RecipeModel;
+import ch.primeo.fridgely.model.multiplayer.MultiplayerGameStateModel;
 import ch.primeo.fridgely.model.Recipe;
 
 /**
  * Controller for Player 2 (Chef) in the multiplayer game mode.
  * Handles recipe selection and validation.
  */
-public class Player2Controller {
+public class MultiplayerPlayer2Controller {
     
     private final FridgeStockModel fridgeStockModel;
-    private final GameStateModel gameStateModel;
+    private final MultiplayerGameStateModel gameStateModel;
     private final PenguinModel penguinModel;
     private final RecipeModel recipeModel;
     
@@ -26,9 +26,9 @@ public class Player2Controller {
      * @param penguinModel the model for the penguin HP
      * @param recipeModel the model for recipes
      */
-    public Player2Controller(
+    public MultiplayerPlayer2Controller(
             FridgeStockModel fridgeStockModel,
-            GameStateModel gameStateModel,
+            MultiplayerGameStateModel gameStateModel,
             PenguinModel penguinModel,
             RecipeModel recipeModel) {
         this.fridgeStockModel = fridgeStockModel;
@@ -44,7 +44,7 @@ public class Player2Controller {
      */
     public boolean selectRecipe(Recipe recipe) {
         // Check if it's player 2's turn
-        if (gameStateModel.getCurrentPlayer() != GameStateModel.Player.PLAYER2) {
+        if (gameStateModel.getCurrentPlayer() != MultiplayerGameStateModel.Player.PLAYER2) {
             return false;
         }
         
@@ -94,7 +94,7 @@ public class Player2Controller {
      */
     public boolean finishTurn() {
         // Check if it's player 2's turn
-        if (gameStateModel.getCurrentPlayer() != GameStateModel.Player.PLAYER2) {
+        if (gameStateModel.getCurrentPlayer() != MultiplayerGameStateModel.Player.PLAYER2) {
             return false;
         }
         // Check if a recipe has been selected
