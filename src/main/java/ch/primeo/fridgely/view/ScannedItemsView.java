@@ -17,7 +17,13 @@ import java.util.List;
  * This view shows all products scanned by Player 1 in real-time.
  */
 public class ScannedItemsView extends JPanel implements PropertyChangeListener, LocalizationObserver {
-    
+    // define localization keys
+    private static final String KEY_SCANNED_ITEMS_HEADER = "scanneditems.header";
+    private static final String KEY_LABEL_BIO = "label.bio";
+    private static final String KEY_LABEL_NON_BIO = "label.non_bio";
+    private static final String KEY_LABEL_LOCAL = "label.local";
+    private static final String KEY_LABEL_NON_LOCAL = "label.non_local";
+
     private final MultiplayerGameController gameController;
     private final AppLocalizationService localizationService;
     private Image backgroundImg;
@@ -41,8 +47,9 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         initializeComponents();
         setupLayout();
         registerListeners();
-        updateProductList(); // Initial update
-        localizationService.subscribe(this); // Subscribe to locale changes
+        // subscribe and apply localization
+        localizationService.subscribe(this);
+        onLocaleChanged();
         frame.setContentPane(this);
         
         // Handle multi-monitor setup for the second display
@@ -70,7 +77,8 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         defaultProductCardsPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 18));
         defaultProductCardsPanel.setOpaque(false);
 
-        headerLabel = new JLabel(localizationService.get("scanneditems.header"));
+        // placeholder; actual text set in onLocaleChanged()
+        headerLabel = new JLabel();
         headerLabel.setFont(new Font(headerLabel.getFont().getName(), Font.BOLD, 18));
     }
     
@@ -156,7 +164,12 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         // Labels at the bottom
         JPanel tagsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 6, 0));
         tagsPanel.setOpaque(false);
-        JLabel bioLabel = new JLabel(product.isBio() ? "Bio" : "Non-Bio");
+        // bio tag
+        JLabel bioLabel = new JLabel(
+            product.isBio()
+                ? localizationService.get(KEY_LABEL_BIO)
+                : localizationService.get(KEY_LABEL_NON_BIO)
+        );
         bioLabel.setOpaque(true);
         bioLabel.setFont(new Font(nameLabel.getFont().getName(), Font.BOLD, 10));
         bioLabel.setForeground(Color.WHITE);
@@ -165,7 +178,12 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
             BorderFactory.createLineBorder(product.isBio() ? new Color(39, 174, 96) : new Color(127, 140, 141), 1, true),
             BorderFactory.createEmptyBorder(2, 8, 2, 8)));
         tagsPanel.add(bioLabel);
-        JLabel localLabel = new JLabel(product.isLocal() ? "Local" : "Non-Local");
+        // local tag
+        JLabel localLabel = new JLabel(
+            product.isLocal()
+                ? localizationService.get(KEY_LABEL_LOCAL)
+                : localizationService.get(KEY_LABEL_NON_LOCAL)
+        );
         localLabel.setOpaque(true);
         localLabel.setFont(new Font(nameLabel.getFont().getName(), Font.BOLD, 10));
         localLabel.setForeground(Color.WHITE);
@@ -207,7 +225,9 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
     
     @Override
     public void onLocaleChanged() {
-        headerLabel.setText(localizationService.get("scanneditems.header"));
+        headerLabel.setText(localizationService.get(KEY_SCANNED_ITEMS_HEADER));
+        // refresh all product cards with updated labels
+        updateProductList();
     }
 
     @Override

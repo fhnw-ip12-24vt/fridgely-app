@@ -2,6 +2,8 @@ package ch.primeo.fridgely.view;
 
 import ch.primeo.fridgely.Constants;
 import ch.primeo.fridgely.view.component.LanguageSwitchButton;
+import ch.primeo.fridgely.service.localization.AppLocalizationService;
+import ch.primeo.fridgely.service.localization.LocalizationObserver;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -22,8 +24,16 @@ import java.awt.Image;
  * View for choosing the game mode: single player or multiplayer.
  * Displays options for single player and multiplayer modes with corresponding images and text.
  */
-public class ChooseGameModeView extends BaseView {
+public class ChooseGameModeView extends BaseView implements LocalizationObserver {
 
+    // localization keys
+    private static final String KEY_TITLE             = "choose_mode_title";
+    private static final String KEY_SINGLE_PLAYER     = "single_player_mode";
+    private static final String KEY_MULTIPLAYER       = "multiplayer_mode";
+    private static final String KEY_LANG_BUTTON       = "button_language";
+
+    private final AppLocalizationService localizationService;
+    private final JButton langButton;
     private JPanel mainPanel;
     private JLabel titleLabel;
     private JPanel gameModePanel;
@@ -33,7 +43,6 @@ public class ChooseGameModeView extends BaseView {
     private JLabel multiplayerImageLabel;
     private JLabel singlePlayerTextLabel;
     private JLabel multiplayerTextLabel;
-    private final JButton langButton;
 
     private static final String SINGLE_PLAYER_IMAGE = "src/main/resources/ch/primeo/fridgely/sprites/single_player.png";
     private static final String MULTIPLAYER_IMAGE = "src/main/resources/ch/primeo/fridgely/sprites/multi_player.png";
@@ -42,11 +51,15 @@ public class ChooseGameModeView extends BaseView {
      * Constructor for the ChooseGameModeView.
      * Initializes the components and sets up the layout.
      */
-    public ChooseGameModeView(LanguageSwitchButton langButton) {
+    public ChooseGameModeView(LanguageSwitchButton langButton, AppLocalizationService localizationService) {
         this.langButton = langButton;
+        this.localizationService = localizationService;
 
         initializeComponents();
         setupLayout();
+
+        onLocaleChanged();
+        localizationService.subscribe(this);
     }
 
     /**
@@ -194,5 +207,13 @@ public class ChooseGameModeView extends BaseView {
      */
     public JButton getLangButton() {
         return langButton;
+    }
+
+    @Override
+    public void onLocaleChanged() {
+        titleLabel.setText(localizationService.get(KEY_TITLE));
+        singlePlayerTextLabel.setText(localizationService.get(KEY_SINGLE_PLAYER));
+        multiplayerTextLabel.setText(localizationService.get(KEY_MULTIPLAYER));
+        langButton.setText(localizationService.get(KEY_LANG_BUTTON));
     }
 }

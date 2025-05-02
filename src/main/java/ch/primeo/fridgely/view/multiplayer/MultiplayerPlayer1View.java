@@ -8,6 +8,7 @@ import ch.primeo.fridgely.model.PenguinFacialExpression;
 import ch.primeo.fridgely.model.Product;
 import ch.primeo.fridgely.model.multiplayer.MultiplayerGameStateModel;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
+import ch.primeo.fridgely.service.localization.LocalizationObserver;
 import ch.primeo.fridgely.view.PenguinReactionOverlay;
 
 import javax.swing.BorderFactory;
@@ -16,7 +17,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.awt.Window;
@@ -31,14 +31,29 @@ import java.awt.event.KeyEvent;
  * Shows the barcode scanning interface.
  * The scanned items are now displayed in a separate window.
  */
-public class MultiplayerPlayer1View extends JPanel implements PropertyChangeListener {
+public class MultiplayerPlayer1View extends JPanel implements PropertyChangeListener, LocalizationObserver {
     
+    // localization keys
+    private static final String KEY_SCAN_PROMPT_BASE            = "scan_prompt_base";
+    private static final String KEY_FINISH_TURN_BUTTON          = "finish_turn_button";
+    private static final String KEY_STATUS_PLAYER1_TURN_SCAN    = "status_player1_turn_scan";
+    private static final String KEY_MIN_PRODUCTS_INITIAL_FMT    = "min_products_initial_fmt";
+    private static final String KEY_SCANNING_PRODUCT            = "scanning_product";
+    private static final String KEY_REMOVED_FROM_STOCK_FMT      = "removed_from_stock_fmt";
+    private static final String KEY_ADDED_TO_STOCK_FMT         = "added_to_stock_fmt";
+    private static final String KEY_PRODUCT_NOT_FOUND_FMT       = "product_not_found_fmt";
+    private static final String KEY_MIN_PRODUCTS_REMAINING_FMT  = "min_products_remaining_fmt";
+    private static final String KEY_MIN_PRODUCTS_REACHED_FMT    = "min_products_reached_fmt";
+    private static final String KEY_GAME_OVER                   = "game_over";
+    private static final String KEY_ROUND_P1_SCAN_FMT           = "round_player1_scan_fmt";
+    private static final String KEY_ROUND_P2_SELECT_FMT         = "round_player2_select_fmt";
+
     private final MultiplayerGameController gameController;
     private final MultiplayerPlayer1Controller player1Controller;
     private final AppLocalizationService localizationService;
     
     private JLabel scanPromptLabel;
-    private String scanPromptBase = "Scan an item";
+    private String scanPromptBase;
     private int scanPromptDotCount = 0;
     private javax.swing.Timer scanPromptTimer;
     private JButton finishTurnButton;
@@ -59,6 +74,11 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
         initializeComponents();
         setupLayout();
         registerListeners();
+        
+        // subscribe and initialize texts
+        localizationService.subscribe(this);
+        onLocaleChanged();
+        
         updateComponentStates();
     }
     
@@ -66,18 +86,10 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
      * Initializes the UI components.
      */
     private void initializeComponents() {
-        scanPromptLabel = new JLabel(scanPromptBase, SwingConstants.CENTER);
-        scanPromptLabel.setFont(new Font("SansSerif", Font.BOLD, 28));
-        scanPromptLabel.setAlignmentX(CENTER_ALIGNMENT);
-        scanPromptLabel.setVisible(false);
-        
-        finishTurnButton = new JButton("Finish Turn");
-        
-        statusLabel = new JLabel("Player 1's Turn: Scan Products");
-        statusLabel.setFont(new Font(statusLabel.getFont().getName(), Font.BOLD, 16));
-        
-        minProductsLabel = new JLabel(
-                String.format("Scan at least %d products", GameConfig.MIN_PRODUCTS_PER_ROUND));
+        scanPromptLabel  = new JLabel("", SwingConstants.CENTER);
+        finishTurnButton = new JButton("");
+        statusLabel      = new JLabel("");
+        minProductsLabel = new JLabel("");
     }
     
     /**
@@ -161,7 +173,7 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
     private void scanBarcode(String barcode) {
         System.out.println("[DEBUG] scanBarcode called with: '" + barcode + "'");
         setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.WAIT_CURSOR));
-        statusLabel.setText("Scanning product...");
+        statusLabel.setText(localizationService.get(KEY_SCANNING_PRODUCT));
         boolean wasInStock = false;
         for (Product p : gameController.getFridgeStockModel().getProducts()) {
             if (p.getBarcode() != null && p.getBarcode().equals(barcode)) {
@@ -177,11 +189,11 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
             PenguinFacialExpression reaction;
             if (wasInStock) {
                 // Removal
-                statusLabel.setText("Removed from stock: " + productName);
+                statusLabel.setText(String.format(localizationService.get(KEY_REMOVED_FROM_STOCK_FMT), productName));
                 reaction = isGood ? PenguinFacialExpression.DISAPPOINTED : PenguinFacialExpression.HAPPY;
             } else {
                 // Addition
-                statusLabel.setText("Added to stock: " + productName);
+                statusLabel.setText(String.format(localizationService.get(KEY_ADDED_TO_STOCK_FMT), productName));
                 reaction = isGood ? PenguinFacialExpression.HAPPY : PenguinFacialExpression.DISAPPOINTED;
             }
             java.awt.Toolkit.getDefaultToolkit().beep();
@@ -190,7 +202,7 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
             PenguinReactionOverlay overlay = new PenguinReactionOverlay(topLevel, reaction);
             overlay.showAndAutoHide();
         } else {
-            statusLabel.setText("Product not found: " + barcode);
+            statusLabel.setText(String.format(localizationService.get(KEY_PRODUCT_NOT_FOUND_FMT), barcode));
         }
         setCursor(java.awt.Cursor.getDefaultCursor());
         updateComponentStates();
@@ -241,27 +253,29 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
         // Update the min products label
         int currentCount = fridgeStockModel.getProductCount();
         if (currentCount < GameConfig.MIN_PRODUCTS_PER_ROUND) {
-            minProductsLabel.setText(
-                String.format("Scan at least %d more products (%d/%d)",
-                    GameConfig.MIN_PRODUCTS_PER_ROUND - currentCount,
-                    currentCount,
-                    GameConfig.MIN_PRODUCTS_PER_ROUND));
+            minProductsLabel.setText(String.format(
+                localizationService.get(KEY_MIN_PRODUCTS_REMAINING_FMT),
+                GameConfig.MIN_PRODUCTS_PER_ROUND - currentCount,
+                currentCount,
+                GameConfig.MIN_PRODUCTS_PER_ROUND));
         } else {
-            minProductsLabel.setText(
-                String.format("Minimum products reached (%d/%d)! You can finish your turn.",
-                    currentCount,
-                    GameConfig.MIN_PRODUCTS_PER_ROUND));
+            minProductsLabel.setText(String.format(
+                localizationService.get(KEY_MIN_PRODUCTS_REACHED_FMT),
+                currentCount,
+                GameConfig.MIN_PRODUCTS_PER_ROUND));
         }
         
         // Update status label
         if (isGameOver) {
-            statusLabel.setText("Game Over!");
+            statusLabel.setText(localizationService.get(KEY_GAME_OVER));
         } else if (isPlayer1Turn) {
-            statusLabel.setText(String.format("Round %d - Player 1's Turn: Scan Products", 
-                    gameStateModel.getCurrentRound()));
+            statusLabel.setText(String.format(
+                localizationService.get(KEY_ROUND_P1_SCAN_FMT),
+                gameStateModel.getCurrentRound()));
         } else {
-            statusLabel.setText(String.format("Round %d - Player 2's Turn: Select a Recipe", 
-                    gameStateModel.getCurrentRound()));
+            statusLabel.setText(String.format(
+                localizationService.get(KEY_ROUND_P2_SELECT_FMT),
+                gameStateModel.getCurrentRound()));
         }
     }
     
@@ -274,5 +288,15 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
         if (evt.getSource() instanceof MultiplayerGameStateModel) {
             updateComponentStates();
         }
+    }
+
+    @Override
+    public void onLocaleChanged() {
+        scanPromptBase = localizationService.get(KEY_SCAN_PROMPT_BASE);
+        scanPromptLabel.setText(scanPromptBase);
+        finishTurnButton.setText(localizationService.get(KEY_FINISH_TURN_BUTTON));
+        statusLabel.setText(localizationService.get(KEY_STATUS_PLAYER1_TURN_SCAN));
+        minProductsLabel.setText(
+            String.format(localizationService.get(KEY_MIN_PRODUCTS_INITIAL_FMT), GameConfig.MIN_PRODUCTS_PER_ROUND));
     }
 }

@@ -6,6 +6,7 @@ import ch.primeo.fridgely.model.RecipeModel;
 import ch.primeo.fridgely.model.multiplayer.MultiplayerGameStateModel;
 import ch.primeo.fridgely.model.Recipe;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
+import ch.primeo.fridgely.service.localization.LocalizationObserver;
 import ch.primeo.fridgely.view.component.UnifiedRecipePanel;
 
 import javax.swing.*;
@@ -17,23 +18,32 @@ import java.beans.PropertyChangeListener;
  * View for Player 2 (Chef) in the multiplayer game mode.
  * Shows available recipes with their ingredients in a unified display.
  */
-public class MultiplayerPlayer2View extends JPanel implements PropertyChangeListener {
-    
+public class MultiplayerPlayer2View extends JPanel 
+        implements PropertyChangeListener, LocalizationObserver {
+
+    // localization keys
+    private static final String KEY_FINISH_TURN_BUTTON              = "multiplayer.player2.finish_turn_button";
+    private static final String KEY_STATUS_GAME_OVER                = "multiplayer.player2.status_game_over";
+    private static final String KEY_STATUS_PLAYER2_RECIPE_SELECTED  = "multiplayer.player2.status_player2_recipe_selected";
+    private static final String KEY_STATUS_PLAYER2_SELECT_RECIPE    = "multiplayer.player2.status_player2_select_recipe";
+    private static final String KEY_STATUS_PLAYER1_SCAN_PRODUCTS    = "multiplayer.player2.status_player1_scan_products";
+
     private final MultiplayerGameController gameController;
     private final MultiplayerPlayer2Controller player2Controller;
     private final AppLocalizationService localizationService;
-    
+
     private UnifiedRecipePanel unifiedRecipePanel;
     private JButton finishTurnButton;
     private JLabel statusLabel;
-    
+
     /**
      * Constructs a new Player 2 view.
      * 
      * @param gameController the main game controller
      * @param localizationService the service for text localization
      */
-    public MultiplayerPlayer2View(MultiplayerGameController gameController, AppLocalizationService localizationService) {
+    public MultiplayerPlayer2View(MultiplayerGameController gameController, 
+                                  AppLocalizationService localizationService) {
         this.gameController = gameController;
         this.player2Controller = gameController.getPlayer2Controller();
         this.localizationService = localizationService;
@@ -41,7 +51,11 @@ public class MultiplayerPlayer2View extends JPanel implements PropertyChangeList
         initializeComponents();
         setupLayout();
         registerListeners();
-        
+
+        // subscribe to locale changes and apply once
+        localizationService.subscribe(this);
+        onLocaleChanged();
+
         // Update the recipe list on startup
         updateRecipeList();
         updateComponentStates();
@@ -54,11 +68,9 @@ public class MultiplayerPlayer2View extends JPanel implements PropertyChangeList
         // Create the unified recipe panel
         unifiedRecipePanel = new UnifiedRecipePanel(gameController, gameController.getProductRepository());
         
-        // Finish turn button
-        finishTurnButton = new JButton("Finish Turn");
-        
-        // Status label
-        statusLabel = new JLabel("Player 2's Turn: Select a Recipe");
+        // initialize with empty text; will be set in onLocaleChanged()
+        finishTurnButton = new JButton();
+        statusLabel = new JLabel();
         statusLabel.setFont(new Font(statusLabel.getFont().getName(), Font.BOLD, 16));
     }
     
@@ -134,9 +146,9 @@ public class MultiplayerPlayer2View extends JPanel implements PropertyChangeList
         MultiplayerGameStateModel gameStateModel = gameController.getGameStateModel();
         RecipeModel recipeModel = gameController.getRecipeModel();
         
-        boolean isPlayer2Turn = gameStateModel.getCurrentPlayer() == MultiplayerGameStateModel.Player.PLAYER2;
-        boolean isGameOver = gameStateModel.isGameOver();
-        boolean hasSelectedRecipe = recipeModel.getSelectedRecipe() != null;
+        boolean isPlayer2Turn    = gameStateModel.getCurrentPlayer() == MultiplayerGameStateModel.Player.PLAYER2;
+        boolean isGameOver       = gameStateModel.isGameOver();
+        boolean hasSelectedRecipe= recipeModel.getSelectedRecipe() != null;
         
         // Update enabled states
         unifiedRecipePanel.setEnabled(isPlayer2Turn && !isGameOver && !hasSelectedRecipe);
@@ -144,21 +156,31 @@ public class MultiplayerPlayer2View extends JPanel implements PropertyChangeList
         
         // Update status label
         if (isGameOver) {
-            statusLabel.setText("Game Over!");
+            statusLabel.setText(localizationService.get(KEY_STATUS_GAME_OVER));
         } else if (isPlayer2Turn) {
             if (hasSelectedRecipe) {
-                statusLabel.setText(String.format("Round %d - Player 2's Turn: Recipe Selected", 
-                        gameStateModel.getCurrentRound()));
+                statusLabel.setText(String.format(
+                    localizationService.get(KEY_STATUS_PLAYER2_RECIPE_SELECTED),
+                    gameStateModel.getCurrentRound()));
             } else {
-                statusLabel.setText(String.format("Round %d - Player 2's Turn: Select a Recipe", 
-                        gameStateModel.getCurrentRound()));
+                statusLabel.setText(String.format(
+                    localizationService.get(KEY_STATUS_PLAYER2_SELECT_RECIPE),
+                    gameStateModel.getCurrentRound()));
             }
         } else {
-            statusLabel.setText(String.format("Round %d - Player 1's Turn: Scan Products", 
-                    gameStateModel.getCurrentRound()));
+            statusLabel.setText(String.format(
+                localizationService.get(KEY_STATUS_PLAYER1_SCAN_PRODUCTS),
+                gameStateModel.getCurrentRound()));
         }
     }
     
+    @Override
+    public void onLocaleChanged() {
+        finishTurnButton.setText(localizationService.get(KEY_FINISH_TURN_BUTTON));
+        // statusLabel text will be refreshed via updateComponentStates()
+        updateComponentStates();
+    }
+
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getSource() instanceof MultiplayerGameStateModel) {
