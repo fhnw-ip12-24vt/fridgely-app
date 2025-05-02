@@ -44,7 +44,7 @@ public class ChooseGameModeController implements BaseController {
 
         this.localizationService = localizationService;
         this.multiplayerGameLauncher = multiplayerGameLauncher;
-        this.view = new ChooseGameModeView(languageSwitchButton);
+        this.view = new ChooseGameModeView(languageSwitchButton, this.localizationService);
 
         localizationService.subscribe(this::updateUIText);
 
