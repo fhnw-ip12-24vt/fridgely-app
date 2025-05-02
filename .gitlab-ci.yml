@@ -1,0 +1,93 @@
+image: maven:3.9-eclipse-temurin-21
+
+stages:
+  - validate
+  - test
+  - package
+  - site
+  - deploy
+  - pages
+
+variables:
+  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true"
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+
+# Cache downloaded dependencies and plugins between builds
+cache:
+  paths:
+    - .m2/repository
+
+validate:
+  stage: validate
+  script:
+    - mvn $MAVEN_CLI_OPTS validate
+  allow_failure: false
+
+test:
+  stage: test
+  script:
+    - mvn $MAVEN_CLI_OPTS test
+  allow_failure: false
+  artifacts:
+    reports:
+      junit:
+        - target/surefire-reports/TEST-*.xml
+
+package:
+  stage: package
+  script:
+    - mvn $MAVEN_CLI_OPTS package -DskipTests
+  artifacts:
+    paths:
+      - target/*.jar
+    expire_in: 1 week
+
+site:
+  stage: site
+  script:
+    - mvn $MAVEN_CLI_OPTS site
+  artifacts:
+    paths:
+      - target/site
+    expire_in: 1 week
+  only:
+    - main
+
+# GitLab Pages job to deploy the Maven site
+pages:
+  stage: pages
+  dependencies:
+    - site
+  script:
+    - mkdir -p public
+    - cp -r target/site/* public/
+  artifacts:
+    paths:
+      - public
+    expire_in: 1 week
+  only:
+    - main
+
+deploy:
+  stage: deploy
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  script:
+    - echo "Creating release with JAR file from the package stage"
+  dependencies:
+    - package
+    - test
+    - site
+  artifacts:
+    paths:
+      - target/*-fat.jar
+    expire_in: 1 month
+  release:
+    tag_name: 'v$CI_PIPELINE_IID'
+    description: 'Release from Pipeline $CI_PIPELINE_IID - All tests and checks passed'
+    assets:
+      links:
+        - name: 'FridgelyAppV3-$CI_PIPELINE_IID.jar'
+          url: '${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/raw/target/FridgelyAppV3-1.0-SNAPSHOT-fat.jar'
+  only:
+    - main
+  when: on_success
