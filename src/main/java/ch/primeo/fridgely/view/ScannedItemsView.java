@@ -129,13 +129,6 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         defaultProductCardsPanel.repaint();
     }
 
-    /**
-     * Updates the text elements based on the current locale.
-     */
-    private void updateTexts() {
-        headerLabel.setText(localizationService.get("scanneditems.header"));
-    }
-
     private JPanel createProductCard(Product product) {
         JPanel card = new JPanel();
         card.setLayout(new BorderLayout(0, 0));
@@ -214,7 +207,7 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
     
     @Override
     public void onLocaleChanged() {
-        updateTexts();
+        headerLabel.setText(localizationService.get("scanneditems.header"));
     }
 
     @Override
