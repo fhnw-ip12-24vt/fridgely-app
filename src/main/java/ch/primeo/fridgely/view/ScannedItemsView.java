@@ -1,6 +1,6 @@
 package ch.primeo.fridgely.view;
 
-import ch.primeo.fridgely.controller.GameController;
+import ch.primeo.fridgely.controller.multiplayer.MultiplayerGameController;
 import ch.primeo.fridgely.model.FridgeStockModel;
 import ch.primeo.fridgely.model.Product;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class ScannedItemsView extends JPanel implements PropertyChangeListener {
     
-    private final GameController gameController;
+    private final MultiplayerGameController gameController;
     private final AppLocalizationService localizationService;
     private Image backgroundImg;
     
@@ -32,7 +32,7 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener {
      * @param localizationService the service for text localization
      * @param frame the parent JFrame for this view
      */
-    public ScannedItemsView(GameController gameController, AppLocalizationService localizationService, JFrame frame) {
+    public ScannedItemsView(MultiplayerGameController gameController, AppLocalizationService localizationService, JFrame frame) {
         this.gameController = gameController;
         this.localizationService = localizationService;
         // Load fridge background image

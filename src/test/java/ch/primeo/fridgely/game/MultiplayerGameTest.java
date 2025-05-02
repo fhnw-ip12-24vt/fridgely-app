@@ -1,11 +1,11 @@
 package ch.primeo.fridgely.game;
 
 import ch.primeo.fridgely.config.GameConfig;
-import ch.primeo.fridgely.controller.GameController;
+import ch.primeo.fridgely.controller.multiplayer.MultiplayerGameController;
 import ch.primeo.fridgely.model.FridgeStockModel;
-import ch.primeo.fridgely.model.GameStateModel;
 import ch.primeo.fridgely.model.PenguinModel;
 import ch.primeo.fridgely.model.Product;
+import ch.primeo.fridgely.model.multiplayer.MultiplayerGameStateModel;
 import ch.primeo.fridgely.service.ProductRepository;
 import ch.primeo.fridgely.service.RecipeRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,20 +27,20 @@ public class MultiplayerGameTest {
     @Mock
     private RecipeRepository recipeRepository;
     
-    private GameController gameController;
+    private MultiplayerGameController gameController;
     
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        gameController = new GameController(productRepository, recipeRepository);
+        gameController = new MultiplayerGameController(productRepository, recipeRepository);
     }
     
     @Test
     public void testGameInitialization() {
         // Verify initial game state
-        GameStateModel gameState = gameController.getGameStateModel();
+        MultiplayerGameStateModel gameState = gameController.getGameStateModel();
         assertEquals(1, gameState.getCurrentRound());
-        assertEquals(GameStateModel.Player.PLAYER1, gameState.getCurrentPlayer());
+        assertEquals(MultiplayerGameStateModel.Player.PLAYER1, gameState.getCurrentPlayer());
         assertEquals(0, gameState.getPlayer1Score());
         assertEquals(0, gameState.getPlayer2Score());
         assertFalse(gameState.isGameOver());

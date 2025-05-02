@@ -1,6 +1,6 @@
 package ch.primeo.fridgely.controller;
 
-import ch.primeo.fridgely.MultiplayerGameLauncher;
+import ch.primeo.fridgely.gamelaunchers.MultiplayerGameLauncher;
 import ch.primeo.fridgely.model.GameMode;
 import ch.primeo.fridgely.model.PenguinFacialExpression;
 import ch.primeo.fridgely.model.PenguinHPState;
