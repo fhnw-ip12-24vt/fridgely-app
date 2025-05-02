@@ -76,9 +76,8 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
         initializeComponents();
         setupLayout();
         registerListeners();
-
-        onLocaleChanged(); // Set text initially
         updateGameInfo();
+        onLocaleChanged(); // Set text initially
         showCurrentPlayerView();
 
         localizationService.subscribe(this); // Register for future locale changes
