@@ -13,7 +13,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>fridgely</name>
 	<description>Fridgely IP12 App</description>
-	<url/>
+	<url>https://gitlab.fhnw.ch/ip12-24vt/ip12-24vt_fridgely/FridgelyAppV3</url>
 	<licenses>
 		<license/>
 	</licenses>
@@ -30,6 +30,8 @@
 		<java.version>21</java.version>
 		<querydsl.version>5.1.0</querydsl.version> <!-- Add QueryDSL version property -->
         <hibernate.version>6.6.11.Final</hibernate.version> <!-- Define Hibernate version -->
+        <maven-jxr-plugin.version>3.4.0</maven-jxr-plugin.version> <!-- Add JXR plugin version -->
+        <maven-project-info-reports-plugin.version>3.9.0</maven-project-info-reports-plugin.version> <!-- Update project info reports plugin version -->
 	</properties>
 	<dependencies>
 		<dependency>
@@ -132,6 +134,13 @@
 				<artifactId>maven-surefire-report-plugin</artifactId>
 				<version>3.5.3</version>
 			</plugin>
+
+			<!-- JXR plugin for source cross-reference -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>${maven-jxr-plugin.version}</version>
+			</plugin>
 		</plugins>
 	</reporting>
 
@@ -232,7 +241,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-project-info-reports-plugin</artifactId>
-				<version>3.9.0</version> <!-- Downgrade to stable version that works -->
+				<version>${maven-project-info-reports-plugin.version}</version> <!-- Use updated version -->
 			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
