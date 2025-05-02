@@ -10,12 +10,6 @@ import java.util.logging.Logger;
 
 @SpringBootApplication
 public class Fridgely {
-
-    protected Fridgely() {
-        // Prevent instantiation
-        throw new UnsupportedOperationException("Fridgely is a utility class and cannot be instantiated");
-    }
-
     /**
      * Logger for the application.
      */
