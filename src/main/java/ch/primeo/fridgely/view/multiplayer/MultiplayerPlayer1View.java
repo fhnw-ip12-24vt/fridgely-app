@@ -8,6 +8,7 @@ import ch.primeo.fridgely.model.PenguinFacialExpression;
 import ch.primeo.fridgely.model.Product;
 import ch.primeo.fridgely.model.multiplayer.MultiplayerGameStateModel;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
+import ch.primeo.fridgely.view.PenguinReactionOverlay;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
