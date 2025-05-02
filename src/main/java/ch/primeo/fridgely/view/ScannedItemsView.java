@@ -4,6 +4,7 @@ import ch.primeo.fridgely.controller.multiplayer.MultiplayerGameController;
 import ch.primeo.fridgely.model.FridgeStockModel;
 import ch.primeo.fridgely.model.Product;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
+import ch.primeo.fridgely.service.localization.LocalizationObserver;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,7 +16,7 @@ import java.util.List;
  * View for displaying scanned items on a secondary screen in multiplayer mode.
  * This view shows all products scanned by Player 1 in real-time.
  */
-public class ScannedItemsView extends JPanel implements PropertyChangeListener {
+public class ScannedItemsView extends JPanel implements PropertyChangeListener, LocalizationObserver {
     
     private final MultiplayerGameController gameController;
     private final AppLocalizationService localizationService;
@@ -41,9 +42,8 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener {
         setupLayout();
         registerListeners();
         updateProductList(); // Initial update
+        localizationService.subscribe(this); // Subscribe to locale changes
         frame.setContentPane(this);
-        // For fullscreen mode, we don't need to pack() or set location
-        // The frame will use the fullscreen settings from the launcher
         
         // Handle multi-monitor setup for the second display
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -70,7 +70,7 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener {
         defaultProductCardsPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 18));
         defaultProductCardsPanel.setOpaque(false);
 
-        headerLabel = new JLabel("Scanned Items");
+        headerLabel = new JLabel(localizationService.get("scanneditems.header"));
         headerLabel.setFont(new Font(headerLabel.getFont().getName(), Font.BOLD, 18));
     }
     
@@ -127,6 +127,13 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener {
         productCardsPanel.repaint();
         defaultProductCardsPanel.revalidate();
         defaultProductCardsPanel.repaint();
+    }
+
+    /**
+     * Updates the text elements based on the current locale.
+     */
+    private void updateTexts() {
+        headerLabel.setText(localizationService.get("scanneditems.header"));
     }
 
     private JPanel createProductCard(Product product) {
@@ -205,6 +212,11 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener {
         return card;
     }
     
+    @Override
+    public void onLocaleChanged() {
+        updateTexts();
+    }
+
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getSource() instanceof FridgeStockModel && 
