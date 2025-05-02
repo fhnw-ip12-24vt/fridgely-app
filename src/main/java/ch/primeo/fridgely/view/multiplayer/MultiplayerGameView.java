@@ -66,12 +66,11 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
     private JButton exitButton;
 
     private CardLayout playerCardLayout;
-    private MultiplayerPlayer1View player1View;
-    private MultiplayerPlayer2View player2View;
 
-    public MultiplayerGameView(MultiplayerGameController gameController, AppLocalizationService localizationService, JFrame frame) {
-        this.gameController = gameController;
-        this.localizationService = localizationService;
+    public MultiplayerGameView(MultiplayerGameController controller, AppLocalizationService localization,
+            JFrame frame) {
+        this.gameController = controller;
+        this.localizationService = localization;
 
         initializeComponents();
         setupLayout();
@@ -93,8 +92,8 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
         scorePanel = new JPanel();
         controlPanel = new JPanel();
 
-        player1View = new MultiplayerPlayer1View(gameController, localizationService);
-        player2View = new MultiplayerPlayer2View(gameController, localizationService);
+        MultiplayerPlayer1View player1View = new MultiplayerPlayer1View(gameController, localizationService);
+        MultiplayerPlayer2View player2View = new MultiplayerPlayer2View(gameController, localizationService);
 
         playerCardLayout = new CardLayout();
         playerPanel = new JPanel(playerCardLayout);
@@ -173,16 +172,15 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
         MultiplayerGameStateModel gameState = gameController.getGameStateModel();
         PenguinModel penguinModel = gameController.getPenguinModel();
 
-        roundLabel.setText(String.format(localizationService.get(KEY_ROUND_LABEL),
-                gameState.getCurrentRound(), gameState.getTotalRounds()));
+        roundLabel.setText(String.format(localizationService.get(KEY_ROUND_LABEL), gameState.getCurrentRound(),
+                gameState.getTotalRounds()));
 
-        player1ScoreLabel.setText(String.format(localizationService.get(KEY_PLAYER1_SCORE),
-                gameState.getPlayer1Score()));
-        player2ScoreLabel.setText(String.format(localizationService.get(KEY_PLAYER2_SCORE),
-                gameState.getPlayer2Score()));
+        player1ScoreLabel.setText(
+                String.format(localizationService.get(KEY_PLAYER1_SCORE), gameState.getPlayer1Score()));
+        player2ScoreLabel.setText(
+                String.format(localizationService.get(KEY_PLAYER2_SCORE), gameState.getPlayer2Score()));
 
-        penguinHPLabel.setText(String.format(localizationService.get(KEY_HP_LABEL),
-                penguinModel.getHP(), 60));
+        penguinHPLabel.setText(String.format(localizationService.get(KEY_HP_LABEL), penguinModel.getHP(), 60));
 
         try {
             ImageIcon penguinIcon = penguinModel.getImageForHP();
@@ -205,11 +203,8 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
     }
 
     private void startNewGame() {
-        int confirm = JOptionPane.showConfirmDialog(
-                this,
-                localizationService.get(KEY_CONFIRM_NEW_GAME),
-                localizationService.get(KEY_CONFIRM_NEW_GAME_TITLE),
-                JOptionPane.YES_NO_OPTION);
+        int confirm = JOptionPane.showConfirmDialog(this, localizationService.get(KEY_CONFIRM_NEW_GAME),
+                localizationService.get(KEY_CONFIRM_NEW_GAME_TITLE), JOptionPane.YES_NO_OPTION);
 
         if (confirm == JOptionPane.YES_OPTION) {
             gameController.startNewGame();
@@ -217,11 +212,8 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
     }
 
     private void exitGame() {
-        int confirm = JOptionPane.showConfirmDialog(
-                this,
-                localizationService.get(KEY_CONFIRM_EXIT_GAME),
-                localizationService.get(KEY_CONFIRM_EXIT_GAME_TITLE),
-                JOptionPane.YES_NO_OPTION);
+        int confirm = JOptionPane.showConfirmDialog(this, localizationService.get(KEY_CONFIRM_EXIT_GAME),
+                localizationService.get(KEY_CONFIRM_EXIT_GAME_TITLE), JOptionPane.YES_NO_OPTION);
 
         if (confirm == JOptionPane.YES_OPTION) {
             Window window = SwingUtilities.getWindowAncestor(this);
@@ -233,8 +225,7 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getSource() instanceof MultiplayerGameStateModel ||
-                evt.getSource() instanceof PenguinModel) {
+        if (evt.getSource() instanceof MultiplayerGameStateModel || evt.getSource() instanceof PenguinModel) {
             updateGameInfo();
         }
         if (MultiplayerGameStateModel.PROP_CURRENT_PLAYER.equals(evt.getPropertyName())) {

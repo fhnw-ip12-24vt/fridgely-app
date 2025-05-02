@@ -33,17 +33,17 @@ public class ChooseGameModeController implements BaseController {
 
     /**
      * Constructs the controller and sets up UI event handlers.
-     * @param localizationService the localization service for text updates
+     * @param localization the localization service for text updates
      * @param languageSwitchButton the button for switching languages
-     * @param multiplayerGameLauncher the launcher for multiplayer game mode
+     * @param launcher the launcher for multiplayer game mode
      */
     public ChooseGameModeController(
-            AppLocalizationService localizationService,
+            AppLocalizationService localization,
             LanguageSwitchButton languageSwitchButton,
-            MultiplayerGameLauncher multiplayerGameLauncher) {
+            MultiplayerGameLauncher launcher) {
 
-        this.localizationService = localizationService;
-        this.multiplayerGameLauncher = multiplayerGameLauncher;
+        this.localizationService = localization;
+        this.multiplayerGameLauncher = launcher;
         this.view = new ChooseGameModeView(languageSwitchButton, this.localizationService);
 
         localizationService.subscribe(this::updateUIText);
@@ -166,6 +166,7 @@ public class ChooseGameModeController implements BaseController {
      * Starts the single player game after the tutorial.
      */
     private void startSinglePlayerGame() {
+        // TODO: Implement the logic to start the single player game
     }
 
     /**

@@ -5,8 +5,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 /**
- * Represents an item in the fridge stock, mapping to the 'FridgeStock' table.
- * Uses the product barcode as the primary key.
+ * Represents an item in the fridge stock, mapping to the 'FridgeStock' table. Uses the product barcode as the primary
+ * key.
  */
 @Entity
 @Table(name = "FridgeStock")
@@ -26,10 +26,11 @@ public class FridgeStock {
 
     /**
      * Constructs a new FridgeStock item.
-     * @param barcode The product barcode.
+     *
+     * @param code The product barcode.
      */
-    public FridgeStock(String barcode) {
-        this.barcode = barcode;
+    public FridgeStock(String code) {
+        this.barcode = code;
     }
 
     // --- Getter ---
@@ -40,22 +41,25 @@ public class FridgeStock {
 
     // --- Setter ---
 
-    public void setBarcode(String barcode) {
-        this.barcode = barcode;
+    public void setBarcode(String code) {
+        this.barcode = code;
     }
 
     // toString, equals, hashCode methods can be added if needed
     @Override
     public String toString() {
-        return "FridgeStock{" +
-               "barcode='" + barcode + "'" +
-               '}';
+        return "FridgeStock{" + "barcode='" + barcode + "'" + '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
         FridgeStock that = (FridgeStock) o;
         return java.util.Objects.equals(barcode, that.barcode);
     }

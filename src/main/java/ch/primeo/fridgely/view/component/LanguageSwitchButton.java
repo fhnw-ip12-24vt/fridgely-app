@@ -25,17 +25,19 @@ public class LanguageSwitchButton extends JButton {
     private static final int BUTTON_HEIGHT = 50;
     private static final Color BUTTON_COLOR = new Color(0x3F3F3F);
     private static final Color HOVER_COLOR = new Color(0x5A5A5A);
-    
+
     /**
      * Constructs a LanguageSwitchButton and subscribes to localization changes.
+     *
+     * @param localization the localization service for text updates
      */
-    public LanguageSwitchButton(AppLocalizationService localizationService) {
+    public LanguageSwitchButton(AppLocalizationService localization) {
         super("");
-        this.localizationService = localizationService;
-        
+        this.localizationService = localization;
+
         configureButton();
         setupBehavior();
-        localizationService.subscribe(this::updateText);
+        localization.subscribe(this::updateText);
         updateText();
     }
 
@@ -47,24 +49,24 @@ public class LanguageSwitchButton extends JButton {
         setContentAreaFilled(true);
         setFocusPainted(false);
         setBorderPainted(false);
-        
+
         // Set visual properties
         setBackground(BUTTON_COLOR);
         setForeground(Color.WHITE);
         setFont(new Font("SansSerif", Font.BOLD, 16));
-        
+
         // Fix sizing issues
         Dimension buttonSize = new Dimension(getPreferredSize().width, BUTTON_HEIGHT);
         setPreferredSize(buttonSize);
         setMinimumSize(buttonSize);
-        
+
         // Ensure button expands horizontally but maintains height
         setMaximumSize(new Dimension(Short.MAX_VALUE, BUTTON_HEIGHT));
-        
+
         // Critical for proper rendering
         setOpaque(true);
         setHorizontalAlignment(SwingConstants.CENTER);
-        
+
         // Override layout hints for parent containers
         putClientProperty("JComponent.sizeVariant", "large");
     }
@@ -74,7 +76,7 @@ public class LanguageSwitchButton extends JButton {
      */
     private void setupBehavior() {
         addActionListener(e -> localizationService.toggleLocale());
-        
+
         // Add hover effect
         addMouseListener(new MouseAdapter() {
             @Override
@@ -90,9 +92,10 @@ public class LanguageSwitchButton extends JButton {
             }
         });
     }
-    
+
     /**
      * Returns the preferred size of the button, ensuring correct height.
+     *
      * @return the preferred Dimension
      */
     @Override
@@ -100,9 +103,10 @@ public class LanguageSwitchButton extends JButton {
         Dimension size = super.getPreferredSize();
         return new Dimension(size.width, BUTTON_HEIGHT);
     }
-    
+
     /**
      * Returns the minimum size of the button, ensuring correct height.
+     *
      * @return the minimum Dimension
      */
     @Override

@@ -9,8 +9,14 @@ import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -31,15 +37,11 @@ public class RecipeRepository {
     private final QRecipe qRecipe = QRecipe.recipe;
     private final QRecipeIngredient qRecipeIngredient = QRecipeIngredient.recipeIngredient;
 
-    public RecipeRepository(AppLocalizationService localizationService,
-                          FridgeStockRepository fridgeStockRepository,
-                          ProductRepository productRepository, // Add ProductRepository
-                          RecipeJpaRepository recipeJpaRepository,
-                          RecipeIngredientJpaRepository recipeIngredientJpaRepository,
-                          EntityManager entityManager) {
-        this.localizationService = localizationService;
-        this.fridgeStockRepository = fridgeStockRepository;
-        this.recipeJpaRepository = recipeJpaRepository;
+    public RecipeRepository(AppLocalizationService localization, FridgeStockRepository stockRepo,
+            RecipeJpaRepository recipeJpaRepo, EntityManager entityManager) {
+        this.localizationService = localization;
+        this.fridgeStockRepository = stockRepo;
+        this.recipeJpaRepository = recipeJpaRepo;
         this.queryFactory = new JPAQueryFactory(entityManager);
     }
 
@@ -47,6 +49,7 @@ public class RecipeRepository {
 
     /**
      * Returns a single recipe by its ID with localized name/description and availability.
+     *
      * @param recipeId the recipe ID
      * @return An Optional containing the Recipe DTO, or empty if not found.
      */
@@ -56,10 +59,7 @@ public class RecipeRepository {
 
         try {
             // Fetch basic recipe info
-            Recipe recipe = queryFactory
-                    .selectFrom(qRecipe)
-                    .where(qRecipe.recipeId.eq(recipeId))
-                    .fetchOne();
+            Recipe recipe = queryFactory.selectFrom(qRecipe).where(qRecipe.recipeId.eq(recipeId)).fetchOne();
 
             if (recipe == null) {
                 return Optional.empty();
@@ -83,6 +83,7 @@ public class RecipeRepository {
 
     /**
      * Returns all recipes with localized names/descriptions and availability.
+     *
      * @return a list of Recipe DTO objects
      */
     @Transactional(readOnly = true)
@@ -91,31 +92,23 @@ public class RecipeRepository {
 
         try {
             // Fetch all recipes
-            List<Recipe> recipes = queryFactory
-                    .selectFrom(qRecipe)
-                    .fetch();
+            List<Recipe> recipes = queryFactory.selectFrom(qRecipe).fetch();
 
             // Fetch all ingredients for all recipes efficiently
-            Map<Integer, List<String>> ingredientsByRecipeId = queryFactory
-                    .select(qRecipeIngredient.recipe.recipeId, qRecipeIngredient.product.barcode)
-                    .from(qRecipeIngredient)
-                    .fetch()
-                    .stream()
-                    .collect(Collectors.groupingBy(
-                            tuple -> tuple.get(qRecipeIngredient.recipe.recipeId),
-                            Collectors.mapping(tuple -> tuple.get(qRecipeIngredient.product.barcode), Collectors.toList())
-                    ));
+            Map<Integer, List<String>> ingredientsByRecipeId = queryFactory.select(qRecipeIngredient.recipe.recipeId,
+                    qRecipeIngredient.product.barcode).from(qRecipeIngredient).fetch().stream().collect(
+                    Collectors.groupingBy(tuple -> tuple.get(qRecipeIngredient.recipe.recipeId),
+                            Collectors.mapping(tuple -> tuple.get(qRecipeIngredient.product.barcode),
+                                    Collectors.toList())));
 
             // Get stock info once
             Set<String> barcodesInStock = fridgeStockRepository.getAllBarcodesInStockAsSet();
 
             // Create DTOs
-            return recipes.stream()
-                    .map(recipe -> {
-                        List<String> ingredients = ingredientsByRecipeId.getOrDefault(recipe.getRecipeId(), List.of());
-                        return createRecipeDTO(recipe, ingredients, barcodesInStock, language);
-                    })
-                    .collect(Collectors.toList());
+            return recipes.stream().map(recipe -> {
+                List<String> ingredients = ingredientsByRecipeId.getOrDefault(recipe.getRecipeId(), List.of());
+                return createRecipeDTO(recipe, ingredients, barcodesInStock, language);
+            }).collect(Collectors.toList());
 
         } catch (Exception e) {
             LOGGER.severe("Error fetching all recipes: " + e.getMessage());
@@ -125,17 +118,15 @@ public class RecipeRepository {
 
     /**
      * Returns all ingredient barcodes for a given recipe using QueryDSL.
+     *
      * @param recipeId the recipe ID
      * @return a list of ingredient barcodes
      */
     @Transactional(readOnly = true)
     public List<String> getRecipeIngredientBarcodes(int recipeId) {
         try {
-            return queryFactory
-                    .select(qRecipeIngredient.product.barcode)
-                    .from(qRecipeIngredient)
-                    .where(qRecipeIngredient.recipe.recipeId.eq(recipeId))
-                    .fetch();
+            return queryFactory.select(qRecipeIngredient.product.barcode).from(qRecipeIngredient)
+                    .where(qRecipeIngredient.recipe.recipeId.eq(recipeId)).fetch();
         } catch (Exception e) {
             LOGGER.severe("Error fetching ingredients for recipe ID " + recipeId + ": " + e.getMessage());
             return List.of();
@@ -144,10 +135,11 @@ public class RecipeRepository {
 
     // getRecipesByAvailabilityCategories might need rethinking with DTOs or separate queries
     // This implementation provides a basic structure but might be inefficient.
+
     /**
-     * Returns recipes categorized by how many of the given ingredients they use.
-     * Note: This implementation fetches all recipes and then categorizes them in memory.
-     * Consider optimizing if performance is critical.
+     * Returns recipes categorized by how many of the given ingredients they use. Note: This implementation fetches all
+     * recipes and then categorizes them in memory. Consider optimizing if performance is critical.
+     *
      * @param scannedBarcodes list of scanned ingredient barcodes
      * @return a map of match count to list of Recipe DTO objects
      */
@@ -159,7 +151,7 @@ public class RecipeRepository {
 
         for (RecipeDTO dto : allRecipeDTOs) {
             int matchCount = 0;
-            List<String> requiredIngredients = getRecipeIngredientBarcodes(dto.getRecipeId()); // Fetch required ingredients
+            List<String> requiredIngredients = getRecipeIngredientBarcodes(dto.getRecipeId());
             for (String ingredient : requiredIngredients) {
                 if (scannedBarcodesSet.contains(ingredient)) {
                     matchCount++;
@@ -174,9 +166,11 @@ public class RecipeRepository {
         }
 
         return categories;
-    }    /**
+    }
+
+    /**
      * Finds a Recipe entity by its ID.
-     * 
+     *
      * @param recipeId the recipe ID to look up
      * @return an Optional containing the Recipe if found, or empty if not found
      */
@@ -189,11 +183,11 @@ public class RecipeRepository {
             return Optional.empty();
         }
     }
-    
+
     /**
-     * Returns all Recipe entities directly from the database.
-     * This is a simplified method that doesn't include availability information.
-     * 
+     * Returns all Recipe entities directly from the database. This is a simplified method that doesn't include
+     * availability information.
+     *
      * @return a list of Recipe entities
      */
     @Transactional(readOnly = true)
@@ -211,26 +205,22 @@ public class RecipeRepository {
     /**
      * Creates a RecipeDTO from a Recipe entity and related data.
      */
-    private RecipeDTO createRecipeDTO(Recipe recipe, List<String> ingredientBarcodes, Set<String> barcodesInStock, String language) {
-        List<String> availableIngredients = ingredientBarcodes.stream()
-                .filter(barcodesInStock::contains)
+    private RecipeDTO createRecipeDTO(Recipe recipe, List<String> ingredientBarcodes, Set<String> barcodesInStock,
+            String language) {
+        List<String> availableIngredients = ingredientBarcodes.stream().filter(barcodesInStock::contains)
                 .collect(Collectors.toList());
 
-        return new RecipeDTO(
-                recipe.getRecipeId(),
-                recipe.getLocalizedName(language), // Use localization method from entity
+        return new RecipeDTO(recipe.getRecipeId(), recipe.getLocalizedName(language),
+                // Use localization method from entity
                 recipe.getLocalizedDescription(language), // Use localization method from entity
-                availableIngredients.size(),
-                ingredientBarcodes.size(),
-                availableIngredients
-        );
+                availableIngredients.size(), ingredientBarcodes.size(), availableIngredients);
     }
 
     // --- DTO Class --- //
 
     /**
-     * Data Transfer Object for Recipe information, including availability.
-     * This replaces the direct manipulation of the Recipe model for view purposes.
+     * Data Transfer Object for Recipe information, including availability. This replaces the direct manipulation of the
+     * Recipe model for view purposes.
      */
     public static class RecipeDTO {
         private final int recipeId;
@@ -240,22 +230,40 @@ public class RecipeRepository {
         private final int totalIngredientCount;
         private final List<String> availableIngredients;
 
-        public RecipeDTO(int recipeId, String name, String description, int availableIngredientCount, int totalIngredientCount, List<String> availableIngredients) {
-            this.recipeId = recipeId;
-            this.name = name;
-            this.description = description;
-            this.availableIngredientCount = availableIngredientCount;
-            this.totalIngredientCount = totalIngredientCount;
-            this.availableIngredients = Collections.unmodifiableList(availableIngredients); // Make list immutable
+        public RecipeDTO(int id, String nameE, String descriptionE, int availableIngredient, int totalIngredient,
+                List<String> availableIngredientsList) {
+            this.recipeId = id;
+            this.name = nameE;
+            this.description = descriptionE;
+            this.availableIngredientCount = availableIngredient;
+            this.totalIngredientCount = totalIngredient;
+            this.availableIngredients = Collections.unmodifiableList(availableIngredientsList); // Make list immutable
         }
 
         // Getters for all fields
-        public int getRecipeId() { return recipeId; }
-        public String getName() { return name; }
-        public String getDescription() { return description; }
-        public int getAvailableIngredientCount() { return availableIngredientCount; }
-        public int getTotalIngredientCount() { return totalIngredientCount; }
-        public List<String> getAvailableIngredients() { return availableIngredients; }
+        public int getRecipeId() {
+            return recipeId;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public int getAvailableIngredientCount() {
+            return availableIngredientCount;
+        }
+
+        public int getTotalIngredientCount() {
+            return totalIngredientCount;
+        }
+
+        public List<String> getAvailableIngredients() {
+            return availableIngredients;
+        }
 
         @Override
         public String toString() {

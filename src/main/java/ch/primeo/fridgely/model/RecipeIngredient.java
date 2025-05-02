@@ -1,10 +1,15 @@
 package ch.primeo.fridgely.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
 /**
- * Represents the relationship between a Recipe and a Product (ingredient),
- * mapping to the 'RecipeIngredients' join table.
+ * Represents the relationship between a Recipe and a Product (ingredient), mapping to the 'RecipeIngredients' join
+ * table.
  */
 @Entity
 // No explicit table name, Hibernate will use snake_case: "recipe_ingredient"
@@ -18,15 +23,13 @@ public class RecipeIngredient {
     private Long id; // Using Long for generated ID
 
     /**
-     * The recipe this ingredient belongs to.
-     * Hibernate will use "recipe_id" as the foreign key column name
+     * The recipe this ingredient belongs to. Hibernate will use "recipe_id" as the foreign key column name
      */
     @ManyToOne(fetch = FetchType.LAZY) // Lazy fetch is often preferred for performance
     private Recipe recipe;
 
     /**
-     * The product (ingredient) required for the recipe.
-     * Hibernate will use "product_id" as the foreign key column name
+     * The product (ingredient) required for the recipe. Hibernate will use "product_id" as the foreign key column name
      * and automatically reference the primary key of the Product entity
      */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -54,25 +57,23 @@ public class RecipeIngredient {
 
     // --- Setters ---
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setId(Long i) {
+        this.id = i;
     }
 
-    public void setRecipe(Recipe recipe) {
-        this.recipe = recipe;
+    public void setRecipe(Recipe r) {
+        this.recipe = r;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setProduct(Product p) {
+        this.product = p;
     }
 
     // toString, equals, hashCode methods can be added if needed
     @Override
     public String toString() {
-        return "RecipeIngredient{" +
-               "id=" + id +
-               ", recipeId=" + (recipe != null ? recipe.getRecipeId() : "null") +
-               ", productBarcode='" + (product != null ? product.getBarcode() : "null") + "'" +
-               '}';
+        return "RecipeIngredient{" + "id=" + id + ", recipeId=" + (recipe != null
+                ? recipe.getRecipeId() : "null")
+                + ", productBarcode='" + (product != null ? product.getBarcode() : "null") + "'" + '}';
     }
 }

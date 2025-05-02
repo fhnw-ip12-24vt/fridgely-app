@@ -15,27 +15,27 @@ import javax.sql.DataSource;
 @Component
 public class DataLoader implements CommandLineRunner {
 
-    private static final Logger logger = LoggerFactory.getLogger(DataLoader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataLoader.class);
     
     private final DataSource dataSource;
     
-    public DataLoader(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public DataLoader(DataSource source) {
+        this.dataSource = source;
     }
     
     @Override
     public void run(String... args) {
         try {
-            logger.info("Loading initial data from SQL script");
+            LOGGER.info("Loading initial data from SQL script");
             
             // Load and execute the SQL script
             ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator();
             resourceDatabasePopulator.addScript(new ClassPathResource("ch/primeo/fridgely/sql/data.sql"));
             resourceDatabasePopulator.execute(dataSource);
-            
-            logger.info("Data loaded successfully");
+
+            LOGGER.info("Data loaded successfully");
         } catch (Exception e) {
-            logger.error("Error loading initial data", e);
+            LOGGER.error("Error loading initial data", e);
         }
     }
 }

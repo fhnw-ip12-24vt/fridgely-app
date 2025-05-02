@@ -11,28 +11,33 @@ import java.util.logging.Logger;
 @SpringBootApplication
 public class Fridgely {
 
-	/**
-	 * Logger for the application.
-	 */
-	private static final Logger LOGGER = Logger.getLogger(Fridgely.class.getName());
+    protected Fridgely() {
+        // Prevent instantiation
+        throw new UnsupportedOperationException("Fridgely is a utility class and cannot be instantiated");
+    }
 
-	public static void main(String[] args) {
-		var context = new SpringApplicationBuilder(Fridgely.class).headless(false).run(args);
+    /**
+     * Logger for the application.
+     */
+    private static final Logger LOGGER = Logger.getLogger(Fridgely.class.getName());
 
-		// Preload all images before showing UI
-		try {
-			ImageLoader.preloadAllImages();
-		} catch (Exception e) {
-			LOGGER.severe("Error preloading images: " + e.getMessage());
-			System.exit(1);
-		}
+    public static void main(String[] args) {
+        var context = new SpringApplicationBuilder(Fridgely.class).headless(false).run(args);
 
-		// Hide loading screen and show main UI
-		SwingUtilities.invokeLater(() -> {
-			// Create and set up MainPage
-			context.getBean(ChooseGameModeController.class);
-		});
+        // Preload all images before showing UI
+        try {
+            ImageLoader.preloadAllImages();
+        } catch (Exception e) {
+            LOGGER.severe("Error preloading images: " + e.getMessage());
+            System.exit(1);
+        }
 
-		ImageLoader.clearCache();
-	}
+        // Hide loading screen and show main UI
+        SwingUtilities.invokeLater(() -> {
+            // Create and set up MainPage
+            context.getBean(ChooseGameModeController.class);
+        });
+
+        ImageLoader.clearCache();
+    }
 }

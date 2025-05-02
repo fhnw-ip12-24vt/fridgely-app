@@ -22,13 +22,14 @@ public class ProductRepository {
     private final JPAQueryFactory queryFactory;
     private final QProduct qProduct = QProduct.product;
 
-    public ProductRepository(ProductJpaRepository productJpaRepository, EntityManager entityManager) {
-        this.productJpaRepository = productJpaRepository;
+    public ProductRepository(ProductJpaRepository productRepo, EntityManager entityManager) {
+        this.productJpaRepository = productRepo;
         this.queryFactory = new JPAQueryFactory(entityManager);
     }
 
     /**
      * Returns the products mapped by barcode for the given list of barcodes using QueryDSL.
+     *
      * @param barcodes the list of product barcodes
      * @return a map of barcode to Product
      */
@@ -38,17 +39,14 @@ public class ProductRepository {
             return Map.of();
         }
 
-        List<Product> productList = queryFactory
-                .selectFrom(qProduct)
-                .where(qProduct.barcode.in(barcodes))
-                .fetch();
+        List<Product> productList = queryFactory.selectFrom(qProduct).where(qProduct.barcode.in(barcodes)).fetch();
 
-        return productList.stream()
-                .collect(Collectors.toMap(Product::getBarcode, product -> product));
+        return productList.stream().collect(Collectors.toMap(Product::getBarcode, product -> product));
     }
 
     /**
      * Returns the products for the given barcodes as a list.
+     *
      * @param barcodes the list of product barcodes
      * @return a list of Product objects
      */
@@ -63,6 +61,7 @@ public class ProductRepository {
 
     /**
      * Returns the product for the given barcode using JpaRepository.
+     *
      * @param barcode the product barcode
      * @return the Product object, or null if not found
      */
@@ -78,6 +77,7 @@ public class ProductRepository {
 
     /**
      * Returns all products in the database using JpaRepository.
+     *
      * @return a list of all Product objects
      */
     @Transactional(readOnly = true)
@@ -87,13 +87,11 @@ public class ProductRepository {
 
     /**
      * Returns all default products in the database using QueryDSL.
+     *
      * @return a list of default Product objects
      */
     @Transactional(readOnly = true)
     public List<Product> getAllDefaultProducts() {
-        return queryFactory
-                .selectFrom(qProduct)
-                .where(qProduct.isDefaultProduct.isTrue())
-                .fetch();
+        return queryFactory.selectFrom(qProduct).where(qProduct.isDefaultProduct.isTrue()).fetch();
     }
 }

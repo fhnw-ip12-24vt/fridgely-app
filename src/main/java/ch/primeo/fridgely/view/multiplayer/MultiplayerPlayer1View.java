@@ -27,31 +27,30 @@ import java.awt.KeyEventDispatcher;
 import java.awt.event.KeyEvent;
 
 /**
- * View for Player 1 (Scanner) in the multiplayer game mode.
- * Shows the barcode scanning interface.
- * The scanned items are now displayed in a separate window.
+ * View for Player 1 (Scanner) in the multiplayer game mode. Shows the barcode scanning interface. The scanned items are
+ * now displayed in a separate window.
  */
 public class MultiplayerPlayer1View extends JPanel implements PropertyChangeListener, LocalizationObserver {
-    
+
     // localization keys
-    private static final String KEY_SCAN_PROMPT_BASE            = "scan_prompt_base";
-    private static final String KEY_FINISH_TURN_BUTTON          = "finish_turn_button";
-    private static final String KEY_STATUS_PLAYER1_TURN_SCAN    = "status_player1_turn_scan";
-    private static final String KEY_MIN_PRODUCTS_INITIAL_FMT    = "min_products_initial_fmt";
-    private static final String KEY_SCANNING_PRODUCT            = "scanning_product";
-    private static final String KEY_REMOVED_FROM_STOCK_FMT      = "removed_from_stock_fmt";
-    private static final String KEY_ADDED_TO_STOCK_FMT         = "added_to_stock_fmt";
-    private static final String KEY_PRODUCT_NOT_FOUND_FMT       = "product_not_found_fmt";
-    private static final String KEY_MIN_PRODUCTS_REMAINING_FMT  = "min_products_remaining_fmt";
-    private static final String KEY_MIN_PRODUCTS_REACHED_FMT    = "min_products_reached_fmt";
-    private static final String KEY_GAME_OVER                   = "game_over";
-    private static final String KEY_ROUND_P1_SCAN_FMT           = "round_player1_scan_fmt";
-    private static final String KEY_ROUND_P2_SELECT_FMT         = "round_player2_select_fmt";
+    private static final String KEY_SCAN_PROMPT_BASE = "scan_prompt_base";
+    private static final String KEY_FINISH_TURN_BUTTON = "finish_turn_button";
+    private static final String KEY_STATUS_PLAYER1_TURN_SCAN = "status_player1_turn_scan";
+    private static final String KEY_MIN_PRODUCTS_INITIAL_FMT = "min_products_initial_fmt";
+    private static final String KEY_SCANNING_PRODUCT = "scanning_product";
+    private static final String KEY_REMOVED_FROM_STOCK_FMT = "removed_from_stock_fmt";
+    private static final String KEY_ADDED_TO_STOCK_FMT = "added_to_stock_fmt";
+    private static final String KEY_PRODUCT_NOT_FOUND_FMT = "product_not_found_fmt";
+    private static final String KEY_MIN_PRODUCTS_REMAINING_FMT = "min_products_remaining_fmt";
+    private static final String KEY_MIN_PRODUCTS_REACHED_FMT = "min_products_reached_fmt";
+    private static final String KEY_GAME_OVER = "game_over";
+    private static final String KEY_ROUND_P1_SCAN_FMT = "round_player1_scan_fmt";
+    private static final String KEY_ROUND_P2_SELECT_FMT = "round_player2_select_fmt";
 
     private final MultiplayerGameController gameController;
     private final MultiplayerPlayer1Controller player1Controller;
     private final AppLocalizationService localizationService;
-    
+
     private JLabel scanPromptLabel;
     private String scanPromptBase;
     private int scanPromptDotCount = 0;
@@ -59,39 +58,39 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
     private JButton finishTurnButton;
     private JLabel statusLabel;
     private JLabel minProductsLabel;
-    
+
     /**
      * Constructs a new Player 1 view.
-     * 
-     * @param gameController the main game controller
-     * @param localizationService the service for text localization
+     *
+     * @param controller   the main game controller
+     * @param localization the service for text localization
      */
-    public MultiplayerPlayer1View(MultiplayerGameController gameController, AppLocalizationService localizationService) {
-        this.gameController = gameController;
+    public MultiplayerPlayer1View(MultiplayerGameController controller, AppLocalizationService localization) {
+        this.gameController = controller;
         this.player1Controller = gameController.getPlayer1Controller();
-        this.localizationService = localizationService;
-        
+        this.localizationService = localization;
+
         initializeComponents();
         setupLayout();
         registerListeners();
-        
+
         // subscribe and initialize texts
         localizationService.subscribe(this);
         onLocaleChanged();
-        
+
         updateComponentStates();
     }
-    
+
     /**
      * Initializes the UI components.
      */
     private void initializeComponents() {
-        scanPromptLabel  = new JLabel("", SwingConstants.CENTER);
+        scanPromptLabel = new JLabel("", SwingConstants.CENTER);
         finishTurnButton = new JButton("");
-        statusLabel      = new JLabel("");
+        statusLabel = new JLabel("");
         minProductsLabel = new JLabel("");
     }
-    
+
     /**
      * Sets up the layout of the view.
      */
@@ -115,7 +114,7 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
         actionPanel.add(finishTurnButton);
         add(actionPanel, BorderLayout.SOUTH);
     }
-    
+
     /**
      * Registers event listeners for the UI components and models.
      */
@@ -123,20 +122,25 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
         // Register with models for updates
         gameController.getGameStateModel().addPropertyChangeListener(this);
         gameController.getFridgeStockModel().addPropertyChangeListener(this);
-        
+
         // Button action listeners
         finishTurnButton.addActionListener(e -> {
             finishTurn();
             requestFocusInWindow();
         });
-        
+
         // Instead, use a KeyEventDispatcher for global key capture
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
-            private StringBuilder barcodeBuffer = new StringBuilder();
+            private final StringBuilder barcodeBuffer = new StringBuilder();
+
             @Override
             public boolean dispatchKeyEvent(KeyEvent e) {
-                if (e.getID() != KeyEvent.KEY_PRESSED) return false;
-                System.out.println("[DISPATCHER DEBUG] keyPressed: code=" + e.getKeyCode() + ", char='" + e.getKeyChar() + "'");
+                if (e.getID() != KeyEvent.KEY_PRESSED) {
+                    return false;
+                }
+
+                System.out.println(
+                        "[DISPATCHER DEBUG] keyPressed: code=" + e.getKeyCode() + ", char='" + e.getKeyChar() + "'");
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     String barcode = barcodeBuffer.toString().trim();
                     System.out.println("[DISPATCHER DEBUG] Enter pressed, barcodeBuffer='" + barcode + "'");
@@ -148,16 +152,17 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
                     char c = e.getKeyChar();
                     if (!Character.isISOControl(c)) {
                         barcodeBuffer.append(c);
-                        System.out.println("[DISPATCHER DEBUG] Appended char: '" + c + "', buffer now: '" + barcodeBuffer + "'");
+                        System.out.println(
+                                "[DISPATCHER DEBUG] Appended char: '" + c + "', buffer now: '" + barcodeBuffer + "'");
                     }
                 }
                 return false; // Let other components also process the event
             }
         });
-        
+
         // Set focus to this panel by default to be ready for scanner input
         requestFocusInWindow();
-        
+
         // Add a focus listener to always return focus to this panel after operations
         addComponentListener(new java.awt.event.ComponentAdapter() {
             @Override
@@ -165,10 +170,12 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
                 requestFocusInWindow();
             }
         });
-    }    /**
-     * Scans a product based on the barcode in the barcode field.
-     * Optimized for barcode scanner input which sends barcode as keyboard input followed by Enter key.
-     * Toggles the product: adds it if not in stock or removes it if already in stock.
+    }
+
+    /**
+     * Scans a product based on the barcode in the barcode field. Optimized for barcode scanner input which sends
+     * barcode as keyboard input followed by Enter key. Toggles the product: adds it if not in stock or removes it if
+     * already in stock.
      */
     private void scanBarcode(String barcode) {
         System.out.println("[DEBUG] scanBarcode called with: '" + barcode + "'");
@@ -208,7 +215,7 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
         updateComponentStates();
         requestFocusInWindow();
     }
-    
+
     /**
      * Finishes Player 1's turn.
      */
@@ -216,29 +223,27 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
         player1Controller.finishTurn();
         updateComponentStates();
     }
-    
+
     /**
      * Updates the enabled/disabled state of components based on the current game state.
      */
     private void updateComponentStates() {
         MultiplayerGameStateModel gameStateModel = gameController.getGameStateModel();
         FridgeStockModel fridgeStockModel = gameController.getFridgeStockModel();
-        
+
         boolean isPlayer1Turn = gameStateModel.getCurrentPlayer() == MultiplayerGameStateModel.Player.PLAYER1;
         boolean isGameOver = gameStateModel.isGameOver();
         boolean hasEnoughProducts = fridgeStockModel.getProductCount() >= GameConfig.MIN_PRODUCTS_PER_ROUND;
-        
+
         finishTurnButton.setEnabled(isPlayer1Turn && !isGameOver && hasEnoughProducts);
-        
+
         // Animated scan prompt label logic
         scanPromptLabel.setVisible(isPlayer1Turn && !isGameOver && !hasEnoughProducts);
         if (scanPromptLabel.isVisible()) {
             if (scanPromptTimer == null) {
                 scanPromptTimer = new javax.swing.Timer(500, e -> {
                     scanPromptDotCount = (scanPromptDotCount + 1) % 4;
-                    StringBuilder dots = new StringBuilder();
-                    for (int i = 0; i < scanPromptDotCount; i++) dots.append('.');
-                    scanPromptLabel.setText(scanPromptBase + dots);
+                    scanPromptLabel.setText(scanPromptBase + ".".repeat(Math.max(0, scanPromptDotCount)));
                 });
                 scanPromptTimer.start();
             } else if (!scanPromptTimer.isRunning()) {
@@ -249,42 +254,35 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
                 scanPromptTimer.stop();
             }
         }
-        
+
         // Update the min products label
         int currentCount = fridgeStockModel.getProductCount();
         if (currentCount < GameConfig.MIN_PRODUCTS_PER_ROUND) {
-            minProductsLabel.setText(String.format(
-                localizationService.get(KEY_MIN_PRODUCTS_REMAINING_FMT),
-                GameConfig.MIN_PRODUCTS_PER_ROUND - currentCount,
-                currentCount,
-                GameConfig.MIN_PRODUCTS_PER_ROUND));
+            minProductsLabel.setText(String.format(localizationService.get(KEY_MIN_PRODUCTS_REMAINING_FMT),
+                    GameConfig.MIN_PRODUCTS_PER_ROUND - currentCount, currentCount, GameConfig.MIN_PRODUCTS_PER_ROUND));
         } else {
-            minProductsLabel.setText(String.format(
-                localizationService.get(KEY_MIN_PRODUCTS_REACHED_FMT),
-                currentCount,
-                GameConfig.MIN_PRODUCTS_PER_ROUND));
+            minProductsLabel.setText(String.format(localizationService.get(KEY_MIN_PRODUCTS_REACHED_FMT), currentCount,
+                    GameConfig.MIN_PRODUCTS_PER_ROUND));
         }
-        
+
         // Update status label
         if (isGameOver) {
             statusLabel.setText(localizationService.get(KEY_GAME_OVER));
         } else if (isPlayer1Turn) {
-            statusLabel.setText(String.format(
-                localizationService.get(KEY_ROUND_P1_SCAN_FMT),
-                gameStateModel.getCurrentRound()));
+            statusLabel.setText(
+                    String.format(localizationService.get(KEY_ROUND_P1_SCAN_FMT), gameStateModel.getCurrentRound()));
         } else {
-            statusLabel.setText(String.format(
-                localizationService.get(KEY_ROUND_P2_SELECT_FMT),
-                gameStateModel.getCurrentRound()));
+            statusLabel.setText(
+                    String.format(localizationService.get(KEY_ROUND_P2_SELECT_FMT), gameStateModel.getCurrentRound()));
         }
     }
-    
+
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getSource() instanceof FridgeStockModel) {
             updateComponentStates();
         }
-        
+
         if (evt.getSource() instanceof MultiplayerGameStateModel) {
             updateComponentStates();
         }
@@ -296,7 +294,7 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
         scanPromptLabel.setText(scanPromptBase);
         finishTurnButton.setText(localizationService.get(KEY_FINISH_TURN_BUTTON));
         statusLabel.setText(localizationService.get(KEY_STATUS_PLAYER1_TURN_SCAN));
-        minProductsLabel.setText(
-            String.format(localizationService.get(KEY_MIN_PRODUCTS_INITIAL_FMT), GameConfig.MIN_PRODUCTS_PER_ROUND));
+        minProductsLabel.setText(String.format(localizationService.get(KEY_MIN_PRODUCTS_INITIAL_FMT),
+                GameConfig.MIN_PRODUCTS_PER_ROUND));
     }
 }

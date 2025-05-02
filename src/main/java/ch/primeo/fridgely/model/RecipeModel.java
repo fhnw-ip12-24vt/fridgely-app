@@ -34,10 +34,10 @@ public class RecipeModel {
     /**
      * Constructs a new recipe model.
      * 
-     * @param recipeRepository the repository for accessing recipes
+     * @param recipeRepo the repository for accessing recipes
      */
-    public RecipeModel(RecipeRepository recipeRepository) {
-        this.recipeRepository = recipeRepository;
+    public RecipeModel(RecipeRepository recipeRepo) {
+        this.recipeRepository = recipeRepo;
         this.availableRecipes = new ArrayList<>();
         this.propertyChangeSupport = new PropertyChangeSupport(this);
         loadAvailableRecipes();
@@ -57,10 +57,7 @@ public class RecipeModel {
             if (recipeDTOs != null && !recipeDTOs.isEmpty()) {
                 for (RecipeRepository.RecipeDTO dto : recipeDTOs) {
                     try {
-                        Recipe recipe = recipeRepository.findById(dto.getRecipeId()).orElse(null);
-                        if (recipe != null) {
-                            availableRecipes.add(recipe);
-                        }
+                        recipeRepository.findById(dto.getRecipeId()).ifPresent(availableRecipes::add);
                     } catch (Exception e) {
                         System.err.println("Error processing recipe ID " + dto.getRecipeId() + ": " + e.getMessage());
                     }
@@ -70,7 +67,7 @@ public class RecipeModel {
             // If no recipes were loaded, try direct entity query as fallback
             if (availableRecipes.isEmpty()) {
                 System.out.println("Attempting to load recipes directly from JPA repository...");
-                recipeRepository.getAllRecipesEntities().forEach(availableRecipes::add);
+                availableRecipes.addAll(recipeRepository.getAllRecipesEntities());
             }
             
         } catch (Exception e) {

@@ -21,16 +21,16 @@ import java.awt.GridBagLayout;
 import java.awt.Image;
 
 /**
- * View for choosing the game mode: single player or multiplayer.
- * Displays options for single player and multiplayer modes with corresponding images and text.
+ * View for choosing the game mode: single player or multiplayer. Displays options for single player and multiplayer
+ * modes with corresponding images and text.
  */
 public class ChooseGameModeView extends BaseView implements LocalizationObserver {
 
     // localization keys
-    private static final String KEY_TITLE             = "choose_mode_title";
-    private static final String KEY_SINGLE_PLAYER     = "single_player_mode";
-    private static final String KEY_MULTIPLAYER       = "multiplayer_mode";
-    private static final String KEY_LANG_BUTTON       = "button_language";
+    private static final String KEY_TITLE = "choose_mode_title";
+    private static final String KEY_SINGLE_PLAYER = "single_player_mode";
+    private static final String KEY_MULTIPLAYER = "multiplayer_mode";
+    private static final String KEY_LANG_BUTTON = "button_language";
 
     private final AppLocalizationService localizationService;
     private final JButton langButton;
@@ -48,12 +48,13 @@ public class ChooseGameModeView extends BaseView implements LocalizationObserver
     private static final String MULTIPLAYER_IMAGE = "src/main/resources/ch/primeo/fridgely/sprites/multi_player.png";
 
     /**
-     * Constructor for the ChooseGameModeView.
-     * Initializes the components and sets up the layout.
+     * Constructor for the ChooseGameModeView. Initializes the components and sets up the layout.
+     * @param button the language switch button
+     * @param localization the localization service for text updates
      */
-    public ChooseGameModeView(LanguageSwitchButton langButton, AppLocalizationService localizationService) {
-        this.langButton = langButton;
-        this.localizationService = localizationService;
+    public ChooseGameModeView(LanguageSwitchButton button, AppLocalizationService localization) {
+        this.langButton = button;
+        this.localizationService = localization;
 
         initializeComponents();
         setupLayout();
@@ -69,11 +70,6 @@ public class ChooseGameModeView extends BaseView implements LocalizationObserver
         mainPanel = new JPanel();
         titleLabel = new JLabel();
         gameModePanel = new JPanel();
-
-        // Ensure the button is properly configured
-        /*langButton.setOpaque(true);
-        langButton.setText(localizationService.get("home.button.lang"));
-        langButton.setHorizontalAlignment(SwingConstants.CENTER);*/
 
         singlePlayerPanel = new JPanel();
         singlePlayerImageLabel = createImageLabel(SINGLE_PLAYER_IMAGE, 200, 200);
@@ -126,9 +122,10 @@ public class ChooseGameModeView extends BaseView implements LocalizationObserver
 
     /**
      * Sets up a game mode panel with the given image and text labels.
-     * @param panel the panel to set up
+     *
+     * @param panel      the panel to set up
      * @param imageLabel the image label for the panel
-     * @param textLabel the text label for the panel
+     * @param textLabel  the text label for the panel
      */
     private void setupGameModePanel(JPanel panel, JLabel imageLabel, JLabel textLabel) {
         panel.setBackground(Constants.BACKGROUND_COLOR);
@@ -144,6 +141,7 @@ public class ChooseGameModeView extends BaseView implements LocalizationObserver
 
     /**
      * Creates a JLabel with an image icon.
+     *
      * @param resourcePath the path to the image resource
      * @return the JLabel with the image icon
      */
@@ -163,6 +161,7 @@ public class ChooseGameModeView extends BaseView implements LocalizationObserver
 
     /**
      * Returns the title label.
+     *
      * @return the JLabel for the title
      */
     public JLabel getTitleLabel() {
@@ -171,6 +170,7 @@ public class ChooseGameModeView extends BaseView implements LocalizationObserver
 
     /**
      * Returns the label for the single player text.
+     *
      * @return the JLabel for single player text
      */
     public JLabel getSinglePlayerTextLabel() {
@@ -179,6 +179,7 @@ public class ChooseGameModeView extends BaseView implements LocalizationObserver
 
     /**
      * Returns the label for the multiplayer text.
+     *
      * @return the JLabel for multiplayer text
      */
     public JLabel getMultiplayerTextLabel() {
@@ -187,6 +188,7 @@ public class ChooseGameModeView extends BaseView implements LocalizationObserver
 
     /**
      * Returns the label for single player image.
+     *
      * @return the JLabel for single player image
      */
     public JLabel getSinglePlayerImageLabel() {
@@ -195,6 +197,7 @@ public class ChooseGameModeView extends BaseView implements LocalizationObserver
 
     /**
      * Returns the label for multiplayer image.
+     *
      * @return the JLabel for multiplayer image
      */
     public JLabel getMultiplayerImageLabel() {
@@ -203,6 +206,7 @@ public class ChooseGameModeView extends BaseView implements LocalizationObserver
 
     /**
      * Returns the language switch button.
+     *
      * @return the LanguageSwitchButton
      */
     public JButton getLangButton() {

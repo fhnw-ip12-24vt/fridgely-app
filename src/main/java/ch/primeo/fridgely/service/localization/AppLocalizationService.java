@@ -39,16 +39,14 @@ public class AppLocalizationService {
      */
     private final CopyOnWriteArrayList<LocalizationObserver> observers = new CopyOnWriteArrayList<>();
 
-    private AppConfig appConfig;
-
     /**
      * Constructs the AppLocalization with the given startup language.
+     * @param config the application configuration
      */
-    public AppLocalizationService(AppConfig appConfig) {
-        this.appConfig = appConfig;
-        var startupLanguage = this.appConfig.getConfiguredAppLanguage() == null
+    public AppLocalizationService(AppConfig config) {
+        var startupLanguage = config.getConfiguredAppLanguage() == null
                 ? "en"
-                : this.appConfig.getConfiguredAppLanguage();
+                : config.getConfiguredAppLanguage();
 
         if (locales.contains(Locale.forLanguageTag(startupLanguage))) {
             currentLocale = Locale.forLanguageTag(startupLanguage);

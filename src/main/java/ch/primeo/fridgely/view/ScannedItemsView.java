@@ -6,15 +6,29 @@ import ch.primeo.fridgely.model.Product;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import ch.primeo.fridgely.service.localization.LocalizationObserver;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
+import java.util.Objects;
 
 /**
- * View for displaying scanned items on a secondary screen in multiplayer mode.
- * This view shows all products scanned by Player 1 in real-time.
+ * View for displaying scanned items on a secondary screen in multiplayer mode. This view shows all products scanned by
+ * Player 1 in real-time.
  */
 public class ScannedItemsView extends JPanel implements PropertyChangeListener, LocalizationObserver {
     // define localization keys
@@ -26,24 +40,25 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
 
     private final MultiplayerGameController gameController;
     private final AppLocalizationService localizationService;
-    private Image backgroundImg;
-    
+    private final Image backgroundImg;
+
     private JPanel productCardsPanel; // Regular products
     private JPanel defaultProductCardsPanel; // Default products
     private JLabel headerLabel;
-    
+
     /**
      * Constructs a new ScannedItemsView.
-     * 
-     * @param gameController the main game controller
-     * @param localizationService the service for text localization
-     * @param frame the parent JFrame for this view
+     *
+     * @param controller   the main game controller
+     * @param localization the service for text localization
+     * @param frame        the parent JFrame for this view
      */
-    public ScannedItemsView(MultiplayerGameController gameController, AppLocalizationService localizationService, JFrame frame) {
-        this.gameController = gameController;
-        this.localizationService = localizationService;
+    public ScannedItemsView(MultiplayerGameController controller, AppLocalizationService localization, JFrame frame) {
+        this.gameController = controller;
+        this.localizationService = localization;
         // Load fridge background image
-        backgroundImg = new ImageIcon(getClass().getResource("/ch/primeo/fridgely/sprites/fridge_interior.png")).getImage();
+        backgroundImg = new ImageIcon(Objects.requireNonNull(
+                getClass().getResource("/ch/primeo/fridgely/sprites/fridge_interior.png"))).getImage();
         initializeComponents();
         setupLayout();
         registerListeners();
@@ -51,20 +66,20 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         localizationService.subscribe(this);
         onLocaleChanged();
         frame.setContentPane(this);
-        
+
         // Handle multi-monitor setup for the second display
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice[] screens = ge.getScreenDevices();
-        
+
         // If there's more than one screen, display on the second screen
         if (screens.length > 1) {
             // Use the second screen for this frame
             screens[1].setFullScreenWindow(frame);
         }
-        
+
         frame.setVisible(true);
     }
-    
+
     /**
      * Initializes the UI components.
      */
@@ -81,7 +96,7 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         headerLabel = new JLabel();
         headerLabel.setFont(new Font(headerLabel.getFont().getName(), Font.BOLD, 18));
     }
-    
+
     /**
      * Sets up the layout of the view.
      */
@@ -98,7 +113,7 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         add(productCardsPanel, BorderLayout.CENTER);
         add(defaultProductCardsPanel, BorderLayout.SOUTH);
     }
-    
+
     /**
      * Registers event listeners for the UI components and models.
      */
@@ -106,7 +121,7 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         // Register with fridge model for updates
         gameController.getFridgeStockModel().addPropertyChangeListener(this);
     }
-    
+
     /**
      * Updates the product list from the fridge stock model.
      */
@@ -116,7 +131,11 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         List<Product> products = gameController.getFridgeStockModel().getProducts();
         List<Product> defaultProducts = gameController.getProductRepository().getAllDefaultProducts();
         java.util.Set<String> inStockBarcodes = new java.util.HashSet<>();
-        for (Product p : products) inStockBarcodes.add(p.getBarcode());
+
+        for (Product p : products) {
+            inStockBarcodes.add(p.getBarcode());
+        }
+
         java.util.List<Product> filteredDefaults = new java.util.ArrayList<>();
         for (Product p : defaultProducts) {
             if (!inStockBarcodes.contains(p.getBarcode())) {
@@ -142,10 +161,10 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         card.setLayout(new BorderLayout(0, 0));
         card.setPreferredSize(new Dimension(160, 140)); // Smaller card
         card.setOpaque(true); // Enable background painting
-        card.setBackground(new Color(255,255,255,240)); // Semi-opaque white
-        card.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(180,180,180), 2, true),
-            BorderFactory.createEmptyBorder(8, 8, 8, 8)));
+        card.setBackground(new Color(255, 255, 255, 240)); // Semi-opaque white
+        card.setBorder(
+                BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(180, 180, 180), 2, true),
+                        BorderFactory.createEmptyBorder(8, 8, 8, 8)));
         // Title at the top
         JLabel nameLabel = new JLabel(product.getName(localizationService.getLanguage()));
         nameLabel.setFont(new Font(nameLabel.getFont().getName(), Font.BOLD, 13));
@@ -166,45 +185,40 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         tagsPanel.setOpaque(false);
         // bio tag
         JLabel bioLabel = new JLabel(
-            product.isBio()
-                ? localizationService.get(KEY_LABEL_BIO)
-                : localizationService.get(KEY_LABEL_NON_BIO)
-        );
+                product.isBio() ? localizationService.get(KEY_LABEL_BIO) : localizationService.get(KEY_LABEL_NON_BIO));
         bioLabel.setOpaque(true);
         bioLabel.setFont(new Font(nameLabel.getFont().getName(), Font.BOLD, 10));
         bioLabel.setForeground(Color.WHITE);
         bioLabel.setBackground(product.isBio() ? new Color(46, 204, 113) : new Color(189, 195, 199));
         bioLabel.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(product.isBio() ? new Color(39, 174, 96) : new Color(127, 140, 141), 1, true),
-            BorderFactory.createEmptyBorder(2, 8, 2, 8)));
+                BorderFactory.createLineBorder(product.isBio() ? new Color(39, 174, 96) : new Color(127, 140, 141), 1,
+                        true), BorderFactory.createEmptyBorder(2, 8, 2, 8)));
         tagsPanel.add(bioLabel);
         // local tag
-        JLabel localLabel = new JLabel(
-            product.isLocal()
+        JLabel localLabel = new JLabel(product.isLocal()
                 ? localizationService.get(KEY_LABEL_LOCAL)
-                : localizationService.get(KEY_LABEL_NON_LOCAL)
-        );
+                : localizationService.get(KEY_LABEL_NON_LOCAL));
         localLabel.setOpaque(true);
         localLabel.setFont(new Font(nameLabel.getFont().getName(), Font.BOLD, 10));
         localLabel.setForeground(Color.WHITE);
         localLabel.setBackground(product.isLocal() ? new Color(52, 152, 219) : new Color(189, 195, 199));
         localLabel.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(product.isLocal() ? new Color(41, 128, 185) : new Color(127, 140, 141), 1, true),
-            BorderFactory.createEmptyBorder(2, 8, 2, 8)));
+                BorderFactory.createLineBorder(product.isLocal() ? new Color(41, 128, 185) : new Color(127, 140, 141),
+                        1, true), BorderFactory.createEmptyBorder(2, 8, 2, 8)));
         tagsPanel.add(localLabel);
         card.add(tagsPanel, BorderLayout.SOUTH);
         return card;
     }
-    
+
     private JPanel createDefaultProductCard(Product product) {
         JPanel card = new JPanel();
         card.setLayout(new BorderLayout(0, 0));
         card.setPreferredSize(new Dimension(140, 110));
         card.setOpaque(true); // Enable background painting
-        card.setBackground(new Color(255,255,255,225)); // Semi-opaque white, slightly more transparent
-        card.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createDashedBorder(new Color(180,180,180), 2, 4),
-            BorderFactory.createEmptyBorder(6, 6, 6, 6)));
+        card.setBackground(new Color(255, 255, 255, 225)); // Semi-opaque white, slightly more transparent
+        card.setBorder(
+                BorderFactory.createCompoundBorder(BorderFactory.createDashedBorder(new Color(180, 180, 180), 2, 4),
+                        BorderFactory.createEmptyBorder(6, 6, 6, 6)));
         // Title at the top
         JLabel nameLabel = new JLabel(product.getName(localizationService.getLanguage()));
         nameLabel.setFont(new Font(nameLabel.getFont().getName(), Font.PLAIN, 11));
@@ -222,7 +236,7 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         card.add(imageLabel, BorderLayout.CENTER);
         return card;
     }
-    
+
     @Override
     public void onLocaleChanged() {
         headerLabel.setText(localizationService.get(KEY_SCANNED_ITEMS_HEADER));
@@ -232,12 +246,12 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getSource() instanceof FridgeStockModel && 
-                FridgeStockModel.PROP_FRIDGE_CONTENTS.equals(evt.getPropertyName())) {
+        if (evt.getSource() instanceof FridgeStockModel && FridgeStockModel.PROP_FRIDGE_CONTENTS.equals(
+                evt.getPropertyName())) {
             updateProductList();
         }
     }
-    
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

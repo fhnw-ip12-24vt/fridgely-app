@@ -16,10 +16,10 @@ public final class AppConfig {
      * Private constructor to prevent instantiation of this utility class.
      */
     private AppConfig(Environment env) {
-        this.env = env;
+        this.environment = env;
     }
 
-    private final Environment env;
+    private final Environment environment;
 
     /**
      * Returns the configured application language.
@@ -27,6 +27,6 @@ public final class AppConfig {
      * @return the application language
      */
     public String getConfiguredAppLanguage() {
-        return env.getProperty("app.language");
+        return environment.getProperty("app.language");
     }
 }

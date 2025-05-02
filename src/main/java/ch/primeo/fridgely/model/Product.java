@@ -7,12 +7,11 @@ import javax.swing.ImageIcon;
 import java.util.Objects;
 
 /**
- * Represents a product with localized names, descriptions, and attributes.
- * JPA entity for database persistence.
+ * Represents a product with localized names, descriptions, and attributes. JPA entity for database persistence.
  */
 @Entity
 public class Product {
-    
+
     @Id
     private String barcode;
     private String name;
@@ -24,139 +23,143 @@ public class Product {
     private boolean isDefaultProduct;
     private boolean isBio;
     private boolean isLocal;
-    
+
     /**
      * Default constructor required by JPA
      */
     public Product() {
         // Required by JPA/Hibernate
     }
-    
+
     /**
      * Full constructor for all product properties
+     *
+     * @param code           the product barcode
+     * @param nameE          the product name
+     * @param nameD          the product name in German
+     * @param nameF          the product name in French
+     * @param descriptionE   the product description
+     * @param descriptionD   the product description in German
+     * @param descriptionF   the product description in French
+     * @param defaultProduct whether the product is a default product
+     * @param bio            whether the product is organic
+     * @param local          whether the product is local
      */
-    public Product(
-            String barcode, 
-            String name, 
-            String nameDE, 
-            String nameFR, 
-            String description, 
-            String descriptionDE, 
-            String descriptionFR, 
-            boolean isDefaultProduct, 
-            boolean isBio, 
-            boolean isLocal) {
-        this.barcode = barcode;
-        this.name = name;
-        this.nameDE = nameDE;
-        this.nameFR = nameFR;
-        this.description = description;
-        this.descriptionDE = descriptionDE;
-        this.descriptionFR = descriptionFR;
-        this.isDefaultProduct = isDefaultProduct;
-        this.isBio = isBio;
-        this.isLocal = isLocal;
+    public Product(String code, String nameE, String nameD, String nameF, String descriptionE, String descriptionD,
+            String descriptionF, boolean defaultProduct, boolean bio, boolean local) {
+        this.barcode = code;
+        this.name = nameE;
+        this.nameDE = nameD;
+        this.nameFR = nameF;
+        this.description = descriptionE;
+        this.descriptionDE = descriptionD;
+        this.descriptionFR = descriptionF;
+        this.isDefaultProduct = defaultProduct;
+        this.isBio = bio;
+        this.isLocal = local;
     }
 
     /**
      * Returns the product name based on the current application language.
+     *
      * @param language the language code ("de", "fr", etc.)
      * @return the product name in the specified language or default if not found
      */
     public String getName(String language) {
         return switch (language != null ? language.toLowerCase() : "") {
-            case "de" -> nameDE != null ? nameDE : name;
-            case "fr" -> nameFR != null ? nameFR : name;
-            default -> name;
+        case "de" -> nameDE != null ? nameDE : name;
+        case "fr" -> nameFR != null ? nameFR : name;
+        default -> name;
         };
     }
-    
+
     // Getters and setters
-    
+
     public String getBarcode() {
         return barcode;
     }
-    
-    public void setBarcode(String barcode) {
-        this.barcode = barcode;
+
+    public void setBarcode(String code) {
+        this.barcode = code;
     }
-    
+
     public String getName() {
         return name;
     }
-    
-    public void setName(String name) {
-        this.name = name;
+
+    public void setName(String nameE) {
+        this.name = nameE;
     }
-    
+
     public String getNameDE() {
         return nameDE;
     }
-    
-    public void setNameDE(String nameDE) {
-        this.nameDE = nameDE;
+
+    public void setNameDE(String nameD) {
+        this.nameDE = nameD;
     }
-    
+
     public String getNameFR() {
         return nameFR;
     }
-    
-    public void setNameFR(String nameFR) {
-        this.nameFR = nameFR;
+
+    public void setNameFR(String nameF) {
+        this.nameFR = nameF;
     }
-    
+
     public String getDescription() {
         return description;
     }
-    
-    public void setDescription(String description) {
-        this.description = description;
+
+    public void setDescription(String descriptionE) {
+        this.description = descriptionE;
     }
-    
+
     public String getDescriptionDE() {
         return descriptionDE;
     }
-    
-    public void setDescriptionDE(String descriptionDE) {
-        this.descriptionDE = descriptionDE;
+
+    public void setDescriptionDE(String descriptionD) {
+        this.descriptionDE = descriptionD;
     }
-    
+
     public String getDescriptionFR() {
         return descriptionFR;
     }
-    
-    public void setDescriptionFR(String descriptionFR) {
-        this.descriptionFR = descriptionFR;
+
+    public void setDescriptionFR(String descriptionF) {
+        this.descriptionFR = descriptionF;
     }
-    
+
     public boolean isDefaultProduct() {
         return isDefaultProduct;
     }
-    
-    public void setDefaultProduct(boolean isDefaultProduct) {
-        this.isDefaultProduct = isDefaultProduct;
+
+    public void setDefaultProduct(boolean defaultProduct) {
+        this.isDefaultProduct = defaultProduct;
     }
-    
+
     public boolean isBio() {
         return isBio;
     }
-    
-    public void setBio(boolean isBio) {
-        this.isBio = isBio;
+
+    public void setBio(boolean bio) {
+        this.isBio = bio;
     }
-    
+
     public boolean isLocal() {
         return isLocal;
     }
 
-    public void setLocal(boolean isLocal) {
-        this.isLocal = isLocal;
+    public void setLocal(boolean local) {
+        this.isLocal = local;
     }
 
-    public ImageIcon getProductImage(){
+    public ImageIcon getProductImage() {
         try {
             return new ImageIcon(Objects.requireNonNull(
-                    getClass().getResourceAsStream("/ch/primeo/fridgely/productimages/" + barcode + ".png")).readAllBytes());
+                            getClass().getResourceAsStream("/ch/primeo/fridgely/productimages/" + barcode + ".png"))
+                    .readAllBytes());
         } catch (Exception e) {
             // ignored
         }
@@ -164,26 +167,32 @@ public class Product {
         try {
             return new ImageIcon(Objects.requireNonNull(
                     getClass().getResourceAsStream("/ch/primeo/fridgely/productimages/notfound.png")).readAllBytes());
-        }catch (Exception e) {
+        } catch (Exception e) {
             return null;
         }
     }
 
     /**
-     * Determines if this product is equal to another object.
-     * Products are considered equal if they have the same barcode.
+     * Determines if this product is equal to another object. Products are considered equal if they have the same
+     * barcode.
      *
      * @param o the object to compare with
      * @return true if the products have the same barcode, false otherwise
      */
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
         Product product = (Product) o;
         return barcode != null && barcode.equals(product.barcode);
     }
-    
+
     /**
      * Returns a hash code for this product based on its barcode.
      *

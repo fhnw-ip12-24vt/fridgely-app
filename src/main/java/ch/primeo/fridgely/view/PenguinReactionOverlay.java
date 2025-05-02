@@ -3,8 +3,12 @@ package ch.primeo.fridgely.view;
 import ch.primeo.fridgely.model.PenguinFacialExpression;
 import ch.primeo.fridgely.util.ImageLoader;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JPanel;
+import javax.swing.JWindow;
+import javax.swing.Timer;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Window;
 import java.awt.image.BufferedImage;
 
 /**
@@ -18,7 +22,7 @@ public class PenguinReactionOverlay extends JWindow {
     public PenguinReactionOverlay(Window parent, PenguinFacialExpression expression) {
         super(parent);
         this.penguinImage = ImageLoader.loadBufferedImage(expression.getSprite(), getClass());
-        setBackground(new Color(0,0,0,0));
+        setBackground(new Color(0, 0, 0, 0));
         setAlwaysOnTop(true);
         setSize(OVERLAY_SIZE, OVERLAY_SIZE);
         setLocationRelativeTo(parent);
@@ -32,7 +36,7 @@ public class PenguinReactionOverlay extends JWindow {
                     int w = penguinImage.getWidth();
                     int h = penguinImage.getHeight();
                     int size = Math.min(OVERLAY_SIZE, Math.min(w, h));
-                    g.drawImage(penguinImage, (OVERLAY_SIZE-size)/2, (OVERLAY_SIZE-size)/2, size, size, null);
+                    g.drawImage(penguinImage, (OVERLAY_SIZE - size) / 2, (OVERLAY_SIZE - size) / 2, size, size, null);
                 }
             }
         };

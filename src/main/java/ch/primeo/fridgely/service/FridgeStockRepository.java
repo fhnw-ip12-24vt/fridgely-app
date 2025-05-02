@@ -23,16 +23,19 @@ public class FridgeStockRepository {
 
     /**
      * Initializes a new FridgeStockRepository with JPA dependencies.
+     *
+     * @param repository the JPA repository for fridge stock
+     * @param manager    the EntityManager for QueryDSL
      */
 
-    public FridgeStockRepository(FridgeStockJpaRepository fridgeStockJpaRepository, EntityManager entityManager) {
-        this.fridgeStockJpaRepository = fridgeStockJpaRepository;
-        this.queryFactory = new JPAQueryFactory(entityManager);
+    public FridgeStockRepository(FridgeStockJpaRepository repository, EntityManager manager) {
+        this.fridgeStockJpaRepository = repository;
+        this.queryFactory = new JPAQueryFactory(manager);
     }
-
 
     /**
      * Adds multiple products to the fridge stock using JPA.
+     *
      * @param barcodes list of product barcodes to add
      * @return true if all products were added successfully (or already existed)
      */
@@ -43,9 +46,7 @@ public class FridgeStockRepository {
         }
 
         try {
-            List<FridgeStock> stockItems = barcodes.stream()
-                    .map(FridgeStock::new)
-                    .collect(Collectors.toList());
+            List<FridgeStock> stockItems = barcodes.stream().map(FridgeStock::new).collect(Collectors.toList());
             fridgeStockJpaRepository.saveAll(stockItems);
             return true;
         } catch (Exception e) {
@@ -55,6 +56,7 @@ public class FridgeStockRepository {
 
     /**
      * Adds a single product to the fridge stock.
+     *
      * @param barcode the product barcode to add
      * @return true if the product was added successfully
      */
@@ -68,6 +70,7 @@ public class FridgeStockRepository {
 
     /**
      * Removes multiple products from the fridge stock using QueryDSL.
+     *
      * @param barcodes list of product barcodes to remove
      * @return true if products were removed successfully
      */
@@ -87,6 +90,7 @@ public class FridgeStockRepository {
 
     /**
      * Removes a single product from the fridge stock.
+     *
      * @param barcode the product barcode to remove
      * @return true if the product was removed successfully
      */
@@ -100,6 +104,7 @@ public class FridgeStockRepository {
 
     /**
      * Checks if a single product exists in stock using JPA repository.
+     *
      * @param barcode the product barcode to check
      * @return true if the product is in stock
      */
@@ -113,19 +118,17 @@ public class FridgeStockRepository {
 
     /**
      * Gets all product barcodes in stock using QueryDSL.
+     *
      * @return A list of all product barcodes currently in stock.
      */
     @Transactional(readOnly = true)
     public List<String> getAllBarcodesInStock() {
-        return queryFactory
-                    .select(qFridgeStock.barcode)
-                    .from(qFridgeStock)
-                    .fetch();
+        return queryFactory.select(qFridgeStock.barcode).from(qFridgeStock).fetch();
     }
 
     /**
-     * Gets all product barcodes in stock as a Set using QueryDSL.
-     * Useful for efficient lookups.
+     * Gets all product barcodes in stock as a Set using QueryDSL. Useful for efficient lookups.
+     *
      * @return A set of all product barcodes currently in stock.
      */
     @Transactional(readOnly = true)
@@ -135,6 +138,7 @@ public class FridgeStockRepository {
 
     /**
      * Clears all products from stock using QueryDSL.
+     *
      * @return true if the stock was cleared successfully
      */
     @Transactional
