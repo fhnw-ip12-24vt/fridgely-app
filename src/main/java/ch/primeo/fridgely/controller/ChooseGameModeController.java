@@ -1,6 +1,7 @@
 package ch.primeo.fridgely.controller;
 
 import ch.primeo.fridgely.gamelaunchers.MultiplayerGameLauncher;
+import ch.primeo.fridgely.gamelaunchers.SingleplayerGameLauncher;
 import ch.primeo.fridgely.model.GameMode;
 import ch.primeo.fridgely.model.PenguinFacialExpression;
 import ch.primeo.fridgely.model.PenguinHPState;
@@ -26,24 +27,28 @@ import java.util.List;
 @Component
 @Scope("singleton")
 public class ChooseGameModeController implements BaseController {
-    
+
     private final AppLocalizationService localizationService;
     private final ChooseGameModeView view;
     private final MultiplayerGameLauncher multiplayerGameLauncher;
+    private final SingleplayerGameLauncher singleplayerGameLauncher;
 
     /**
      * Constructs the controller and sets up UI event handlers.
-     * @param localization the localization service for text updates
+     * 
+     * @param localization         the localization service for text updates
      * @param languageSwitchButton the button for switching languages
-     * @param launcher the launcher for multiplayer game mode
+     * @param launcher             the launcher for multiplayer game mode
      */
     public ChooseGameModeController(
             AppLocalizationService localization,
             LanguageSwitchButton languageSwitchButton,
-            MultiplayerGameLauncher launcher) {
+            MultiplayerGameLauncher multiplayerGameLauncher,
+            SingleplayerGameLauncher singleplayerGameLauncher) {
 
         this.localizationService = localization;
-        this.multiplayerGameLauncher = launcher;
+        this.multiplayerGameLauncher = multiplayerGameLauncher;
+        this.singleplayerGameLauncher = singleplayerGameLauncher;
         this.view = new ChooseGameModeView(languageSwitchButton, this.localizationService);
 
         localizationService.subscribe(this::updateUIText);
@@ -82,9 +87,10 @@ public class ChooseGameModeController implements BaseController {
 
     /**
      * Sets up click and tooltip behavior for a label.
-     * @param label the JLabel to make clickable
+     * 
+     * @param label      the JLabel to make clickable
      * @param tooltipKey the localization key for the tooltip
-     * @param onClick the action to perform on click
+     * @param onClick    the action to perform on click
      */
     private void setupClickableBehavior(JLabel label, String tooltipKey, Runnable onClick) {
         label.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -99,6 +105,7 @@ public class ChooseGameModeController implements BaseController {
 
     /**
      * Handles game mode selection and launches the appropriate tutorial or game.
+     * 
      * @param mode the selected GameMode
      */
     private void selectGameMode(GameMode mode) {
@@ -124,8 +131,7 @@ public class ChooseGameModeController implements BaseController {
                 localizationService.get("tutorial.multiplayer.player1"),
                 localizationService.get("tutorial.multiplayer.player2"),
                 localizationService.get("tutorial.points.explanation"),
-                localizationService.get("tutorial.game.winner")
-        );
+                localizationService.get("tutorial.game.winner"));
 
         // Show the tutorial dialog
         new DialogBox(tutorialMessages,
@@ -133,7 +139,7 @@ public class ChooseGameModeController implements BaseController {
                 PenguinHPState.OKAY,
                 this::startMultiplayerGame).showDialog();
     }
-    
+
     /**
      * Starts the multiplayer game after the tutorial.
      */
@@ -150,8 +156,7 @@ public class ChooseGameModeController implements BaseController {
                 localizationService.get("tutorial.welcome"),
                 localizationService.get("tutorial.singleplayer.explanation"),
                 localizationService.get("tutorial.singleplayer.recipe"),
-                localizationService.get("tutorial.singleplayer.score")
-        );
+                localizationService.get("tutorial.singleplayer.score"));
 
         // Important: Create the dialog before any game initialization
         // and block until it's explicitly completed by the user
@@ -166,7 +171,7 @@ public class ChooseGameModeController implements BaseController {
      * Starts the single player game after the tutorial.
      */
     private void startSinglePlayerGame() {
-        // TODO: Implement the logic to start the single player game
+        singleplayerGameLauncher.launchGame();
     }
 
     /**

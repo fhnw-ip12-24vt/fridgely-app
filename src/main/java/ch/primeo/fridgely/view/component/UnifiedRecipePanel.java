@@ -1,7 +1,7 @@
 package ch.primeo.fridgely.view.component;
 
 import ch.primeo.fridgely.model.RecipeModel;
-import ch.primeo.fridgely.controller.multiplayer.MultiplayerGameController;
+import ch.primeo.fridgely.controller.GameController;
 import ch.primeo.fridgely.model.Product;
 import ch.primeo.fridgely.model.Recipe;
 import ch.primeo.fridgely.service.ProductRepository;
@@ -39,7 +39,7 @@ import java.util.Objects;
  */
 public class UnifiedRecipePanel extends JPanel {
 
-    private final MultiplayerGameController gameController;
+    private final GameController gameController;
     private final RecipeModel recipeModel;
     private final ProductRepository productRepository;
     private final Map<String, ImageIcon> imageCache;
@@ -63,7 +63,7 @@ public class UnifiedRecipePanel extends JPanel {
      * @param controller  the game controller
      * @param productRepo the repository for product data
      */
-    public UnifiedRecipePanel(MultiplayerGameController controller, ProductRepository productRepo) {
+    public UnifiedRecipePanel(GameController controller, ProductRepository productRepo) {
         this.gameController = controller;
         this.recipeModel = gameController.getRecipeModel();
         this.productRepository = productRepo;

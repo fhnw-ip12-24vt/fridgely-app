@@ -1,6 +1,6 @@
 package ch.primeo.fridgely.view;
 
-import ch.primeo.fridgely.controller.multiplayer.MultiplayerGameController;
+import ch.primeo.fridgely.controller.GameController;
 import ch.primeo.fridgely.model.FridgeStockModel;
 import ch.primeo.fridgely.model.Product;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
@@ -27,7 +27,8 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * View for displaying scanned items on a secondary screen in multiplayer mode. This view shows all products scanned by
+ * View for displaying scanned items on a secondary screen in multiplayer mode.
+ * This view shows all products scanned by
  * Player 1 in real-time.
  */
 public class ScannedItemsView extends JPanel implements PropertyChangeListener, LocalizationObserver {
@@ -38,7 +39,7 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
     private static final String KEY_LABEL_LOCAL = "label.local";
     private static final String KEY_LABEL_NON_LOCAL = "label.non_local";
 
-    private final MultiplayerGameController gameController;
+    private final GameController gameController;
     private final AppLocalizationService localizationService;
     private final Image backgroundImg;
 
@@ -53,7 +54,7 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
      * @param localization the service for text localization
      * @param frame        the parent JFrame for this view
      */
-    public ScannedItemsView(MultiplayerGameController controller, AppLocalizationService localization, JFrame frame) {
+    public ScannedItemsView(GameController controller, AppLocalizationService localization, JFrame frame) {
         this.gameController = controller;
         this.localizationService = localization;
         // Load fridge background image
@@ -192,7 +193,8 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         bioLabel.setBackground(product.isBio() ? new Color(46, 204, 113) : new Color(189, 195, 199));
         bioLabel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(product.isBio() ? new Color(39, 174, 96) : new Color(127, 140, 141), 1,
-                        true), BorderFactory.createEmptyBorder(2, 8, 2, 8)));
+                        true),
+                BorderFactory.createEmptyBorder(2, 8, 2, 8)));
         tagsPanel.add(bioLabel);
         // local tag
         JLabel localLabel = new JLabel(product.isLocal()
@@ -204,7 +206,8 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         localLabel.setBackground(product.isLocal() ? new Color(52, 152, 219) : new Color(189, 195, 199));
         localLabel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(product.isLocal() ? new Color(41, 128, 185) : new Color(127, 140, 141),
-                        1, true), BorderFactory.createEmptyBorder(2, 8, 2, 8)));
+                        1, true),
+                BorderFactory.createEmptyBorder(2, 8, 2, 8)));
         tagsPanel.add(localLabel);
         card.add(tagsPanel, BorderLayout.SOUTH);
         return card;
