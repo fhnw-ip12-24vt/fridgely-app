@@ -16,15 +16,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,7 +40,6 @@ public class UnifiedRecipePanel extends JPanel {
     private final MultiplayerGameController gameController;
     private final RecipeModel recipeModel;
     private final ProductRepository productRepository;
-    private final Map<String, ImageIcon> imageCache;
     private final Color availableColor = new Color(75, 181, 67);  // Green for available ingredients
     private final Color missingColor = new Color(204, 51, 51);    // Red for missing ingredients
 
@@ -57,19 +54,22 @@ public class UnifiedRecipePanel extends JPanel {
     // Lazy loading support
     private final Map<Recipe, JPanel> loadedRecipeCards;
 
+    private final ImageLoader imageLoader;
+
     /**
      * Constructs a new unified recipe panel.
      *
      * @param controller  the game controller
      * @param productRepo the repository for product data
+     * @param imageLoader the image loader for loading images
      */
-    public UnifiedRecipePanel(MultiplayerGameController controller, ProductRepository productRepo) {
+    public UnifiedRecipePanel(MultiplayerGameController controller, ProductRepository productRepo, ImageLoader imageLoader) {
         this.gameController = controller;
         this.recipeModel = gameController.getRecipeModel();
         this.productRepository = productRepo;
         this.loadedRecipeCards = new HashMap<>();
-        this.imageCache = new HashMap<>();
         this.allRecipes = new ArrayList<>();
+        this.imageLoader = imageLoader;
 
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -345,42 +345,15 @@ public class UnifiedRecipePanel extends JPanel {
      * @return an image icon for the product
      */
     private ImageIcon getProductImageIcon(String barcode) {
-        if (imageCache.containsKey(barcode)) {
-            return imageCache.get(barcode);
+        // Try to load from product images folder
+        ImageIcon icon = imageLoader.loadScaledImage("/ch/primeo/fridgely/productimages/" + barcode + ".png", 24, 24);
+
+        if (icon == null) {
+            // If not found, try the default image
+            icon = imageLoader.loadScaledImage("/ch/primeo/fridgely/productimages/notfound.png", 24, 24);
         }
 
-        try {
-            // Try to load from product images folder
-            ImageIcon icon = ImageLoader.loadImage("/ch/primeo/fridgely/productimages/" + barcode + ".png", getClass());
-
-            // Scale the icon to a reasonable size
-            Image scaledImage = icon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH);
-            ImageIcon scaledIcon = new ImageIcon(scaledImage);
-
-            imageCache.put(barcode, scaledIcon);
-            return scaledIcon;
-        } catch (Exception e) {
-            // If image not found, return a placeholder
-            try {
-                ImageIcon icon = ImageLoader.loadImage("/ch/primeo/fridgely/productimages/notfound.png", getClass());
-                Image scaledImage = icon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH);
-                ImageIcon scaledIcon = new ImageIcon(scaledImage);
-
-                imageCache.put(barcode, scaledIcon);
-                return scaledIcon;
-            } catch (Exception ex) {
-                // If placeholder not found, create a simple colored box
-                BufferedImage img = new BufferedImage(24, 24, BufferedImage.TYPE_INT_RGB);
-                Graphics2D g2d = img.createGraphics();
-                g2d.setColor(Color.LIGHT_GRAY);
-                g2d.fillRect(0, 0, 24, 24);
-                g2d.dispose();
-
-                ImageIcon icon = new ImageIcon(img);
-                imageCache.put(barcode, icon);
-                return icon;
-            }
-        }
+        return icon;
     }
 
     /**
