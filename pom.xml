@@ -14,24 +14,38 @@
 	<name>fridgely</name>
 	<description>Fridgely IP12 App</description>
 	<url>https://gitlab.fhnw.ch/ip12-24vt/ip12-24vt_fridgely/FridgelyAppV3</url>
-	<licenses>
-		<license/>
-	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
+
+	<repositories>
+			<repository>
+					<id>oss.sonatype.org-snapshot</id>
+					<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+					<releases>
+							<enabled>false</enabled>
+					</releases>
+					<snapshots>
+							<enabled>true</enabled>
+					</snapshots>
+			</repository>
+	</repositories>
+
 	<properties>
 		<java.version>21</java.version>
 		<querydsl.version>5.1.0</querydsl.version> <!-- Add QueryDSL version property -->
         <hibernate.version>6.6.11.Final</hibernate.version> <!-- Define Hibernate version -->
         <maven-jxr-plugin.version>3.4.0</maven-jxr-plugin.version> <!-- Add JXR plugin version -->
         <maven-project-info-reports-plugin.version>3.9.0</maven-project-info-reports-plugin.version> <!-- Update project info reports plugin version -->
+
+		<jar.name>fridgely-0.0.1-SNAPSHOT</jar.name>
+		<launcher.class>ch.primeo.fridgely.Fridgely</launcher.class>
+
+		<pi.hostname>raspberrypi</pi.hostname>
+		<pi.ipnumber>10.207.10.169</pi.ipnumber> <!-- Replace with your Raspberry Pi's IP -->
+		<pi.port>22</pi.port>
+		<pi.username>ip12</pi.username>
+		<pi.password>-IP12Fridgely-</pi.password>
+		<pi.deploydirectory>/home/ip12/deploy</pi.deploydirectory>
+		<pi.startScript>start.sh</pi.startScript>
+		<pi.restartScript>restart.sh</pi.restartScript>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -165,12 +179,11 @@
 						<path>
 							<groupId>jakarta.persistence</groupId>
 							<artifactId>jakarta.persistence-api</artifactId>
-							<version>3.2.0</version> <!-- Use the same version as in dependencies -->
+							<version>3.2.0</version>
 						</path>
 					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -253,4 +266,148 @@
 		</plugins>
 	</build>
 
+	<profiles>
+		<profile>
+			<id>release</id>
+			<build>
+				<finalName>${jar.name}</finalName>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>copy-dependencies</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>copy-dependencies</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>
+										${project.build.directory}/libs
+									</outputDirectory>
+									<includeScope>runtime</includeScope>
+									<excludeTransitive>false</excludeTransitive>
+									<overWriteReleases>false</overWriteReleases>
+									<overWriteSnapshots>true</overWriteSnapshots>
+									<overWriteIfNewer>true</overWriteIfNewer>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<configuration>
+							<appendAssemblyId>false</appendAssemblyId>
+							<descriptors>
+								<descriptor>src/assembly/assembly.xml</descriptor>
+							</descriptors>
+						</configuration>
+						<executions>
+							<execution>
+								<id>all</id>
+								<phase>package</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>run-on-Pi</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>transfer</id>
+								<phase>install</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<!-- Ensure target directory exists on RaspPi -->
+										<sshexec host="${pi.ipnumber}" port="${pi.port}"
+															username="${pi.username}" password="${pi.password}"
+															trust="true" command="mkdir --parents ${pi.deploydirectory}; rm -r -f ${pi.deploydirectory}/*"/>
+
+										<!-- Transfer distribution folder to RaspPi via SCP -->
+										<scp trust="true"
+													localFile = "${project.build.directory}/${jar.name}.zip"
+													todir="${pi.username}:${pi.password}@${pi.ipnumber}:${pi.deploydirectory}"
+													port="${pi.port}">
+										</scp>
+
+										<sshexec host="${pi.ipnumber}" port="${pi.port}"
+															username="${pi.username}" password="${pi.password}" trust="true"
+															failonerror="false" usepty="true" useSystemIn="true"
+															command="unzip '${pi.deploydirectory}/${jar.name}.zip' -d '${pi.deploydirectory}'"/>
+
+										<sshexec host="${pi.ipnumber}" port="${pi.port}"
+															username="${pi.username}" password="${pi.password}" trust="true"
+															failonerror="false" usepty="true" useSystemIn="true"
+															command="chmod u+x ${pi.deploydirectory}/${jar.name}/${pi.startScript}"/>
+
+										<!-- Run application on Raspberry Pi -->
+										<sshexec host="${pi.ipnumber}" port="${pi.port}"
+															username="${pi.username}" password="${pi.password}" trust="true"
+															failonerror="false" usepty="true" useSystemIn="true"
+															command="${pi.deploydirectory}/${jar.name}/${pi.startScript} ${pi.deploydirectory}/${jar.name} ${jar.name}"/>
+								</target>
+								</configuration>
+							</execution>
+						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>org.apache.ant</groupId>
+								<artifactId>ant-jsch</artifactId>
+								<version>1.10.15</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>restart-on-Pi</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>restart</id>
+								<phase>validate</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<sshexec host="${pi.ipnumber}" port="${pi.port}"
+												 username="${pi.username}" password="${pi.password}" trust="true"
+												 command="${pi.deploydirectory}/${pi.restartScript}"/>
+									</target>
+								</configuration>
+							</execution>
+						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>org.apache.ant</groupId>
+								<artifactId>ant-jsch</artifactId>
+								<version>1.10.15</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
