@@ -33,3 +33,5 @@ build/
 .vscode/
 
 fridgely.db
+.DS_Store
+dependency-reduced-pom.xml
