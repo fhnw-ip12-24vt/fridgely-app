@@ -1,6 +1,5 @@
 package ch.primeo.fridgely.view.multiplayer;
 
-import ch.primeo.fridgely.Fridgely;
 import ch.primeo.fridgely.controller.multiplayer.MultiplayerGameController;
 import ch.primeo.fridgely.model.PenguinModel;
 import ch.primeo.fridgely.model.multiplayer.MultiplayerGameStateModel;
@@ -30,6 +29,7 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
 
     private final MultiplayerGameController gameController;
     private final AppLocalizationService localizationService;
+    private final ImageLoader imageLoader;
 
     // Localization keys
     private static final String KEY_PENGUIN_TITLE = "panel.penguin.title";
@@ -68,9 +68,10 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
     private CardLayout playerCardLayout;
 
     public MultiplayerGameView(MultiplayerGameController controller, AppLocalizationService localization,
-            JFrame frame) {
+            JFrame frame, ImageLoader imageLoader) {
         this.gameController = controller;
         this.localizationService = localization;
+        this.imageLoader = imageLoader;
 
         initializeComponents();
         setupLayout();
@@ -92,8 +93,8 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
         scorePanel = new JPanel();
         controlPanel = new JPanel();
 
-        MultiplayerPlayer1View player1View = new MultiplayerPlayer1View(gameController, localizationService);
-        MultiplayerPlayer2View player2View = new MultiplayerPlayer2View(gameController, localizationService);
+        MultiplayerPlayer1View player1View = new MultiplayerPlayer1View(gameController, localizationService, imageLoader);
+        MultiplayerPlayer2View player2View = new MultiplayerPlayer2View(gameController, localizationService, imageLoader);
 
         playerCardLayout = new CardLayout();
         playerPanel = new JPanel(playerCardLayout);
@@ -102,7 +103,7 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
 
         penguinImageLabel = new JLabel();
         try {
-            ImageIcon penguinIcon = ImageLoader.loadImage("/ch/primeo/fridgely/sprites/happy.png", Fridgely.class);
+            ImageIcon penguinIcon = imageLoader.loadImage("/ch/primeo/fridgely/sprites/happy.png");
             Image scaledImage = penguinIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
             penguinImageLabel.setIcon(new ImageIcon(scaledImage));
         } catch (Exception e) {
@@ -183,9 +184,7 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
         penguinHPLabel.setText(String.format(localizationService.get(KEY_HP_LABEL), penguinModel.getHP(), 60));
 
         try {
-            ImageIcon penguinIcon = penguinModel.getImageForHP();
-            Image scaledImage = penguinIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-            penguinImageLabel.setIcon(new ImageIcon(scaledImage));
+            penguinImageLabel.setIcon(imageLoader.loadScaledImage(penguinModel.getImagePathForHP(), 100, 100));
         } catch (Exception e) {
             penguinImageLabel.setText(localizationService.get(KEY_PENGUIN_PLACEHOLDER));
         }
