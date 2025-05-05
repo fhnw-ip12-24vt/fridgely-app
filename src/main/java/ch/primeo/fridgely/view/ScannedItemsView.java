@@ -5,6 +5,7 @@ import ch.primeo.fridgely.model.FridgeStockModel;
 import ch.primeo.fridgely.model.Product;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import ch.primeo.fridgely.service.localization.LocalizationObserver;
+import ch.primeo.fridgely.util.ImageLoader;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -24,7 +25,6 @@ import java.awt.Image;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * View for displaying scanned items on a secondary screen in multiplayer mode. This view shows all products scanned by
@@ -40,6 +40,7 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
 
     private final MultiplayerGameController gameController;
     private final AppLocalizationService localizationService;
+    private final ImageLoader imageLoader;
     private final Image backgroundImg;
 
     private JPanel productCardsPanel; // Regular products
@@ -53,12 +54,14 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
      * @param localization the service for text localization
      * @param frame        the parent JFrame for this view
      */
-    public ScannedItemsView(MultiplayerGameController controller, AppLocalizationService localization, JFrame frame) {
+    public ScannedItemsView(MultiplayerGameController controller, AppLocalizationService localization, JFrame frame,
+            ImageLoader imageLoader) {
         this.gameController = controller;
         this.localizationService = localization;
+        this.imageLoader = imageLoader;
+
         // Load fridge background image
-        backgroundImg = new ImageIcon(Objects.requireNonNull(
-                getClass().getResource("/ch/primeo/fridgely/sprites/fridge_interior.png"))).getImage();
+        backgroundImg = imageLoader.loadImage("/ch/primeo/fridgely/sprites/fridge_interior.png").getImage();
         initializeComponents();
         setupLayout();
         registerListeners();
@@ -171,12 +174,15 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
         card.add(nameLabel, BorderLayout.NORTH);
         // Product image in the center
-        ImageIcon icon = product.getProductImage();
+        ImageIcon icon = imageLoader.loadScaledImage(product.getProductImagePath(), 48, 48);
         JLabel imageLabel = new JLabel();
+
         if (icon != null) {
-            Image scaledImg = icon.getImage().getScaledInstance(48, 48, Image.SCALE_SMOOTH);
-            imageLabel.setIcon(new ImageIcon(scaledImg));
+            imageLabel.setIcon(icon);
+        } else {
+            imageLabel.setIcon(imageLoader.loadScaledImage(Product.PRODUCT_IMAGE_NOT_FOUND_PATH, 48, 48));
         }
+
         imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
         imageLabel.setPreferredSize(new Dimension(48, 48));
         card.add(imageLabel, BorderLayout.CENTER);
@@ -225,12 +231,15 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
         card.add(nameLabel, BorderLayout.NORTH);
         // Product image in the center
-        ImageIcon icon = product.getProductImage();
+        ImageIcon icon = imageLoader.loadScaledImage(product.getProductImagePath(), 48, 48);
         JLabel imageLabel = new JLabel();
+
         if (icon != null) {
-            Image scaledImg = icon.getImage().getScaledInstance(36, 36, Image.SCALE_SMOOTH);
-            imageLabel.setIcon(new ImageIcon(scaledImg));
+            imageLabel.setIcon(icon);
+        } else {
+            imageLabel.setIcon(imageLoader.loadScaledImage(Product.PRODUCT_IMAGE_NOT_FOUND_PATH, 36, 36));
         }
+
         imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
         imageLabel.setPreferredSize(new Dimension(36, 36));
         card.add(imageLabel, BorderLayout.CENTER);
