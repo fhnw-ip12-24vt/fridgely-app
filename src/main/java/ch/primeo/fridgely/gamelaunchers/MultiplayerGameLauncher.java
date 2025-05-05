@@ -1,5 +1,6 @@
 package ch.primeo.fridgely.gamelaunchers;
 
+import ch.primeo.fridgely.util.ImageLoader;
 import ch.primeo.fridgely.view.ScannedItemsView;
 import ch.primeo.fridgely.view.multiplayer.MultiplayerGameView;
 import ch.primeo.fridgely.controller.multiplayer.MultiplayerGameController;
@@ -22,6 +23,7 @@ public class MultiplayerGameLauncher {
     private final ProductRepository productRepository;
     private final RecipeRepository recipeRepository;
     private final AppLocalizationService localizationService;
+    private final ImageLoader imageLoader;
 
     /**
      * Constructs a new multiplayer game launcher.
@@ -31,10 +33,11 @@ public class MultiplayerGameLauncher {
      * @param localization the service for text localization
      */
     public MultiplayerGameLauncher(ProductRepository productRepo, RecipeRepository recipeRepo,
-            AppLocalizationService localization) {
+            AppLocalizationService localization, ImageLoader imageLoader) {
         this.productRepository = productRepo;
         this.recipeRepository = recipeRepo;
         this.localizationService = localization;
+        this.imageLoader = imageLoader;
     }
 
     /**
@@ -53,7 +56,7 @@ public class MultiplayerGameLauncher {
             gameFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); // Fullscreen
 
             // Create the game view
-            new MultiplayerGameView(gameController, localizationService, gameFrame);
+            new MultiplayerGameView(gameController, localizationService, gameFrame, imageLoader);
 
             // Create a second frame for displaying scanned items - also fullscreen and undecorated
             JFrame scannedItemsFrame = new JFrame("Fridgely - Scanned Items");
@@ -80,7 +83,7 @@ public class MultiplayerGameLauncher {
             });
 
             // Create the scanned items view
-            new ScannedItemsView(gameController, localizationService, scannedItemsFrame);
+            new ScannedItemsView(gameController, localizationService, scannedItemsFrame, imageLoader);
         });
     }
 }
