@@ -56,6 +56,8 @@ public class DialogBox extends JPanel {
     private static final int DIALOG_FONT_SIZE = 24; // Increased from 18 to 24
     private static final Font DIALOG_FONT = new Font("SansSerif", Font.PLAIN, DIALOG_FONT_SIZE);
 
+    private final ImageLoader imageLoader;
+
     /**
      * Creates a dialog box with a sequence of messages, penguin expression, HP state, and a callback.
      * @param msgs the list of messages to display
@@ -63,7 +65,11 @@ public class DialogBox extends JPanel {
      * @param state the penguin HP state to show
      * @param callback the callback to run when dialog is complete
      */
-    public DialogBox(List<String> msgs, PenguinFacialExpression expression, PenguinHPState state, Runnable callback) {
+    public DialogBox(List<String> msgs, PenguinFacialExpression expression, PenguinHPState state, Runnable callback,
+            ImageLoader imageLoader) {
+
+        this.imageLoader = imageLoader;
+
         this.frame = new JFrame();
         this.frame.setUndecorated(true);
         this.frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -111,27 +117,27 @@ public class DialogBox extends JPanel {
     private void loadImages() {
         // Load Penguin image
         String spritePath = penguinExpression.getSprite();
-        penguinImage = ImageLoader.loadBufferedImage(spritePath, getClass());
+        penguinImage = imageLoader.loadBufferedImage(spritePath);
         if (penguinImage == null) {
             System.err.println("Could not find Penguin sprite: " + spritePath);
         }
 
         // Load HP image
         String hpSpritePath = penguinHPState.getSpritePath();
-        penguinHPImage = ImageLoader.loadBufferedImage(hpSpritePath, getClass());
+        penguinHPImage = imageLoader.loadBufferedImage(hpSpritePath);
         if (penguinHPImage == null) {
             System.err.println("Could not find HP sprite: " + hpSpritePath);
         }
 
         // Load dialog box background images with arrows
         String arrowUpPath = "/ch/primeo/fridgely/vectors/dialog_arrow_up.png";
-        dialogArrowUp = ImageLoader.loadBufferedImage(arrowUpPath, getClass());
+        dialogArrowUp = imageLoader.loadBufferedImage(arrowUpPath);
         if (dialogArrowUp == null) {
             System.err.println("Could not find dialog_arrow_up.png");
         }
 
         String arrowDownPath = "/ch/primeo/fridgely/vectors/dialog_arrow_down.png";
-        dialogArrowDown = ImageLoader.loadBufferedImage(arrowDownPath, getClass());
+        dialogArrowDown = imageLoader.loadBufferedImage(arrowDownPath);
         if (dialogArrowDown == null) {
             System.err.println("Could not find dialog_arrow_down.png");
         }
