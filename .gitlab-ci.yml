@@ -81,7 +81,7 @@ release:
     - cp "$JAR_PATH" fridgely-latest.jar
     - echo "✅ JAR copied to fridgely-latest.jar"
     - |
-      gitlab-release-cli upload \
+      release-cli upload \
         --token $CI_JOB_TOKEN \
         --name "Fridgely JAR" \
         --url "https://gitlab.fhnw.ch" \
