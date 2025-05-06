@@ -55,7 +55,7 @@ public class Recipe {
     /**
      * List of ingredients associated with this recipe. Mapped by the 'recipe' field in the RecipeIngredient entity.
      */
-    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<RecipeIngredient> ingredients = new ArrayList<>();
 
     /**

@@ -110,6 +110,5 @@ public class SingleplayerPlayerController {
             // Clear the fridge stock for the next round
             fridgeStockModel.clear();
         }
-
     }
 }

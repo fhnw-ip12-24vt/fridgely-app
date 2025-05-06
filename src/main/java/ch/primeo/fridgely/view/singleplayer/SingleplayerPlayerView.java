@@ -10,10 +10,7 @@ import ch.primeo.fridgely.service.localization.LocalizationObserver;
 import ch.primeo.fridgely.util.ImageLoader;
 import ch.primeo.fridgely.view.component.UnifiedRecipePanel;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -131,9 +128,16 @@ public class SingleplayerPlayerView extends JPanel implements PropertyChangeList
     }
 
     /**
-     * Finishes Player 2's turn.
+     * Finishes Player turn.
      */
     private void finishTurn() {
+        SingleplayerGameStateModel gameStateModel = gameController.getGameStateModel();
+        if(gameStateModel.getCurrentRound() == gameStateModel.getTotalRounds()){
+            JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+            frame.setContentPane(new SinglePlayerEndGameView(gameController, localizationService, imageLoader));
+            frame.revalidate();
+            return;
+        }
         gameController.startNewRound();
         updateComponentStates();
         updateRecipeList();
@@ -143,7 +147,7 @@ public class SingleplayerPlayerView extends JPanel implements PropertyChangeList
      * Updates the recipe list with the current recipes from the model.
      */
     private void updateRecipeList() {
-        unifiedRecipePanel.updateRecipeList();
+        unifiedRecipePanel.updateRecipeList(gameController.getSelectedRecipes());
     }
 
     /**

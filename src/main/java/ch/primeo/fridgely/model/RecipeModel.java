@@ -2,6 +2,7 @@ package ch.primeo.fridgely.model;
 
 //import ch.primeo.fridgely.model.RecipeIngredient; // Not needed anymore
 import ch.primeo.fridgely.service.RecipeRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -95,6 +96,14 @@ public class RecipeModel {
         return List.copyOf(availableRecipes);
     }
 
+
+
+    /**
+     * Gets a list of recipes that can be made with the given products.
+     *
+     * @param productsFridge the products available in the fridge
+     * @return a list of possible recipes
+     */
     public List<Recipe> getPossibleRecipes(List<Product> productsFridge){
         List<Recipe> possibleRecipes = new ArrayList<>();
         for (Recipe recipe : availableRecipes) {

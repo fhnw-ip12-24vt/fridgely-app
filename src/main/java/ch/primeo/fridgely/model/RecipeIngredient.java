@@ -32,7 +32,7 @@ public class RecipeIngredient {
      * The product (ingredient) required for the recipe. Hibernate will use "product_id" as the foreign key column name
      * and automatically reference the primary key of the Product entity
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Product product;
 
     /**

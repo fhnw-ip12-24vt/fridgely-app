@@ -114,17 +114,21 @@ public class UnifiedRecipePanel extends JPanel {
      * Updates the recipe list with the current recipes from the model. This clears and reloads the entire list.
      */
     public void updateRecipeList() {
-        // Clear old data
-        recipesViewport.removeAll();
-        loadedRecipeCards.clear();
         // Get fresh recipe data and randomize
         allRecipes = new ArrayList<>(recipeModel.getAvailableRecipes());
         List<Product> inFridge = gameController.getFridgeStockModel().getProducts();
         possibleRecipes = new ArrayList<>(recipeModel.getPossibleRecipes(inFridge));
         Collections.shuffle(possibleRecipes);  // Randomize recipe order
+        updateRecipeList(possibleRecipes);
+    }
+
+    public void updateRecipeList(List<Recipe> recipes) {
+        // Clear old data
+        recipesViewport.removeAll();
+        loadedRecipeCards.clear();
 
         // Create placeholder panels for each recipe
-        for (Recipe recipe : possibleRecipes) {
+        for (Recipe recipe : recipes) {
             JPanel placeholder = createRecipePlaceholder(recipe);
             recipesViewport.add(placeholder);
             recipesViewport.add(Box.createRigidArea(new Dimension(0, 10)));

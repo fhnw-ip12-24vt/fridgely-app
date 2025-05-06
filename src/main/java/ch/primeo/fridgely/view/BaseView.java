@@ -1,14 +1,13 @@
 package ch.primeo.fridgely.view;
 
-import javax.swing.JFrame;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import java.awt.Toolkit;
 
 /**
  * Base class for all views in the application.
  * Provides a basic JFrame setup with fullscreen and close operation.
  */
-public abstract class BaseView {
+public abstract class BaseView extends JPanel {
 
     private final JFrame frame = new JFrame();
 

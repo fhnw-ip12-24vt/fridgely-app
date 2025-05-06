@@ -180,8 +180,10 @@ public class SingleplayerGameView extends JPanel implements PropertyChangeListen
 
         if (gameState.isGameOver()) {
             // TODO: Message game over
-            JOptionPane.showMessageDialog(this, localizationService.get(KEY_GAME_OVER_TIE));
-
+            //JOptionPane.showMessageDialog(this, localizationService.get(KEY_GAME_OVER_TIE));
+            SinglePlayerEndGameView endGameView = new SinglePlayerEndGameView(gameController, localizationService, imageLoader);
+            playerPanel.add(endGameView, "endGame");
+            playerCardLayout.show(playerPanel, "endGame");
         }
     }
 
