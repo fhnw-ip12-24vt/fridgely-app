@@ -84,11 +84,8 @@ deploy:
       release-cli create \
         --description "Release from Pipeline $CI_PIPELINE_IID - All tests and checks passed" \
         --tag-name "v$CI_PIPELINE_IID" \
-        --assets-link "{\"name\":\"Fridgely JAR\",\"url\":\"$CI_PROJECT_URL/-/jobs/$CI_JOB_ID/artifacts/raw/fridgely-latest.jar\"}"
-  artifacts:
-    paths:
-      - fridgely-latest.jar
-    expire_in: 1 month
+        --assets \
+        "{\"name\":\"Fridgely JAR\",\"url\":\"$CI_PROJECT_URL/-/jobs/$CI_JOB_ID/artifacts/raw/fridgely-latest.jar\"}"
   only:
     - main
   when: on_success
