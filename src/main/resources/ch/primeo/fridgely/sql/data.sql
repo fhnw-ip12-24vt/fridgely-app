@@ -1,10 +1,9 @@
 INSERT INTO product (barcode, name, nameDE, nameFR, description, descriptionDE, descriptionFR,
                       is_default_product, is_bio, is_local)
 VALUES('001', 'Tomato', 'Tomate', 'Tomate', 'Local organic tomato', 'Lokale Bio-Tomate', 'Tomate bio locale', 0, 1, 1),
-       ('002', 'Egg', 'Ei', 'Œuf', 'Organic free-range egg', 'Bio-Freilandei', 'Œuf bio de plein air', 0, 1, 0),       ('003', 'Cheese - France', 'Käse - Frankreich', 'Fromage - France', 'Imported cheese block from France', 'Importierter Käseblock aus Frankreich',
-        'Bloc de fromage importé de France', 0, 0, 0),
-       ('004', 'Local Carrots', 'Lokale Karotten', 'Carottes Locales', 'Basket full of local carrots', 'Korb voller lokaler Karotten',
-        'Panier plein de carottes locales', 0, 0, 1),
+       ('002', 'Egg', 'Ei', 'Œuf', 'Organic free-range egg', 'Bio-Freilandei', 'Œuf bio de plein air', 0, 1, 0),
+       ('003', 'Cheese - France', 'Käse - Frankreich', 'Fromage - France', 'Imported cheese block from France', 'Importierter Käseblock aus Frankreich','Bloc de fromage importé de France', 0, 0, 0),
+       ('004', 'Local Carrots', 'Lokale Karotten', 'Carottes Locales', 'Basket full of local carrots', 'Korb voller lokaler Karotten','Panier plein de carottes locales', 0, 0, 1),
        ('005', 'Organic Butter', 'Bio-Butter', 'Beurre Bio', 'Organic butter made from grass-fed cows', 'Bio-Butter aus grasgefütterten Kühen', 'Beurre bio issu de vaches nourries à l''herbe', 0, 1, 0),
        ('006', 'Beef - Argentina', 'Rindfleisch - Argentinien', 'Bœuf - Argentine', 'Imported beef from Argentina', 'Importiertes Rindfleisch aus Argentinien', 'Bœuf importé d''Argentine', 0, 0, 0),
        ('007', 'Organic Local Milk', 'Lokale Bio-Milch', 'Lait Bio Local', 'Fresh organic milk from local farms', 'Frische Bio-Milch von lokalen Bauernhöfen', 'Lait bio frais des fermes locales', 0, 1, 1),

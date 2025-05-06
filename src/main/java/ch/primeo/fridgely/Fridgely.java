@@ -17,10 +17,11 @@ public class Fridgely {
 
     public static void main(String[] args) {
         var context = new SpringApplicationBuilder(Fridgely.class).headless(false).run(args);
+        var imageLoader = context.getBean(ImageLoader.class);
 
         // Preload all images before showing UI
         try {
-            ImageLoader.preloadAllImages();
+            imageLoader.preloadAllImages();
         } catch (Exception e) {
             LOGGER.severe("Error preloading images: " + e.getMessage());
             System.exit(1);
@@ -31,7 +32,5 @@ public class Fridgely {
             // Create and set up MainPage
             context.getBean(ChooseGameModeController.class);
         });
-
-        ImageLoader.clearCache();
     }
 }

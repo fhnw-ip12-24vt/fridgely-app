@@ -3,9 +3,6 @@ package ch.primeo.fridgely.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
-import javax.swing.ImageIcon;
-import java.util.Objects;
-
 /**
  * Represents a product with localized names, descriptions, and attributes. JPA entity for database persistence.
  */
@@ -23,6 +20,8 @@ public class Product {
     private boolean isDefaultProduct;
     private boolean isBio;
     private boolean isLocal;
+
+    public static final String PRODUCT_IMAGE_NOT_FOUND_PATH = "/ch/primeo/fridgely/productimages/notfound.png";
 
     /**
      * Default constructor required by JPA
@@ -155,21 +154,8 @@ public class Product {
         this.isLocal = local;
     }
 
-    public ImageIcon getProductImage() {
-        try {
-            return new ImageIcon(Objects.requireNonNull(
-                            getClass().getResourceAsStream("/ch/primeo/fridgely/productimages/" + barcode + ".png"))
-                    .readAllBytes());
-        } catch (Exception e) {
-            // ignored
-        }
-
-        try {
-            return new ImageIcon(Objects.requireNonNull(
-                    getClass().getResourceAsStream("/ch/primeo/fridgely/productimages/notfound.png")).readAllBytes());
-        } catch (Exception e) {
-            return null;
-        }
+    public String getProductImagePath() {
+        return "/ch/primeo/fridgely/productimages/" + barcode + ".png";
     }
 
     /**

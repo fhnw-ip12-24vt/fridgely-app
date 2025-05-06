@@ -1,6 +1,7 @@
 package ch.primeo.fridgely.view;
 
 import ch.primeo.fridgely.Constants;
+import ch.primeo.fridgely.util.ImageLoader;
 import ch.primeo.fridgely.view.component.LanguageSwitchButton;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import ch.primeo.fridgely.service.localization.LocalizationObserver;
@@ -18,7 +19,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 
 /**
  * View for choosing the game mode: single player or multiplayer. Displays options for single player and multiplayer
@@ -44,17 +44,20 @@ public class ChooseGameModeView extends BaseView implements LocalizationObserver
     private JLabel singlePlayerTextLabel;
     private JLabel multiplayerTextLabel;
 
-    private static final String SINGLE_PLAYER_IMAGE = "src/main/resources/ch/primeo/fridgely/sprites/single_player.png";
-    private static final String MULTIPLAYER_IMAGE = "src/main/resources/ch/primeo/fridgely/sprites/multi_player.png";
+    private static final String SINGLE_PLAYER_IMAGE = "/ch/primeo/fridgely/sprites/single_player.png";
+    private static final String MULTIPLAYER_IMAGE = "/ch/primeo/fridgely/sprites/multi_player.png";
+
+    private final ImageLoader imageLoader;
 
     /**
      * Constructor for the ChooseGameModeView. Initializes the components and sets up the layout.
      * @param button the language switch button
      * @param localization the localization service for text updates
      */
-    public ChooseGameModeView(LanguageSwitchButton button, AppLocalizationService localization) {
+    public ChooseGameModeView(LanguageSwitchButton button, AppLocalizationService localization, ImageLoader imageLoader) {
         this.langButton = button;
         this.localizationService = localization;
+        this.imageLoader = imageLoader;
 
         initializeComponents();
         setupLayout();
@@ -148,14 +151,14 @@ public class ChooseGameModeView extends BaseView implements LocalizationObserver
     private JLabel createImageLabel(String resourcePath, int width, int height) {
         JLabel label = new JLabel();
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
-        ImageIcon icon = new ImageIcon(resourcePath);
-        Image image = icon.getImage();
-        if (image != null) {
-            Image scaledImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-            label.setIcon(new ImageIcon(scaledImage));
+        ImageIcon scaledIcon = imageLoader.loadScaledImage(resourcePath, width, height);
+
+        if (scaledIcon != null) {
+            label.setIcon(scaledIcon);
         } else {
             label.setText("Image not found: " + resourcePath);
         }
+
         return label;
     }
 

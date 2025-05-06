@@ -4,9 +4,6 @@ import ch.primeo.fridgely.config.GameConfig;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.Objects;
-
-import javax.swing.ImageIcon;
 
 /**
  * Model for the penguin health points in the multiplayer game mode. Tracks the HP of the penguin and notifies listeners
@@ -39,22 +36,17 @@ public class PenguinModel {
         return hp;
     }
 
-    public ImageIcon getImageForHP() {
+    public String getImagePathForHP() {
         if (hp >= GameConfig.MAX_HP) {
-            return new ImageIcon(
-                    Objects.requireNonNull(getClass().getResource("/ch/primeo/fridgely/sprites/ice_big_size.png")));
+            return "/ch/primeo/fridgely/sprites/ice_big_size.png";
         } else if (hp > GameConfig.STARTING_HP) {
-            return new ImageIcon(
-                    Objects.requireNonNull(getClass().getResource("/ch/primeo/fridgely/sprites/ice_middle_size.png")));
+            return "/ch/primeo/fridgely/sprites/ice_middle_size.png";
         } else if (hp == 30) {
-            return new ImageIcon(Objects.requireNonNull(
-                    getClass().getResource("/ch/primeo/fridgely/sprites/penguin_on_small_block_of_ice.png")));
+            return "/ch/primeo/fridgely/sprites/penguin_on_small_block_of_ice.png";
         } else if (hp > 0) {
-            return new ImageIcon(
-                    Objects.requireNonNull(getClass().getResource("/ch/primeo/fridgely/sprites/penguin_swimming.png")));
+            return "/ch/primeo/fridgely/sprites/penguin_swimming.png";
         } else {
-            return new ImageIcon(
-                    Objects.requireNonNull(getClass().getResource("/ch/primeo/fridgely/sprites/penguin_unalive.png")));
+            return "/ch/primeo/fridgely/sprites/penguin_unalive.png";
         }
     }
 

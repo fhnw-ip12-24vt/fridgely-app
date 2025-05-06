@@ -19,9 +19,9 @@ public class PenguinReactionOverlay extends JWindow {
     private static final int OVERLAY_SIZE = 260;
     private static final int DISPLAY_TIME_MS = 1000;
 
-    public PenguinReactionOverlay(Window parent, PenguinFacialExpression expression) {
+    public PenguinReactionOverlay(Window parent, PenguinFacialExpression expression, ImageLoader imageLoader) {
         super(parent);
-        this.penguinImage = ImageLoader.loadBufferedImage(expression.getSprite(), getClass());
+        this.penguinImage = imageLoader.loadBufferedImage(expression.getSprite());
         setBackground(new Color(0, 0, 0, 0));
         setAlwaysOnTop(true);
         setSize(OVERLAY_SIZE, OVERLAY_SIZE);

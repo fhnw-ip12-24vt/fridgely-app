@@ -6,6 +6,7 @@ import ch.primeo.fridgely.model.GameMode;
 import ch.primeo.fridgely.model.PenguinFacialExpression;
 import ch.primeo.fridgely.model.PenguinHPState;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
+import ch.primeo.fridgely.util.ImageLoader;
 import ch.primeo.fridgely.view.ChooseGameModeView;
 import ch.primeo.fridgely.view.component.LanguageSwitchButton;
 import ch.primeo.fridgely.view.util.DialogBox;
@@ -32,6 +33,8 @@ public class ChooseGameModeController implements BaseController {
     private final ChooseGameModeView view;
     private final MultiplayerGameLauncher multiplayerGameLauncher;
     private final SingleplayerGameLauncher singleplayerGameLauncher;
+    private final ImageLoader imageLoader;
+
 
     /**
      * Constructs the controller and sets up UI event handlers.
@@ -44,12 +47,15 @@ public class ChooseGameModeController implements BaseController {
             AppLocalizationService localization,
             LanguageSwitchButton languageSwitchButton,
             MultiplayerGameLauncher multiplayerGameLauncher,
-            SingleplayerGameLauncher singleplayerGameLauncher) {
+            SingleplayerGameLauncher singleplayerGameLauncher,
+            ImageLoader imageLoader) {
 
         this.localizationService = localization;
         this.multiplayerGameLauncher = multiplayerGameLauncher;
         this.singleplayerGameLauncher = singleplayerGameLauncher;
-        this.view = new ChooseGameModeView(languageSwitchButton, this.localizationService);
+        this.imageLoader = imageLoader;
+
+        this.view = new ChooseGameModeView(languageSwitchButton, this.localizationService, imageLoader);
 
         localizationService.subscribe(this::updateUIText);
 
@@ -137,7 +143,8 @@ public class ChooseGameModeController implements BaseController {
         new DialogBox(tutorialMessages,
                 PenguinFacialExpression.HAPPY,
                 PenguinHPState.OKAY,
-                this::startMultiplayerGame).showDialog();
+                this::startMultiplayerGame,
+                imageLoader).showDialog();
     }
 
     /**
@@ -164,7 +171,8 @@ public class ChooseGameModeController implements BaseController {
         new DialogBox(tutorialMessages,
                 PenguinFacialExpression.HAPPY,
                 PenguinHPState.OKAY,
-                this::startSinglePlayerGame).showDialog();
+                this::startSinglePlayerGame,
+                imageLoader).showDialog();
     }
 
     /**

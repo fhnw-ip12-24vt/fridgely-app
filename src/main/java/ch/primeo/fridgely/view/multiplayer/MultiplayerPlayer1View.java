@@ -9,6 +9,7 @@ import ch.primeo.fridgely.model.Product;
 import ch.primeo.fridgely.model.multiplayer.MultiplayerGameStateModel;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import ch.primeo.fridgely.service.localization.LocalizationObserver;
+import ch.primeo.fridgely.util.ImageLoader;
 import ch.primeo.fridgely.view.PenguinReactionOverlay;
 
 import javax.swing.BorderFactory;
@@ -50,6 +51,7 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
     private final MultiplayerGameController gameController;
     private final MultiplayerPlayer1Controller player1Controller;
     private final AppLocalizationService localizationService;
+    private final ImageLoader imageLoader;
 
     private JLabel scanPromptLabel;
     private String scanPromptBase;
@@ -65,10 +67,11 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
      * @param controller   the main game controller
      * @param localization the service for text localization
      */
-    public MultiplayerPlayer1View(MultiplayerGameController controller, AppLocalizationService localization) {
+    public MultiplayerPlayer1View(MultiplayerGameController controller, AppLocalizationService localization, ImageLoader imageLoader) {
         this.gameController = controller;
         this.player1Controller = gameController.getPlayer1Controller();
         this.localizationService = localization;
+        this.imageLoader = imageLoader;
 
         initializeComponents();
         setupLayout();
@@ -206,7 +209,7 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
             java.awt.Toolkit.getDefaultToolkit().beep();
             // Show penguin reaction overlay (1 second)
             Window topLevel = SwingUtilities.getWindowAncestor(this);
-            PenguinReactionOverlay overlay = new PenguinReactionOverlay(topLevel, reaction);
+            PenguinReactionOverlay overlay = new PenguinReactionOverlay(topLevel, reaction, imageLoader);
             overlay.showAndAutoHide();
         } else {
             statusLabel.setText(String.format(localizationService.get(KEY_PRODUCT_NOT_FOUND_FMT), barcode));
