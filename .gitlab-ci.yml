@@ -4,8 +4,8 @@ stages:
   - validate
   - test
   - package
-  - site
   - deploy
+  - site
   - pages
 
 variables:
