@@ -4,7 +4,7 @@ stages:
   - validate
   - test
   - package
-  - deploy
+  - release
   - site
   - pages
 
@@ -69,8 +69,8 @@ pages:
   only:
     - main
 
-deploy:
-  stage: deploy
+release:
+  stage: release
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   dependencies:
     - package
@@ -81,11 +81,13 @@ deploy:
     - cp "$JAR_PATH" fridgely-latest.jar
     - echo "✅ JAR copied to fridgely-latest.jar"
     - |
-      release-cli create \
-        --description "Release from Pipeline $CI_PIPELINE_IID - All tests and checks passed" \
-        --tag-name "v$CI_PIPELINE_IID" \
-        --assets-link '[{"name": "Fridgely JAR", "url": "'$CI_PROJECT_URL'/-/jobs/'$CI_JOB_ID'/artifacts/raw/fridgely-latest.jar"}]'
+      gitlab-release-cli upload \
+        --token $CI_JOB_TOKEN \
+        --name "Fridgely JAR" \
+        --url "https://gitlab.fhnw.ch" \
+        --project-id $CI_PROJECT_ID \
+        --tag v$CI_PIPELINE_IID \
+        --file fridgely-latest.jar
   only:
     - main
   when: on_success
-
