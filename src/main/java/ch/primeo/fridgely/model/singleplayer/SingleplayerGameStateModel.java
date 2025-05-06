@@ -104,6 +104,7 @@ public class SingleplayerGameStateModel {
             propertyChangeSupport.firePropertyChange(PROP_GAME_OVER, oldGameOver, gameOver);
         }
 
+
     }
 
     /**

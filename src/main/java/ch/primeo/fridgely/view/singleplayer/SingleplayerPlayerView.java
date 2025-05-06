@@ -136,6 +136,7 @@ public class SingleplayerPlayerView extends JPanel implements PropertyChangeList
     private void finishTurn() {
         gameController.startNewRound();
         updateComponentStates();
+        updateRecipeList();
     }
 
     /**

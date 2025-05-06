@@ -49,6 +49,7 @@ public class UnifiedRecipePanel extends JPanel {
 
     // Recipe data
     private List<Recipe> allRecipes;
+    private List<Recipe> possibleRecipes;
     private Recipe selectedRecipe;
 
     // Lazy loading support
@@ -116,13 +117,14 @@ public class UnifiedRecipePanel extends JPanel {
         // Clear old data
         recipesViewport.removeAll();
         loadedRecipeCards.clear();
-
         // Get fresh recipe data and randomize
         allRecipes = new ArrayList<>(recipeModel.getAvailableRecipes());
-        Collections.shuffle(allRecipes);  // Randomize recipe order
+        List<Product> inFridge = gameController.getFridgeStockModel().getProducts();
+        possibleRecipes = new ArrayList<>(recipeModel.getPossibleRecipes(inFridge));
+        Collections.shuffle(possibleRecipes);  // Randomize recipe order
 
         // Create placeholder panels for each recipe
-        for (Recipe recipe : allRecipes) {
+        for (Recipe recipe : possibleRecipes) {
             JPanel placeholder = createRecipePlaceholder(recipe);
             recipesViewport.add(placeholder);
             recipesViewport.add(Box.createRigidArea(new Dimension(0, 10)));

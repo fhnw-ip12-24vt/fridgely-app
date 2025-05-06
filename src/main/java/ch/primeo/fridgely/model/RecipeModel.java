@@ -94,6 +94,16 @@ public class RecipeModel {
     public List<Recipe> getAvailableRecipes() {
         return List.copyOf(availableRecipes);
     }
+
+    public List<Recipe> getPossibleRecipes(List<Product> productsFridge){
+        List<Recipe> possibleRecipes = new ArrayList<>();
+        for (Recipe recipe : availableRecipes) {
+            if (canMakeRecipe(recipe, productsFridge)) {
+                possibleRecipes.add(recipe);
+            }
+        }
+        return possibleRecipes;
+    }
     
     /**
      * Gets the currently selected recipe.
