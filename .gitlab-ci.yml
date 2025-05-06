@@ -76,8 +76,10 @@ deploy:
   stage: deploy
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   script:
-    - mv target/FridgelyAppV3-1.0-SNAPSHOT-fat.jar fridgely-latest.jar
-    - echo "Uploading fridgely-latest.jar to release assets"
+    - ls -lh target/
+    - JAR_PATH=$(find target -name '*-fat.jar' | head -n1)
+    - if [ -z "$JAR_PATH" ]; then echo "❌ JAR file not found!"; exit 1; fi
+    - cp "$JAR_PATH" fridgely-latest.jar
   dependencies:
     - package
     - test
