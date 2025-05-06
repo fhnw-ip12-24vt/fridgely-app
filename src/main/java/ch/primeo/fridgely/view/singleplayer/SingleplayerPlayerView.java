@@ -7,6 +7,7 @@ import ch.primeo.fridgely.model.singleplayer.SingleplayerGameStateModel;
 import ch.primeo.fridgely.model.Recipe;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import ch.primeo.fridgely.service.localization.LocalizationObserver;
+import ch.primeo.fridgely.util.ImageLoader;
 import ch.primeo.fridgely.view.component.UnifiedRecipePanel;
 
 import javax.swing.BorderFactory;
@@ -36,6 +37,7 @@ public class SingleplayerPlayerView extends JPanel implements PropertyChangeList
     private final SingleplayerGameController gameController;
     private final SingleplayerPlayerController playerController;
     private final AppLocalizationService localizationService;
+    private final ImageLoader imageLoader;
 
     private UnifiedRecipePanel unifiedRecipePanel;
     private JButton finishTurnButton;
@@ -48,10 +50,11 @@ public class SingleplayerPlayerView extends JPanel implements PropertyChangeList
      * @param localization the service for text localization
      */
     public SingleplayerPlayerView(SingleplayerGameController controller,
-            AppLocalizationService localization) {
+                                  AppLocalizationService localization, ImageLoader imageLoader) {
         this.gameController = controller;
         this.playerController = gameController.getPlayerController();
         this.localizationService = localization;
+        this.imageLoader = imageLoader;
 
         initializeComponents();
         setupLayout();
@@ -71,7 +74,7 @@ public class SingleplayerPlayerView extends JPanel implements PropertyChangeList
      */
     private void initializeComponents() {
         // Create the unified recipe panel
-        unifiedRecipePanel = new UnifiedRecipePanel(gameController, gameController.getProductRepository());
+        unifiedRecipePanel = new UnifiedRecipePanel(gameController, gameController.getProductRepository(), imageLoader);
 
         // initialize with empty text; will be set in onLocaleChanged()
         finishTurnButton = new JButton();

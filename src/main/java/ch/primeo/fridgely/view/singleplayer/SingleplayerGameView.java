@@ -30,6 +30,7 @@ public class SingleplayerGameView extends JPanel implements PropertyChangeListen
 
     private final SingleplayerGameController gameController;
     private final AppLocalizationService localizationService;
+    private final ImageLoader imageLoader;
 
     // Localization keys
     private static final String KEY_PENGUIN_TITLE = "panel.penguin.title";
@@ -65,9 +66,10 @@ public class SingleplayerGameView extends JPanel implements PropertyChangeListen
     private CardLayout playerCardLayout;
 
     public SingleplayerGameView(SingleplayerGameController controller, AppLocalizationService localization,
-            JFrame frame) {
+            JFrame frame, ImageLoader imageLoader) {
         this.gameController = controller;
         this.localizationService = localization;
+        this.imageLoader = imageLoader;
 
         initializeComponents();
         setupLayout();
@@ -89,7 +91,7 @@ public class SingleplayerGameView extends JPanel implements PropertyChangeListen
         scorePanel = new JPanel();
         controlPanel = new JPanel();
 
-        SingleplayerPlayerView playerView = new SingleplayerPlayerView(gameController, localizationService);
+        SingleplayerPlayerView playerView = new SingleplayerPlayerView(gameController, localizationService, imageLoader);
 
         playerCardLayout = new CardLayout();
         playerPanel = new JPanel(playerCardLayout);
@@ -97,7 +99,7 @@ public class SingleplayerGameView extends JPanel implements PropertyChangeListen
 
         penguinImageLabel = new JLabel();
         try {
-            ImageIcon penguinIcon = ImageLoader.loadImage("/ch/primeo/fridgely/sprites/happy.png", Fridgely.class);
+            ImageIcon penguinIcon = imageLoader.loadImage("/ch/primeo/fridgely/sprites/happy.png");
             Image scaledImage = penguinIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
             penguinImageLabel.setIcon(new ImageIcon(scaledImage));
         } catch (Exception e) {
@@ -169,7 +171,7 @@ public class SingleplayerGameView extends JPanel implements PropertyChangeListen
         penguinHPLabel.setText(String.format(localizationService.get(KEY_HP_LABEL), penguinModel.getHP(), 60));
 
         try {
-            ImageIcon penguinIcon = penguinModel.getImageForHP();
+            ImageIcon penguinIcon = imageLoader.loadImage("/ch/primeo/fridgely/sprites/happy.png");
             Image scaledImage = penguinIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
             penguinImageLabel.setIcon(new ImageIcon(scaledImage));
         } catch (Exception e) {

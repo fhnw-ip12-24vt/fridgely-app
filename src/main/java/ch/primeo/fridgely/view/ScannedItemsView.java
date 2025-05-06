@@ -55,7 +55,7 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
      * @param localization the service for text localization
      * @param frame        the parent JFrame for this view
      */
-        public ScannedItemsView(GameController controller, AppLocalizationService localization, JFrame frame) {
+        public ScannedItemsView(GameController controller, AppLocalizationService localization, JFrame frame, ImageLoader imageLoader) {
         this.gameController = controller;
         this.localizationService = localization;
         this.imageLoader = imageLoader;

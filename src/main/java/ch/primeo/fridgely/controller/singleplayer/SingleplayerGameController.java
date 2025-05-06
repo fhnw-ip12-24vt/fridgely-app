@@ -30,6 +30,7 @@ public class SingleplayerGameController extends GameController {
         this.gameStateModel = new SingleplayerGameStateModel();
         this.playerController = new SingleplayerPlayerController(
                 fridgeStockModel, gameStateModel, penguinModel, recipeModel);
+        startNewGame();
     }
 
     /**

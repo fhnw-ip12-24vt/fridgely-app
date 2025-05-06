@@ -1,5 +1,6 @@
 package ch.primeo.fridgely.gamelaunchers;
 
+import ch.primeo.fridgely.util.ImageLoader;
 import ch.primeo.fridgely.view.ScannedItemsView;
 import ch.primeo.fridgely.view.singleplayer.SingleplayerGameView;
 import ch.primeo.fridgely.controller.singleplayer.SingleplayerGameController;
@@ -24,6 +25,7 @@ public class SingleplayerGameLauncher {
     private final ProductRepository productRepository;
     private final RecipeRepository recipeRepository;
     private final AppLocalizationService localizationService;
+    private final ImageLoader imageLoader;
 
     /**
      * Constructs a new singleplayer game launcher.
@@ -33,10 +35,11 @@ public class SingleplayerGameLauncher {
      * @param localization the service for text localization
      */
     public SingleplayerGameLauncher(ProductRepository productRepo, RecipeRepository recipeRepo,
-            AppLocalizationService localization) {
+                                    AppLocalizationService localization, ImageLoader imageLoader) {
         this.productRepository = productRepo;
         this.recipeRepository = recipeRepo;
         this.localizationService = localization;
+        this.imageLoader = imageLoader;
     }
 
     /**
@@ -55,7 +58,7 @@ public class SingleplayerGameLauncher {
             gameFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); // Fullscreen
 
             // Create the game view
-            new SingleplayerGameView(gameController, localizationService, gameFrame);
+            new SingleplayerGameView(gameController, localizationService, gameFrame, imageLoader);
 
             //
             // Create a second frame for displaying scanned items - also fullscreen and
@@ -84,7 +87,7 @@ public class SingleplayerGameLauncher {
             });
 
             // Create the scanned items view
-            new ScannedItemsView(gameController, localizationService, scannedItemsFrame);
+            new ScannedItemsView(gameController, localizationService, scannedItemsFrame, imageLoader);
         });
     }
 }
