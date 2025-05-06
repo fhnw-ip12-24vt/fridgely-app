@@ -117,6 +117,5 @@ public class MultiplayerPlayer2Controller {
             // Clear the fridge stock for the next round
             fridgeStockModel.clear();
         }
-
     }
 }

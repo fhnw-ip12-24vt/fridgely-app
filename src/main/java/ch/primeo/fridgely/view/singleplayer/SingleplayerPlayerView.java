@@ -131,7 +131,7 @@ public class SingleplayerPlayerView extends JPanel implements PropertyChangeList
      * Finishes Player 2's turn.
      */
     private void finishTurn() {
-        playerController.finishTurn();
+        gameController.startNewRound();
         updateComponentStates();
     }
 

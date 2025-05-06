@@ -102,6 +102,7 @@ public class SingleplayerPlayerController {
         // TODO: Implement round switching logic if needed
         gameStateModel.advanceRound();
 
+
         // Reset for new round if the game isn't over
         if (!gameStateModel.isGameOver()) {
             recipeModel.selectRecipe(null);

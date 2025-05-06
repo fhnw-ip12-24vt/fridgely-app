@@ -43,6 +43,21 @@ public class FridgeStockModel {
         propertyChangeSupport.firePropertyChange(PROP_FRIDGE_CONTENTS, oldProducts, new ArrayList<>(products));
         return true;
     }
+
+    /**
+     * Adds a list of products to the fridge stock.
+     *
+     * @param products the list of products to add
+     */
+    public void addProducts(List<Product> products) {
+        if (products == null || products.isEmpty()) {
+            return;
+        }
+
+        List<Product> oldProducts = new ArrayList<>(this.products);
+        this.products.addAll(products);
+        propertyChangeSupport.firePropertyChange(PROP_FRIDGE_CONTENTS, oldProducts, new ArrayList<>(this.products));
+    }
     
     /**
      * Removes a product from the fridge stock.
