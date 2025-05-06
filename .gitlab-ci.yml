@@ -76,22 +76,24 @@ deploy:
   stage: deploy
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   script:
-    - echo "Creating release with JAR file from the package stage"
+    - mv target/FridgelyAppV3-1.0-SNAPSHOT-fat.jar fridgely-latest.jar
+    - echo "Uploading fridgely-latest.jar to release assets"
   dependencies:
     - package
     - test
     - site
   artifacts:
     paths:
-      - target/*-fat.jar
+      - fridgely-latest.jar
     expire_in: 1 month
   release:
     tag_name: 'v$CI_PIPELINE_IID'
     description: 'Release from Pipeline $CI_PIPELINE_IID - All tests and checks passed'
     assets:
       links:
-        - name: 'FridgelyAppV3-$CI_PIPELINE_IID.jar'
-          url: '${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/raw/target/FridgelyAppV3-1.0-SNAPSHOT-fat.jar'
+        - name: 'FridgelyAppV3 Fat JAR'
+          filepath: 'fridgely-latest.jar'
   only:
     - main
   when: on_success
+
