@@ -2,7 +2,9 @@ package ch.primeo.fridgely.view;
 
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
-import java.awt.Toolkit;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
 
 /**
  * Base class for all views in the application.
@@ -10,18 +12,33 @@ import java.awt.Toolkit;
  */
 public abstract class BaseView {
 
-    private final JFrame frame = new JFrame();
+    private final JFrame frame;
 
     /**
      * Constructor for BaseView.
-     * Initializes the JFrame with fullscreen size, undecorated, and default close operation.
+     * Initializes the JFrame on the specified GraphicsDevice.
+     * @param device The GraphicsDevice to display the frame on. If null, uses default screen.
      */
-    public BaseView() {
-        var screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        frame.setSize(screenSize.width, screenSize.height);
+    public BaseView(GraphicsDevice device) {
+        GraphicsDevice targetDevice = device;
+        if (targetDevice == null) {
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            targetDevice = ge.getDefaultScreenDevice();
+        }
+        this.frame = new JFrame(targetDevice.getDefaultConfiguration());
+        
+        Rectangle bounds = targetDevice.getDefaultConfiguration().getBounds();
+        frame.setBounds(bounds.x, bounds.y, bounds.width, bounds.height); // Position and size to the device
         frame.setUndecorated(true);
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        frame.setLocationRelativeTo(null);
+        // frame.setLocationRelativeTo(null); // Not needed when using setBounds with screen coordinates
+    }
+
+    /**
+     * Default constructor, uses the default screen.
+     */
+    public BaseView() {
+        this(null); // Delegates to the constructor that handles null device as default
     }
 
     /**
