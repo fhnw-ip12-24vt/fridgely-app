@@ -23,6 +23,7 @@ import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -252,7 +253,7 @@ public class DialogBox extends JPanel {
         messageLabel.setBounds(
                 penguinAreaWidth + horizontalPadding,
                 verticalPadding,
-                Math.max((int)(width - penguinAreaWidth - (horizontalPadding * 2) - Math.max(40, width * 0.05)), 100), // Slightly wider, responsive
+                Math.max((int)(width - penguinAreaWidth - (horizontalPadding * 2) - Math.max(20, width * 0.025)), 100), // Slightly wider, still responsive
                 height - (verticalPadding * 2)
         );
     }
@@ -279,8 +280,7 @@ public class DialogBox extends JPanel {
         glassPane.setLayout(null);
 
         // Add the dialog to the glass pane, positioned at the bottom
-        // Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); // OLD
-        Dimension frameSize = this.frame.getSize(); // NEW: Use the actual frame's size
+        Dimension frameSize = this.frame.getSize();
         int dialogWidth = frameSize.width - 100;
         int dialogHeight = 200;
         int xPos = 50; // 50px from left
@@ -328,7 +328,7 @@ public class DialogBox extends JPanel {
 
         // Replace this instance's callback
         try {
-            java.lang.reflect.Field field = DialogBox.class.getDeclaredField("onCompleteCallback");
+            Field field = DialogBox.class.getDeclaredField("onCompleteCallback");
             field.setAccessible(true);
             field.set(this, combinedCallback);
         } catch (Exception e) {
