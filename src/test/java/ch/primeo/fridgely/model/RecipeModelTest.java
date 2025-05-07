@@ -16,27 +16,33 @@ class RecipeModelTest {
 
     private RecipeRepository recipeRepositoryMock;
     private RecipeModel recipeModel;
+    private List<Product> availableProducts;
 
     @BeforeEach
     void setUp() {
         // Arrange: Mock the RecipeRepository and initialize RecipeModel
         recipeRepositoryMock = mock(RecipeRepository.class);
-        recipeModel = new RecipeModel(recipeRepositoryMock);
+        availableProducts = new ArrayList<>();
+        recipeModel = new RecipeModel(recipeRepositoryMock, availableProducts);
     }
 
     @Test
     void testLoadAvailableRecipes_Success() {
         // Arrange
-        List<RecipeRepository.RecipeDTO> recipeDTOs = List.of(new RecipeRepository.RecipeDTO(1, "Test", "Test", 0 ,0, new ArrayList<>()));
+        List<RecipeRepository.RecipeDTO> recipeDTOs = List.of(new RecipeRepository.RecipeDTO(1, "Test", "Test", 0, 0, new ArrayList<>()));
         Recipe recipe = new Recipe();
         recipe.setRecipeId(1);
         recipe.setName("Test Recipe");
 
+        Product product = new Product("123", "Product 1", "Product 1", "Product 1", "Desc", "Desc", "Desc", false, false, false);
+        List<Product> products = List.of(product);
+        
         when(recipeRepositoryMock.getAllRecipes()).thenReturn(recipeDTOs);
         when(recipeRepositoryMock.findById(1)).thenReturn(Optional.of(recipe));
+        when(recipeRepositoryMock.getRecipeIngredientBarcodes(1)).thenReturn(List.of("123"));
 
         // Act
-        recipeModel.loadAvailableRecipes();
+        recipeModel.loadAvailableRecipes(products);
 
         // Assert
         List<Recipe> availableRecipes = recipeModel.getAvailableRecipes();
@@ -45,21 +51,26 @@ class RecipeModelTest {
     }
 
     @Test
-    void testLoadAvailableRecipes_FallbackToEntities() {
+    void testLoadAvailableRecipes_NoMatchingIngredients() {
         // Arrange
-        when(recipeRepositoryMock.getAllRecipes()).thenReturn(new ArrayList<>());
+        List<RecipeRepository.RecipeDTO> recipeDTOs = List.of(new RecipeRepository.RecipeDTO(1, "Test", "Test", 0, 0, new ArrayList<>()));
         Recipe recipe = new Recipe();
-        recipe.setRecipeId(2);
-        recipe.setName("Fallback Recipe");
-        when(recipeRepositoryMock.getAllRecipesEntities()).thenReturn(List.of(recipe));
+        recipe.setRecipeId(1);
+        recipe.setName("Test Recipe");
+
+        Product product = new Product("456", "Product 2", "Product 2", "Product 2", "Desc", "Desc", "Desc", false, false, false);
+        List<Product> products = List.of(product);
+        
+        when(recipeRepositoryMock.getAllRecipes()).thenReturn(recipeDTOs);
+        when(recipeRepositoryMock.findById(1)).thenReturn(Optional.of(recipe));
+        when(recipeRepositoryMock.getRecipeIngredientBarcodes(1)).thenReturn(List.of("123"));
 
         // Act
-        recipeModel.loadAvailableRecipes();
+        recipeModel.loadAvailableRecipes(products);
 
         // Assert
         List<Recipe> availableRecipes = recipeModel.getAvailableRecipes();
-        assertEquals(1, availableRecipes.size());
-        assertEquals("Fallback Recipe", availableRecipes.getFirst().getName());
+        assertEquals(0, availableRecipes.size());
     }
 
     @Test
@@ -87,19 +98,14 @@ class RecipeModelTest {
     void testCanMakeRecipe_AllIngredientsAvailable() {
         // Arrange
         Recipe recipe = new Recipe();
+        recipe.setRecipeId(1);
 
-        Product product1 = new Product("123", "Product 1 NameEN", "Product 1 NameDE", "Product 1 NameFR", "Desc 1 EN" , "Desc 1 DE" , "Desc 1 F", false, false, false);
-        Product product2 = new Product("124", "Product 2 NameEN", "Product 2 NameDE", "Product 2 NameFR", "Desc 2 EN" , "Desc 2 DE" , "Desc 2 F", false, false, false);
-
-        RecipeIngredient recipeIngredient1 = new RecipeIngredient();
-        recipeIngredient1.setProduct(product1);
-
-        RecipeIngredient recipeIngredient2 = new RecipeIngredient();
-        recipeIngredient1.setProduct(product2);
-
-        recipe.setIngredients(List.of(recipeIngredient1, recipeIngredient2));
+        Product product1 = new Product("123", "Product 1 NameEN", "Product 1 NameDE", "Product 1 NameFR", "Desc 1 EN", "Desc 1 DE", "Desc 1 F", false, false, false);
+        Product product2 = new Product("456", "Product 2 NameEN", "Product 2 NameDE", "Product 2 NameFR", "Desc 2 EN", "Desc 2 DE", "Desc 2 F", false, false, false);
 
         List<Product> products = List.of(product1, product2);
+        
+        when(recipeRepositoryMock.getRecipeIngredientBarcodes(1)).thenReturn(List.of("123", "456"));
 
         // Act
         boolean result = recipeModel.canMakeRecipe(recipe, products);
@@ -113,11 +119,11 @@ class RecipeModelTest {
         // Arrange
         Recipe recipe = new Recipe();
         recipe.setRecipeId(1);
-        List<String> ingredientBarcodes = List.of("123", "456");
-        when(recipeRepositoryMock.getRecipeIngredientBarcodes(1)).thenReturn(ingredientBarcodes);
-
-        Product product = new Product("123", "Product 1 NameEN", "Product 1 NameDE", "Product 1 NameFR", "Desc 1 EN" , "Desc 1 DE" , "Desc 1 F", false, false, false);
+        
+        Product product = new Product("123", "Product 1 NameEN", "Product 1 NameDE", "Product 1 NameFR", "Desc 1 EN", "Desc 1 DE", "Desc 1 F", false, false, false);
         List<Product> products = List.of(product);
+        
+        when(recipeRepositoryMock.getRecipeIngredientBarcodes(1)).thenReturn(List.of("123", "456"));
 
         // Act
         boolean result = recipeModel.canMakeRecipe(recipe, products);
@@ -131,11 +137,11 @@ class RecipeModelTest {
         // Arrange
         Recipe recipe = new Recipe();
         recipe.setRecipeId(1);
-        List<String> ingredientBarcodes = List.of("123", "456");
-        when(recipeRepositoryMock.getRecipeIngredientBarcodes(1)).thenReturn(ingredientBarcodes);
+        
+        when(recipeRepositoryMock.getRecipeIngredientBarcodes(1)).thenReturn(List.of("123", "456"));
 
-        Product product1 = new Product("123", "Product 1 NameEN", "Product 1 NameDE", "Product 1 NameFR", "Desc 1 EN" , "Desc 1 DE" , "Desc 1 F", false, false, false);
-        Product product2 = new Product("124", "Product 2 NameEN", "Product 2 NameDE", "Product 2 NameFR", "Desc 2 EN" , "Desc 2 DE" , "Desc 2 F", false, false, false);
+        Product product1 = new Product("123", "Product 1 NameEN", "Product 1 NameDE", "Product 1 NameFR", "Desc 1 EN", "Desc 1 DE", "Desc 1 F", false, false, false);
+        Product product2 = new Product("999", "Product 2 NameEN", "Product 2 NameDE", "Product 2 NameFR", "Desc 2 EN", "Desc 2 DE", "Desc 2 F", false, false, false);
         List<Product> products = List.of(product1, product2);
 
         // Act
