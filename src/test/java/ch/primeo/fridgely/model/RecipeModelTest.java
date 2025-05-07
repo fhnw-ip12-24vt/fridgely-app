@@ -27,6 +27,55 @@ class RecipeModelTest {
     }
 
     @Test
+    void testDefaultConstructor() {
+        // Act
+        Product product = new Product();
+
+        // Assert
+        assertNotNull(product);
+        assertNull(product.getBarcode());
+        assertNull(product.getName());
+        assertNull(product.getNameDE());
+        assertNull(product.getNameFR());
+        assertNull(product.getDescription());
+        assertNull(product.getDescriptionDE());
+        assertNull(product.getDescriptionFR());
+        assertFalse(product.isDefaultProduct());
+        assertFalse(product.isBio());
+        assertFalse(product.isLocal());
+    }
+
+    @Test
+    void testFullConstructor() {
+        // Arrange
+        String barcode = "123456789";
+        String nameE = "Apple";
+        String nameD = "Apfel";
+        String nameF = "Pomme";
+        String descriptionE = "A sweet apple";
+        String descriptionD = "Ein süßer Apfel";
+        String descriptionF = "Une pomme sucrée";
+        boolean defaultProduct = true;
+        boolean bio = true;
+        boolean local = false;
+
+        // Act
+        Product product = new Product(barcode, nameE, nameD, nameF, descriptionE, descriptionD, descriptionF, defaultProduct, bio, local);
+
+        // Assert
+        assertEquals(barcode, product.getBarcode());
+        assertEquals(nameE, product.getName());
+        assertEquals(nameD, product.getNameDE());
+        assertEquals(nameF, product.getNameFR());
+        assertEquals(descriptionE, product.getDescription());
+        assertEquals(descriptionD, product.getDescriptionDE());
+        assertEquals(descriptionF, product.getDescriptionFR());
+        assertTrue(product.isDefaultProduct());
+        assertTrue(product.isBio());
+        assertFalse(product.isLocal());
+    }
+
+    @Test
     void testLoadAvailableRecipes_Success() {
         // Arrange
         List<RecipeRepository.RecipeDTO> recipeDTOs = List.of(new RecipeRepository.RecipeDTO(1, "Test", "Test", 0, 0, new ArrayList<>()));
@@ -171,11 +220,62 @@ class RecipeModelTest {
         // Arrange
         PropertyChangeListener listener = mock(PropertyChangeListener.class);
 
+        // Assert & Act
+        // No exception should be thrown, and the listener should be added and removed successfully
+        assertDoesNotThrow(() -> {
+            recipeModel.addPropertyChangeListener(listener);
+            recipeModel.removePropertyChangeListener(listener);
+        });
+    }
+
+    @Test
+    void testLoadAvailableRecipes_RepositoryThrowsException() {
+        // Arrange
+        when(recipeRepositoryMock.getAllRecipes()).thenThrow(new RuntimeException("Repository error"));
+
         // Act
-        recipeModel.addPropertyChangeListener(listener);
-        recipeModel.removePropertyChangeListener(listener);
+        recipeModel.loadAvailableRecipes();
 
         // Assert
-        // No exception should be thrown, and the listener should be added and removed successfully
+        List<Recipe> availableRecipes = recipeModel.getAvailableRecipes();
+        assertEquals(1, availableRecipes.size());
+        assertEquals("Dummy Recipe", availableRecipes.getFirst().getName());
+    }
+
+    @Test
+    void testLoadAvailableRecipes_EmptyListFromRepository() {
+        // Arrange
+        when(recipeRepositoryMock.getAllRecipes()).thenReturn(new ArrayList<>());
+
+        // Act
+        recipeModel.loadAvailableRecipes();
+
+        // Assert
+        List<Recipe> availableRecipes = recipeModel.getAvailableRecipes();
+        assertEquals(0, availableRecipes.size());
+    }
+
+    @Test
+    void testLoadAvailableRecipes_ErrorProcessingSingleRecipe() {
+        // Arrange
+        List<RecipeRepository.RecipeDTO> recipeDTOs = List.of(
+                new RecipeRepository.RecipeDTO(1, "Valid Recipe", "Test", 0, 0, new ArrayList<>()),
+                new RecipeRepository.RecipeDTO(2, "Invalid Recipe", "Test", 0, 0, new ArrayList<>())
+        );
+        Recipe validRecipe = new Recipe();
+        validRecipe.setRecipeId(1);
+        validRecipe.setName("Valid Recipe");
+
+        when(recipeRepositoryMock.getAllRecipes()).thenReturn(recipeDTOs);
+        when(recipeRepositoryMock.findById(1)).thenReturn(Optional.of(validRecipe));
+        when(recipeRepositoryMock.findById(2)).thenThrow(new RuntimeException("Error processing recipe"));
+
+        // Act
+        recipeModel.loadAvailableRecipes();
+
+        // Assert
+        List<Recipe> availableRecipes = recipeModel.getAvailableRecipes();
+        assertEquals(1, availableRecipes.size());
+        assertEquals("Valid Recipe", availableRecipes.getFirst().getName());
     }
 }
