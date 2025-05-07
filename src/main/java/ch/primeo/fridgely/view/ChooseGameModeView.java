@@ -12,6 +12,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -25,13 +26,17 @@ import java.awt.GridBagLayout;
  * View for choosing the game mode: single player or multiplayer. Displays options for single player and multiplayer
  * modes with corresponding images and text.
  */
-public class ChooseGameModeView extends BaseView implements LocalizationObserver {
+public class ChooseGameModeView implements LocalizationObserver {
 
     // localization keys
     private static final String KEY_TITLE = "choose_mode_title";
     private static final String KEY_SINGLE_PLAYER = "single_player_mode";
     private static final String KEY_MULTIPLAYER = "multiplayer_mode";
     private static final String KEY_LANG_BUTTON = "button_language";
+    private static final String KEY_SINGLE_PLAYER_TOOLTIP = "gamemode.singleplayer.tooltip";
+    private static final String KEY_MULTIPLAYER_TOOLTIP = "gamemode.multiplayer.tooltip";
+
+    private final JFrame frame = new JFrame();
 
     private final AppLocalizationService localizationService;
     private final JButton langButton;
@@ -56,14 +61,15 @@ public class ChooseGameModeView extends BaseView implements LocalizationObserver
      * @param localization the localization service for text updates
      */
     public ChooseGameModeView(LanguageSwitchButton button, AppLocalizationService localization, ImageLoader imageLoader) {
-        super(Fridgely.mainAppScreen);
         this.langButton = button;
         this.localizationService = localization;
         this.imageLoader = imageLoader;
 
+        Fridgely.mainAppScreen.setFullScreenWindow(frame);
+
         initializeComponents();
         setupLayout();
-        getFrame().setContentPane(mainPanel);
+        frame.setContentPane(mainPanel);
     }
 
     /**
@@ -81,8 +87,6 @@ public class ChooseGameModeView extends BaseView implements LocalizationObserver
         multiplayerPanel = new JPanel();
         multiplayerImageLabel = createImageLabel(MULTIPLAYER_IMAGE, 250, 200);
         multiplayerTextLabel = new JLabel();
-
-        super.getFrame().setContentPane(mainPanel);
     }
 
     /**
@@ -221,6 +225,20 @@ public class ChooseGameModeView extends BaseView implements LocalizationObserver
         titleLabel.setText(localizationService.get(KEY_TITLE));
         singlePlayerTextLabel.setText(localizationService.get(KEY_SINGLE_PLAYER));
         multiplayerTextLabel.setText(localizationService.get(KEY_MULTIPLAYER));
+        singlePlayerImageLabel.setToolTipText(localizationService.get(KEY_SINGLE_PLAYER_TOOLTIP));
+        multiplayerImageLabel.setToolTipText(localizationService.get(KEY_MULTIPLAYER_TOOLTIP));
         langButton.setText(localizationService.get(KEY_LANG_BUTTON));
+    }
+
+    public JFrame getFrame() {
+        return frame;
+    }
+
+    public void setVisible(boolean visible) {
+        frame.setVisible(visible);
+    }
+
+    public void dispose() {
+        frame.dispose();
     }
 }
