@@ -1,6 +1,7 @@
 package ch.primeo.fridgely.view;
 
 import ch.primeo.fridgely.Constants;
+import ch.primeo.fridgely.Fridgely;
 import ch.primeo.fridgely.util.ImageLoader;
 import ch.primeo.fridgely.view.component.LanguageSwitchButton;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
@@ -55,15 +56,14 @@ public class ChooseGameModeView extends BaseView implements LocalizationObserver
      * @param localization the localization service for text updates
      */
     public ChooseGameModeView(LanguageSwitchButton button, AppLocalizationService localization, ImageLoader imageLoader) {
+        super(Fridgely.mainAppScreen);
         this.langButton = button;
         this.localizationService = localization;
         this.imageLoader = imageLoader;
 
         initializeComponents();
         setupLayout();
-
-        onLocaleChanged();
-        localizationService.subscribe(this);
+        getFrame().setContentPane(mainPanel);
     }
 
     /**
