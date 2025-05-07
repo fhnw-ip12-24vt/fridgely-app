@@ -131,6 +131,8 @@
 					<excludes>
 						<!-- Exclude views package from coverage reporting -->
 						<exclude>ch/primeo/fridgely/view/**</exclude>
+						<!-- Exclude generated QueryDSL Q classes -->
+						<exclude>**/Q*.class</exclude>
 					</excludes>
 				</configuration>
 				<reportSets>
@@ -208,6 +210,8 @@
 					<excludes>
 						<!-- Exclude views package from coverage reporting -->
 						<exclude>ch/primeo/fridgely/view/**</exclude>
+						<!-- Exclude generated QueryDSL Q classes -->
+						<exclude>**/Q*.class</exclude>
 					</excludes>
 				</configuration>
 				<executions>
