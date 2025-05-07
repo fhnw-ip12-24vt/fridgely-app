@@ -1,5 +1,6 @@
 package ch.primeo.fridgely.controller;
 
+import ch.primeo.fridgely.Fridgely;
 import ch.primeo.fridgely.gamelaunchers.MultiplayerGameLauncher;
 import ch.primeo.fridgely.model.GameMode;
 import ch.primeo.fridgely.model.PenguinFacialExpression;
@@ -51,8 +52,6 @@ public class ChooseGameModeController implements BaseController {
 
         this.view = new ChooseGameModeView(languageSwitchButton, this.localizationService, imageLoader);
 
-        localizationService.subscribe(this::updateUIText);
-
         view.getFrame().addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -65,6 +64,8 @@ public class ChooseGameModeController implements BaseController {
 
         setupClickableBehavior(view.getMultiplayerImageLabel(), "gamemode.multiplayer.tooltip",
                 () -> selectGameMode(GameMode.Multiplayer));
+
+        localizationService.subscribe(this::updateUIText);
 
         updateUIText();
 
