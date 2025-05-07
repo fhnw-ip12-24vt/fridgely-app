@@ -63,6 +63,7 @@ public class MultiplayerGameLauncher {
             scannedItemsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             scannedItemsFrame.setUndecorated(true); // Remove window decorations
 
+
             // Add window listener to dispose both frames together
             gameFrame.addWindowListener(new java.awt.event.WindowAdapter() {
                 @Override
@@ -81,9 +82,17 @@ public class MultiplayerGameLauncher {
                 }
             });
 
-            // Position and display frames on their respective screens
-            Fridgely.mainAppScreen.setFullScreenWindow(gameFrame);
-            Fridgely.scannedItemsScreen.setFullScreenWindow(scannedItemsFrame);
+            if(!Fridgely.isSingleDisplay){
+                // Position and display frames on their respective screens
+                Fridgely.mainAppScreen.setFullScreenWindow(gameFrame);
+                Fridgely.scannedItemsScreen.setFullScreenWindow(scannedItemsFrame);
+            } else {
+                var screenBounds = Fridgely.mainAppScreen.getDefaultConfiguration().getBounds();
+
+                for (JFrame frame : new JFrame[]{gameFrame, scannedItemsFrame}) {
+                    frame.setBounds(screenBounds);
+                }
+            }
 
             // Create the scanned items view
             new ScannedItemsView(gameController, localizationService, scannedItemsFrame, imageLoader);
