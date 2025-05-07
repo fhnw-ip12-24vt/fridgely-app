@@ -1,5 +1,6 @@
 package ch.primeo.fridgely.view.util;
 
+import ch.primeo.fridgely.Fridgely;
 import ch.primeo.fridgely.model.PenguinFacialExpression;
 import ch.primeo.fridgely.model.PenguinHPState;
 import ch.primeo.fridgely.util.ImageLoader;
@@ -73,6 +74,9 @@ public class DialogBox extends JPanel {
         this.frame = new JFrame();
         this.frame.setUndecorated(true);
         this.frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+
+        Fridgely.mainAppScreen.setFullScreenWindow(this.frame);
+
         this.frame.setVisible(true);
 
         this.messages = new ArrayList<>(msgs);
