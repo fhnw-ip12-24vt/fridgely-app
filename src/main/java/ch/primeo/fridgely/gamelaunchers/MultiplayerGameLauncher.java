@@ -1,5 +1,6 @@
 package ch.primeo.fridgely.gamelaunchers;
 
+import ch.primeo.fridgely.Fridgely;
 import ch.primeo.fridgely.util.ImageLoader;
 import ch.primeo.fridgely.view.ScannedItemsView;
 import ch.primeo.fridgely.view.multiplayer.MultiplayerGameView;
@@ -49,20 +50,18 @@ public class MultiplayerGameLauncher {
             MultiplayerGameController gameController = new MultiplayerGameController(productRepository,
                     recipeRepository);
 
-            // Create the main game frame fullscreen and undecorated
+            // Create the main game frame
             JFrame gameFrame = new JFrame("Fridgely - Multiplayer Game");
             gameFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             gameFrame.setUndecorated(true); // Remove window decorations
-            gameFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); // Fullscreen
 
             // Create the game view
             new MultiplayerGameView(gameController, localizationService, gameFrame, imageLoader);
 
-            // Create a second frame for displaying scanned items - also fullscreen and undecorated
+            // Create a second frame for displaying scanned items
             JFrame scannedItemsFrame = new JFrame("Fridgely - Scanned Items");
             scannedItemsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             scannedItemsFrame.setUndecorated(true); // Remove window decorations
-            scannedItemsFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); // Fullscreen
 
             // Add window listener to dispose both frames together
             gameFrame.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -72,7 +71,7 @@ public class MultiplayerGameLauncher {
                 }
             });
 
-            // Add keyboard escape key listener to exit fullscreen mode
+            // Add escape key to close game frame
             gameFrame.getRootPane().getInputMap()
                     .put(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0), "escape");
             gameFrame.getRootPane().getActionMap().put("escape", new javax.swing.AbstractAction() {
@@ -81,6 +80,10 @@ public class MultiplayerGameLauncher {
                     gameFrame.dispose();
                 }
             });
+
+            // Position and display frames on their respective screens
+            Fridgely.mainAppScreen.setFullScreenWindow(gameFrame);
+            Fridgely.scannedItemsScreen.setFullScreenWindow(scannedItemsFrame);
 
             // Create the scanned items view
             new ScannedItemsView(gameController, localizationService, scannedItemsFrame, imageLoader);
