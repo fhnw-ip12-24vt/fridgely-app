@@ -115,7 +115,7 @@ public class ChooseGameModeView implements LocalizationObserver {
         setupGameModePanel(multiplayerPanel, multiplayerImageLabel, multiplayerTextLabel);
 
         gameModePanel.add(singlePlayerPanel);
-        gameModePanel.add(Box.createRigidArea(new Dimension(200, 0)));
+        gameModePanel.add(Box.createRigidArea(new Dimension(50, 0)));
         gameModePanel.add(multiplayerPanel);
         gameModePanel.add(Box.createHorizontalGlue());
 
