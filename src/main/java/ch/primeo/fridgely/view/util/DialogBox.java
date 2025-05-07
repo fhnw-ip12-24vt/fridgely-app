@@ -20,7 +20,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -50,7 +49,7 @@ public class DialogBox extends JPanel {
 
     private static final int ARROW_ANIMATION_DELAY = 500; // milliseconds
     private static final int DIALOG_PADDING = 20;
-    private static final int PENGUIN_SIZE = 150;
+    private static final int PENGUIN_SIZE = 70;
     private static final int HP_IMAGE_SIZE = 600; // New constant for HP image size
 
     // Font size for dialog text - easily changeable
@@ -73,9 +72,8 @@ public class DialogBox extends JPanel {
 
         this.frame = new JFrame();
         this.frame.setUndecorated(true);
-        this.frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
-        Fridgely.mainAppScreen.setFullScreenWindow(this.frame);
+        Fridgely.mainAppScreen.setFullScreenWindow(frame);
 
         this.frame.setVisible(true);
 
@@ -84,7 +82,6 @@ public class DialogBox extends JPanel {
         this.penguinHPState = state;
         this.onCompleteCallback = callback;
 
-        setLayout(null); // Use absolute positioning
         setOpaque(false);
 
         // Load images
@@ -154,7 +151,7 @@ public class DialogBox extends JPanel {
         if (currentMessageIndex < messages.size()) {
             String text = messages.get(currentMessageIndex);
             // Wrap the text to fit dialog width by using HTML
-            messageLabel.setText("<html><body style='width: 700px'>" + text + "</body></html>");
+            messageLabel.setText("<html><body style='width:100%'>" + text + "</body></html>");
         }
     }
 
@@ -216,9 +213,7 @@ public class DialogBox extends JPanel {
 
         // Draw HP image if available
         if (penguinHPImage != null) {
-            // Get the frame dimensions for proper centering
-            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-            int frameWidth = screenSize.width;
+            int frameWidth = this.frame.getWidth();
 
             // Calculate position to center the HP image in the frame
             int hpXPosition = (frameWidth - penguinHPImage.getWidth()) / 2;
@@ -236,9 +231,7 @@ public class DialogBox extends JPanel {
      */
     @Override
     public Dimension getPreferredSize() {
-        // Full width, reasonable height for dialog
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        return new Dimension(screenSize.width - 100, 200);
+        return new Dimension(this.frame.getWidth() - 100, 200);
     }
 
     /**
@@ -259,7 +252,7 @@ public class DialogBox extends JPanel {
         messageLabel.setBounds(
                 penguinAreaWidth + horizontalPadding,
                 verticalPadding,
-                width - penguinAreaWidth - (horizontalPadding * 2) - 80, // Leave more space on the right for the arrow
+                Math.max((int)(width - penguinAreaWidth - (horizontalPadding * 2) - Math.max(40, width * 0.05)), 100), // Slightly wider, responsive
                 height - (verticalPadding * 2)
         );
     }
@@ -286,11 +279,12 @@ public class DialogBox extends JPanel {
         glassPane.setLayout(null);
 
         // Add the dialog to the glass pane, positioned at the bottom
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int dialogWidth = screenSize.width - 100;
+        // Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); // OLD
+        Dimension frameSize = this.frame.getSize(); // NEW: Use the actual frame's size
+        int dialogWidth = frameSize.width - 100;
         int dialogHeight = 200;
         int xPos = 50; // 50px from left
-        int yPos = screenSize.height - dialogHeight - 100; // 100px from bottom
+        int yPos = frameSize.height - dialogHeight - 100; // 100px from bottom
 
         setBounds(xPos, yPos, dialogWidth, dialogHeight);
         glassPane.add(this);
@@ -310,7 +304,7 @@ public class DialogBox extends JPanel {
             g2d.dispose();
 
             JLabel hpLabel = new JLabel(new ImageIcon(scaledHPImage));
-            int hpX = (screenSize.width - scaledWidth) / 2;
+            int hpX = (frameSize.width - scaledWidth) / 2; // NEW: Use frameSize
             int hpY = yPos - scaledHeight - 20; // Position above the dialog with some padding
             hpLabel.setBounds(hpX, hpY, scaledWidth, scaledHeight);
             hpLabel.setOpaque(false);
