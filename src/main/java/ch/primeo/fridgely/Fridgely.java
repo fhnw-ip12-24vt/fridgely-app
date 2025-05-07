@@ -15,6 +15,7 @@ public class Fridgely {
     private static final Logger LOGGER = Logger.getLogger(Fridgely.class.getName());
     public static GraphicsDevice mainAppScreen;
     public static GraphicsDevice scannedItemsScreen;
+    public static boolean isSingleDisplay = false;
 
     public static void main(String[] args) throws InterruptedException {    
         detectScreens();
@@ -69,6 +70,7 @@ public class Fridgely {
                 }
                 if (scannedItemsScreen == null) {
                     scannedItemsScreen = mainAppScreen;
+                    isSingleDisplay = true;
                     LOGGER.warning("Scanned items screen will use the main app screen as target.");
                 }
             }
