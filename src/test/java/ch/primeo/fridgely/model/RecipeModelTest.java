@@ -25,6 +25,55 @@ class RecipeModelTest {
     }
 
     @Test
+    void testDefaultConstructor() {
+        // Act
+        Product product = new Product();
+
+        // Assert
+        assertNotNull(product);
+        assertNull(product.getBarcode());
+        assertNull(product.getName());
+        assertNull(product.getNameDE());
+        assertNull(product.getNameFR());
+        assertNull(product.getDescription());
+        assertNull(product.getDescriptionDE());
+        assertNull(product.getDescriptionFR());
+        assertFalse(product.isDefaultProduct());
+        assertFalse(product.isBio());
+        assertFalse(product.isLocal());
+    }
+
+    @Test
+    void testFullConstructor() {
+        // Arrange
+        String barcode = "123456789";
+        String nameE = "Apple";
+        String nameD = "Apfel";
+        String nameF = "Pomme";
+        String descriptionE = "A sweet apple";
+        String descriptionD = "Ein süßer Apfel";
+        String descriptionF = "Une pomme sucrée";
+        boolean defaultProduct = true;
+        boolean bio = true;
+        boolean local = false;
+
+        // Act
+        Product product = new Product(barcode, nameE, nameD, nameF, descriptionE, descriptionD, descriptionF, defaultProduct, bio, local);
+
+        // Assert
+        assertEquals(barcode, product.getBarcode());
+        assertEquals(nameE, product.getName());
+        assertEquals(nameD, product.getNameDE());
+        assertEquals(nameF, product.getNameFR());
+        assertEquals(descriptionE, product.getDescription());
+        assertEquals(descriptionD, product.getDescriptionDE());
+        assertEquals(descriptionF, product.getDescriptionFR());
+        assertTrue(product.isDefaultProduct());
+        assertTrue(product.isBio());
+        assertFalse(product.isLocal());
+    }
+
+    @Test
     void testLoadAvailableRecipes_Success() {
         // Arrange
         List<RecipeRepository.RecipeDTO> recipeDTOs = List.of(new RecipeRepository.RecipeDTO(1, "Test", "Test", 0 ,0, new ArrayList<>()));
