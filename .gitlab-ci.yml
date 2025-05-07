@@ -4,34 +4,31 @@ stages:
   - validate
   - test
   - package
-  - site
   - deploy
+  - site
   - pages
 
 variables:
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true"
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
 
-# Cache downloaded dependencies and plugins between builds
 cache:
   key:
     files:
-      - pom.xml # Invalidate cache only when pom.xml changes
+      - pom.xml
   paths:
     - .m2/repository
-  policy: pull-push # Explicitly set the policy (optional, default is pull-push)
+  policy: pull-push
 
 validate:
   stage: validate
   script:
     - mvn $MAVEN_CLI_OPTS validate
-  allow_failure: false
 
 test:
   stage: test
   script:
     - mvn $MAVEN_CLI_OPTS test
-  allow_failure: false
   artifacts:
     reports:
       junit:
@@ -41,6 +38,7 @@ package:
   stage: package
   script:
     - mvn $MAVEN_CLI_OPTS package -DskipTests
+    - ls -lh target/
   artifacts:
     paths:
       - target/*.jar
@@ -57,7 +55,6 @@ site:
   only:
     - main
 
-# GitLab Pages job to deploy the Maven site
 pages:
   stage: pages
   dependencies:
@@ -75,23 +72,24 @@ pages:
 deploy:
   stage: deploy
   image: registry.gitlab.com/gitlab-org/release-cli:latest
-  script:
-    - echo "Creating release with JAR file from the package stage"
   dependencies:
     - package
-    - test
-    - site
+  script:
+    - echo "Looking for JAR file..."
+    - JAR_PATH=$(find target -name 'fridgely-*.jar' | head -n1)
+    - if [ -z "$JAR_PATH" ]; then echo "❌ JAR file not found!"; exit 1; fi
+    - cp "$JAR_PATH" fridgely-latest.jar
+    - echo "✅ JAR copied to fridgely-latest.jar"
+    - |
+      release-cli create \
+        --name "Release v$CI_PIPELINE_IID" \
+        --tag-name "v$CI_PIPELINE_IID" \
+        --description "Release from Pipeline $CI_PIPELINE_IID - All tests and checks passed" \
+        --assets-link '[{"name": "Fridgely JAR", "url": "'$CI_PROJECT_URL'/-/jobs/'$CI_JOB_ID'/artifacts/raw/fridgely-latest.jar"}]'
   artifacts:
     paths:
-      - target/*-fat.jar
-    expire_in: 1 month
-  release:
-    tag_name: 'v$CI_PIPELINE_IID'
-    description: 'Release from Pipeline $CI_PIPELINE_IID - All tests and checks passed'
-    assets:
-      links:
-        - name: 'FridgelyAppV3-$CI_PIPELINE_IID.jar'
-          url: '${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/raw/target/FridgelyAppV3-1.0-SNAPSHOT-fat.jar'
+      - fridgely-latest.jar
+    expire_in: 1 week
   only:
     - main
   when: on_success

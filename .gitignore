@@ -31,7 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
-
-fridgely.db
 .DS_Store
 dependency-reduced-pom.xml
+fridgely.db

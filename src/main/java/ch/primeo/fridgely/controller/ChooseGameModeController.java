@@ -57,8 +57,6 @@ public class ChooseGameModeController implements BaseController {
 
         this.view = new ChooseGameModeView(languageSwitchButton, this.localizationService, imageLoader);
 
-        localizationService.subscribe(this::updateUIText);
-
         view.getFrame().addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -72,23 +70,11 @@ public class ChooseGameModeController implements BaseController {
         setupClickableBehavior(view.getMultiplayerImageLabel(), "gamemode.multiplayer.tooltip",
                 () -> selectGameMode(GameMode.Multiplayer));
 
-        updateUIText();
+        localizationService.subscribe(view);
+
+        view.onLocaleChanged();
 
         this.view.setVisible(true);
-    }
-
-    /**
-     * Updates the UI text to match the current language.
-     */
-    public void updateUIText() {
-        view.getTitleLabel().setText(localizationService.get("gamemode.title"));
-        view.getSinglePlayerTextLabel().setText(localizationService.get("gamemode.singleplayer"));
-        view.getMultiplayerTextLabel().setText(localizationService.get("gamemode.multiplayer"));
-        view.getSinglePlayerImageLabel().setToolTipText(localizationService
-                .get("gamemode.singleplayer.tooltip"));
-        view.getMultiplayerImageLabel().setToolTipText(localizationService
-                .get("gamemode.multiplayer.tooltip"));
-        view.getLangButton().setText(localizationService.get("home.button.lang"));
     }
 
     /**
@@ -187,7 +173,7 @@ public class ChooseGameModeController implements BaseController {
      */
     public void dispose() {
         // Perform any necessary cleanup here
-        localizationService.unsubscribe(this::updateUIText);
+        localizationService.unsubscribe(view);
         view.dispose();
     }
 }

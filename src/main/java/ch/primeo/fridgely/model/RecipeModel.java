@@ -46,7 +46,7 @@ public class RecipeModel {
       /**
      * Loads available recipes from the repository.
      */
-    private void loadAvailableRecipes() {
+      void loadAvailableRecipes() {
         List<Recipe> oldRecipes = new ArrayList<>(availableRecipes);
         availableRecipes.clear();
         
