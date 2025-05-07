@@ -4,6 +4,7 @@ import ch.primeo.fridgely.config.GameConfig;
 import ch.primeo.fridgely.model.FridgeStockModel;
 import ch.primeo.fridgely.model.PenguinModel;
 import ch.primeo.fridgely.model.Product;
+import ch.primeo.fridgely.model.RecipeModel;
 import ch.primeo.fridgely.model.multiplayer.MultiplayerGameStateModel;
 import ch.primeo.fridgely.service.ProductRepository;
 
@@ -15,8 +16,9 @@ public class MultiplayerPlayer1Controller {
 
     private final FridgeStockModel fridgeStockModel;
     private final MultiplayerGameStateModel gameStateModel;
-    private final PenguinModel penguinModel;
     private final ProductRepository productRepository;
+    private final PenguinModel penguinModel;
+    private final RecipeModel recipeModel;
 
     /**
      * Constructs a new Player 1 controller.
@@ -27,11 +29,12 @@ public class MultiplayerPlayer1Controller {
      * @param productRepo the repository for accessing products
      */
     public MultiplayerPlayer1Controller(FridgeStockModel stockModel, MultiplayerGameStateModel stateModel,
-            PenguinModel penguModel, ProductRepository productRepo) {
+            PenguinModel penguModel, ProductRepository productRepo, RecipeModel recipeModel) {
         this.fridgeStockModel = stockModel;
         this.gameStateModel = stateModel;
         this.penguinModel = penguModel;
         this.productRepository = productRepo;
+        this.recipeModel = recipeModel;
     }
 
     /**
@@ -159,6 +162,8 @@ public class MultiplayerPlayer1Controller {
         if (fridgeStockModel.getProductCount() < GameConfig.MIN_PRODUCTS_PER_ROUND) {
             return;
         }
+
+        this.recipeModel.loadAvailableRecipes(fridgeStockModel.getProducts());
 
         // Switch to player 2's turn
         gameStateModel.nextPlayer();
