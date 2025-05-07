@@ -1,6 +1,5 @@
 package ch.primeo.fridgely.model;
 
-//import ch.primeo.fridgely.model.RecipeIngredient; // Not needed anymore
 import ch.primeo.fridgely.service.RecipeRepository;
 
 import java.beans.PropertyChangeListener;
@@ -30,34 +29,36 @@ public class RecipeModel {
     private Recipe selectedRecipe;
     private final RecipeRepository recipeRepository;
     private final PropertyChangeSupport propertyChangeSupport;
-    
+
     /**
      * Constructs a new recipe model.
      * 
      * @param recipeRepo the repository for accessing recipes
      */
-    public RecipeModel(RecipeRepository recipeRepo) {
+    public RecipeModel(RecipeRepository recipeRepo, List<Product> availableProducts) {
         this.recipeRepository = recipeRepo;
         this.availableRecipes = new ArrayList<>();
         this.propertyChangeSupport = new PropertyChangeSupport(this);
-        loadAvailableRecipes();
+        loadAvailableRecipes(availableProducts);
     }
       /**
      * Loads available recipes from the repository.
+     * Only includes recipes for which the user has at least one ingredient.
      */
-      void loadAvailableRecipes() {
+      public void loadAvailableRecipes(List<Product> availableProducts) {
         List<Recipe> oldRecipes = new ArrayList<>(availableRecipes);
         availableRecipes.clear();
         
         try {
-            // Directly get recipes using the repository's methods
+            // Get all recipes from repository
+            List<Recipe> allRecipes = new ArrayList<>();
             List<RecipeRepository.RecipeDTO> recipeDTOs = recipeRepository.getAllRecipes();
             
             // Convert DTOs to Recipe objects
             if (recipeDTOs != null && !recipeDTOs.isEmpty()) {
                 for (RecipeRepository.RecipeDTO dto : recipeDTOs) {
                     try {
-                        recipeRepository.findById(dto.getRecipeId()).ifPresent(availableRecipes::add);
+                        recipeRepository.findById(dto.getRecipeId()).ifPresent(allRecipes::add);
                     } catch (Exception e) {
                         System.err.println("Error processing recipe ID " + dto.getRecipeId() + ": " + e.getMessage());
                     }
@@ -65,9 +66,16 @@ public class RecipeModel {
             }
             
             // If no recipes were loaded, try direct entity query as fallback
-            if (availableRecipes.isEmpty()) {
+            /*if (availableRecipes.isEmpty()) {
                 System.out.println("Attempting to load recipes directly from JPA repository...");
                 availableRecipes.addAll(recipeRepository.getAllRecipesEntities());
+            }*/
+            
+            // Filter recipes to only include those with at least one matching ingredient
+            for (Recipe recipe : allRecipes) {
+                if (getMatchingIngredientsCount(recipe, availableProducts) > 0) {
+                    availableRecipes.add(recipe);
+                }
             }
             
         } catch (Exception e) {
@@ -82,7 +90,7 @@ public class RecipeModel {
             availableRecipes.add(dummyRecipe);
         }
         
-        System.out.println("Loaded " + availableRecipes.size() + " recipes");
+        System.out.println("Loaded " + availableRecipes.size() + " recipes with at least one matching ingredient");
         propertyChangeSupport.firePropertyChange(PROP_AVAILABLE_RECIPES, oldRecipes, new ArrayList<>(availableRecipes));
     }
     
@@ -179,21 +187,14 @@ public class RecipeModel {
         
         // Get the ingredient barcodes for the recipe
         List<String> ingredientBarcodes = getRecipeIngredientBarcodes(recipe);
-        
-        // Create a set of product barcodes for quick lookup
-        Map<String, Product> productMap = new HashMap<>();
-        for (Product product : products) {
-            productMap.put(product.getBarcode(), product);
-        }
-        
-        // Count matching ingredients
+
         int count = 0;
-        for (String barcode : ingredientBarcodes) {
-            if (productMap.containsKey(barcode)) {
+
+        for(var product : products) {
+            if(ingredientBarcodes.contains(product.getBarcode()))
                 count++;
-            }
         }
-        
+
         return count;
     }
     
