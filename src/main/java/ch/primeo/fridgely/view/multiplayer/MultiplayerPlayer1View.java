@@ -259,7 +259,7 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
         }
 
         // Update the min products label
-        int currentCount = fridgeStockModel.getProductCount();
+        int currentCount = fridgeStockModel.getProducts().size();
         if (currentCount < GameConfig.MIN_PRODUCTS_PER_ROUND) {
             minProductsLabel.setText(String.format(localizationService.get(KEY_MIN_PRODUCTS_REMAINING_FMT),
                     GameConfig.MIN_PRODUCTS_PER_ROUND - currentCount, currentCount, GameConfig.MIN_PRODUCTS_PER_ROUND));

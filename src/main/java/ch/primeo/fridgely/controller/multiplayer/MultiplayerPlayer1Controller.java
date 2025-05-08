@@ -18,20 +18,25 @@ public class MultiplayerPlayer1Controller {
     private final PenguinModel penguinModel;
     private final ProductRepository productRepository;
 
+    private int roundScannedItems;
+    private int roundScore;
+
     /**
      * Constructs a new Player 1 controller.
      *
      * @param stockModel  the model for the fridge stock
      * @param stateModel  the model for the game state
-     * @param penguModel  the model for the penguin HP
+     * @param penguinModel  the model for the penguin HP
      * @param productRepo the repository for accessing products
      */
     public MultiplayerPlayer1Controller(FridgeStockModel stockModel, MultiplayerGameStateModel stateModel,
-            PenguinModel penguModel, ProductRepository productRepo) {
+            PenguinModel penguinModel, ProductRepository productRepo) {
         this.fridgeStockModel = stockModel;
         this.gameStateModel = stateModel;
-        this.penguinModel = penguModel;
+        this.penguinModel = penguinModel;
         this.productRepository = productRepo;
+        roundScannedItems = 0;
+        roundScore = 0;
     }
 
     /**
@@ -50,16 +55,9 @@ public class MultiplayerPlayer1Controller {
 
         // Look up the product
         Product product = productRepository.getProductByBarcode(barcode);
-        if (product == null) {
-            return null;
-        }
 
-        // Toggle the product: if it's in the fridge stock, remove it; otherwise, add it
-        if (fridgeStockModel.getProducts().contains(product)) {
-            // Product is in the stock, so remove it
-            removeProduct(product);
-            return product;
-        } else {
+        // If product not in the fridge stock, add it; otherwise ignore
+        if (product != null && !fridgeStockModel.getProducts().contains(product)) {
             // Product is not in the stock, so add it
             boolean added = fridgeStockModel.addProduct(product);
             if (!added) {
@@ -75,36 +73,7 @@ public class MultiplayerPlayer1Controller {
 
             return product;
         }
-    }
-
-    /**
-     * Removes a product from the fridge stock.
-     *
-     * @param product the product to remove
-     */
-    public void removeProduct(Product product) {
-        // Check if it's player 1's turn
-        if (gameStateModel.getCurrentPlayer() != MultiplayerGameStateModel.Player.PLAYER1) {
-            return;
-        }
-
-        // Remove the product
-        boolean removed = fridgeStockModel.removeProduct(product);
-        if (!removed) {
-            return;
-        }
-
-        // Subtract the score
-        int score = -calculateProductScore(product);
-        gameStateModel.addPlayer1Score(score);
-
-        // Reverse the penguin HP change
-        if (product.isBio() || product.isLocal()) {
-            penguinModel.modifyHP(-GameConfig.HP_INCREASE);
-        } else {
-            penguinModel.modifyHP(-GameConfig.HP_DECREASE); // Double negative becomes positive
-        }
-
+        return null;
     }
 
     /**
@@ -130,6 +99,22 @@ public class MultiplayerPlayer1Controller {
         }
 
         return score;
+    }
+
+    private int calculateRoundScore() {
+        double roundHelper = roundScore < 0 ? -0.5 : 0.5;
+        int sum = (int) ((double) (roundScore / roundScannedItems) + roundHelper);
+
+        int maxScore = GameConfig.SCORE_BIO + GameConfig.SCORE_LOCAL + GameConfig.SCORE_LOW_CO2;
+        int minScore = GameConfig.SCORE_NON_BIO + GameConfig.SCORE_NON_LOCAL + GameConfig.SCORE_HIGH_CO2;
+
+        if (sum < 0) {
+            sum = (int) ((double) sum / minScore * GameConfig.SCORE_PLAYER1_DECREASE + roundHelper);
+        } else  {
+            sum = (int) ((double) sum / maxScore * GameConfig.SCORE_PLAYER1_INCREASE + roundHelper);
+        }
+
+        return sum;
     }
 
     /**
@@ -162,6 +147,10 @@ public class MultiplayerPlayer1Controller {
 
         // Switch to player 2's turn
         gameStateModel.nextPlayer();
+
+        //reset for next round
+        roundScore = 0;
+        roundScannedItems = 0;
     }
 
     /**
