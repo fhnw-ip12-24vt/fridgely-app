@@ -109,8 +109,26 @@ public class Product {
         this.nameFR = nameF;
     }
 
-    public String getDescription() {
+    public String getDescription(){
         return description;
+    }
+
+    public String getExplanationKey() {
+        String key = "product.";
+        if(isBio) key = key + "bio.";
+        else key = key + "non_bio.";
+
+        if(isLocal) key = key + "local.";
+        else key = key + "foreign.";
+
+        switch(description){
+            case "meat" -> key = key + "meat";
+            case "water_intensive" -> key = key + "water_intensive";
+            case "coffee_belt" -> key = key + "coffee_belt";
+            default -> key = key + (isLowCo2 ? "lowCO2" : "highCO2");
+        }
+
+        return key;
     }
 
     public void setDescription(String descriptionE) {
