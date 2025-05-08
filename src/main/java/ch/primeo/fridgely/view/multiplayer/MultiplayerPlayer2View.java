@@ -66,7 +66,7 @@ public class MultiplayerPlayer2View extends JPanel implements PropertyChangeList
         onLocaleChanged();
 
         // Update the recipe list on startup
-        updateRecipeList();
+        //updateRecipeList();
         updateComponentStates();
     }
 
@@ -142,7 +142,7 @@ public class MultiplayerPlayer2View extends JPanel implements PropertyChangeList
     /**
      * Updates the recipe list with the current recipes from the model.
      */
-    private void updateRecipeList() {
+    void updateRecipeList() {
         unifiedRecipePanel.updateRecipeList();
     }
 
@@ -189,9 +189,9 @@ public class MultiplayerPlayer2View extends JPanel implements PropertyChangeList
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getSource() instanceof MultiplayerGameStateModel) {
             updateComponentStates();
-        } else if (evt.getSource() instanceof RecipeModel && RecipeModel.PROP_AVAILABLE_RECIPES.equals(
-                evt.getPropertyName())) {
-            updateRecipeList();
+//        } else if (evt.getSource() instanceof RecipeModel && RecipeModel.PROP_AVAILABLE_RECIPES.equals(
+//                evt.getPropertyName())) {
+//            updateRecipeList();
         } else if (evt.getSource() instanceof RecipeModel && RecipeModel.PROP_SELECTED_RECIPE.equals(
                 evt.getPropertyName())) {
             updateComponentStates();
