@@ -9,6 +9,7 @@ import ch.primeo.fridgely.util.ImageLoader;
 import ch.primeo.fridgely.view.ChooseGameModeView;
 import ch.primeo.fridgely.view.component.LanguageSwitchButton;
 import ch.primeo.fridgely.view.util.DialogBox;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -39,6 +40,7 @@ public class ChooseGameModeController implements BaseController {
      * @param languageSwitchButton the button for switching languages
      * @param launcher the launcher for multiplayer game mode
      */
+    @Autowired
     public ChooseGameModeController(
             AppLocalizationService localization,
             LanguageSwitchButton languageSwitchButton,
@@ -49,7 +51,13 @@ public class ChooseGameModeController implements BaseController {
         this.multiplayerGameLauncher = launcher;
         this.imageLoader = imageLoader;
 
-        this.view = new ChooseGameModeView(languageSwitchButton, this.localizationService, imageLoader);
+        this.view = createView(languageSwitchButton);
+        this.view.getFrame().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                dispose(); // Cleanup
+            }
+        });
 
         view.getFrame().addWindowListener(new WindowAdapter() {
             @Override
@@ -58,11 +66,9 @@ public class ChooseGameModeController implements BaseController {
             }
         });
 
-        setupClickableBehavior(view.getSinglePlayerImageLabel(), "gamemode.singleplayer.tooltip",
-                () -> selectGameMode(GameMode.SinglePlayer));
+        setupClickableBehavior(view.getSinglePlayerImageLabel(), "gamemode.singleplayer.tooltip", () -> selectGameMode(GameMode.SinglePlayer));
 
-        setupClickableBehavior(view.getMultiplayerImageLabel(), "gamemode.multiplayer.tooltip",
-                () -> selectGameMode(GameMode.Multiplayer));
+        setupClickableBehavior(view.getMultiplayerImageLabel(), "gamemode.multiplayer.tooltip", () -> selectGameMode(GameMode.Multiplayer));
 
         localizationService.subscribe(view);
 
@@ -71,13 +77,76 @@ public class ChooseGameModeController implements BaseController {
         this.view.setVisible(true);
     }
 
+    protected ChooseGameModeController(
+            AppLocalizationService localization,
+            MultiplayerGameLauncher launcher,
+            ImageLoader imageLoader,
+            ChooseGameModeView view // test-only
+    ) {
+        this.localizationService = localization;
+        this.multiplayerGameLauncher = launcher;
+        this.imageLoader = imageLoader;
+        this.view = view;
+
+        this.view.getFrame().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                dispose();
+            }
+        });
+
+        localizationService.subscribe(view);
+        view.onLocaleChanged();
+        view.setVisible(true);
+    }
+
+    /**
+     * Creates the view. Extracted for testing.
+     * @return the created view
+     */
+    protected ChooseGameModeView createView() {
+        return new ChooseGameModeView(null, this.localizationService, imageLoader);
+    }
+
+    /**
+     * Creates the view with a language switch button. Extracted for testing.
+     * @param languageSwitchButton the button for switching languages
+     * @return the created view
+     */
+    protected ChooseGameModeView createView(LanguageSwitchButton languageSwitchButton) {
+        return new ChooseGameModeView(languageSwitchButton, this.localizationService, imageLoader);
+    }
+    
+    /**
+     * Creates a dialog box. Extracted for testing.
+     */
+    protected DialogBox createDialogBox(List<String> messages,
+                                      PenguinFacialExpression expression,
+                                      PenguinHPState state,
+                                      Runnable onComplete,
+                                      ImageLoader imageLoader) {
+        System.out.println("createDialogBox invoked with arguments: " +
+            "messages=" + messages + ", expression=" + expression +
+            ", state=" + state + ", onComplete=" + onComplete +
+            ", imageLoader=" + imageLoader);
+        System.out.println("Validating arguments for createDialogBox...");
+        if (messages == null || expression == null || state == null || onComplete == null || imageLoader == null) {
+            System.out.println("Validation failed: One or more arguments are null.");
+            throw new IllegalArgumentException("Arguments cannot be null");
+        }
+        return new DialogBox(messages, expression, state, onComplete, imageLoader);
+    }
+
     /**
      * Sets up click and tooltip behavior for a label.
      * @param label the JLabel to make clickable
      * @param tooltipKey the localization key for the tooltip
      * @param onClick the action to perform on click
      */
-    private void setupClickableBehavior(JLabel label, String tooltipKey, Runnable onClick) {
+    void setupClickableBehavior(JLabel label, String tooltipKey, Runnable onClick) {
+        if (label == null || tooltipKey == null || onClick == null) {
+            throw new IllegalArgumentException("Arguments cannot be null");
+        }
         label.setCursor(new Cursor(Cursor.HAND_CURSOR));
         label.setToolTipText(localizationService.get(tooltipKey));
         label.addMouseListener(new MouseAdapter() {
@@ -92,7 +161,7 @@ public class ChooseGameModeController implements BaseController {
      * Handles game mode selection and launches the appropriate tutorial or game.
      * @param mode the selected GameMode
      */
-    private void selectGameMode(GameMode mode) {
+    void selectGameMode(GameMode mode) {
         if (mode == GameMode.Multiplayer) {
             // Show tutorial dialog first, then start multiplayer game
             dispose();
@@ -107,7 +176,7 @@ public class ChooseGameModeController implements BaseController {
     /**
      * Shows the multiplayer tutorial dialog.
      */
-    private void showMultiplayerTutorial() {
+    void showMultiplayerTutorial() {
         // Tutorial messages explaining multiplayer game rules using localization
         List<String> tutorialMessages = Arrays.asList(
                 localizationService.get("tutorial.welcome"),
@@ -119,7 +188,7 @@ public class ChooseGameModeController implements BaseController {
         );
 
         // Show the tutorial dialog
-        new DialogBox(tutorialMessages,
+        createDialogBox(tutorialMessages,
                 PenguinFacialExpression.HAPPY,
                 PenguinHPState.OKAY,
                 this::startMultiplayerGame,
@@ -129,14 +198,14 @@ public class ChooseGameModeController implements BaseController {
     /**
      * Starts the multiplayer game after the tutorial.
      */
-    private void startMultiplayerGame() {
+    void startMultiplayerGame() {
         multiplayerGameLauncher.launchGame();
     }
 
     /**
      * Shows the single player tutorial dialog.
      */
-    private void showSinglePlayerTutorial() {
+    void showSinglePlayerTutorial() {
         // Tutorial messages explaining single player game rules using localization
         List<String> tutorialMessages = Arrays.asList(
                 localizationService.get("tutorial.welcome"),
@@ -148,7 +217,7 @@ public class ChooseGameModeController implements BaseController {
         // Important: Create the dialog before any game initialization
         // and block until it's explicitly completed by the user
         // Start game after dialog completion
-        new DialogBox(tutorialMessages,
+        createDialogBox(tutorialMessages,
                 PenguinFacialExpression.HAPPY,
                 PenguinHPState.OKAY,
                 this::startSinglePlayerGame,
@@ -158,7 +227,7 @@ public class ChooseGameModeController implements BaseController {
     /**
      * Starts the single player game after the tutorial.
      */
-    private void startSinglePlayerGame() {
+    void startSinglePlayerGame() {
         // TODO: Implement the logic to start the single player game
     }
 
