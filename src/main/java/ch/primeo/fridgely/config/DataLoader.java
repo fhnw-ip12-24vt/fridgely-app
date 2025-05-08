@@ -36,6 +36,7 @@ public class DataLoader implements CommandLineRunner {
             LOGGER.info("Data loaded successfully");
         } catch (Exception e) {
             LOGGER.error("Error loading initial data", e);
+            throw new RuntimeException("Error loading initial data", e);
         }
     }
 }
