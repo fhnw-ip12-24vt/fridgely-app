@@ -39,6 +39,8 @@ update-contributors:
         }' >> temp_readme.md
     - sed -i '/# Project Contributors/,$d' README.md # Remove old contributor data from README.md
     - cat temp_readme.md >> README.md # Append new contributor data to README.md
+    - git config --global user.email "ci-bot@ip12.ch" # Set a default email
+    - git config --global user.name "CI Bot" # Set a default username
     - git add README.md
     - git commit -m "Update contributors stats in README [skip ci]" # Commit with skip ci to prevent a recursive pipeline
     - git push
