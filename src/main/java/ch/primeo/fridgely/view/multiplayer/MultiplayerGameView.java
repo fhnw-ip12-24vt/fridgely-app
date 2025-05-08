@@ -234,9 +234,9 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
 
     @Override
     public void onLocaleChanged() {
-        penguinPanel.setBorder(BorderFactory.createTitledBorder(localizationService.get(KEY_PENGUIN_TITLE)));
-        scorePanel.setBorder(BorderFactory.createTitledBorder(localizationService.get(KEY_GAME_STATUS_TITLE)));
-        controlPanel.setBorder(BorderFactory.createTitledBorder(localizationService.get(KEY_CONTROLS_TITLE)));
+//        penguinPanel.setBorder(BorderFactory.createTitledBorder(localizationService.get(KEY_PENGUIN_TITLE)));
+//        scorePanel.setBorder(BorderFactory.createTitledBorder(localizationService.get(KEY_GAME_STATUS_TITLE)));
+//        controlPanel.setBorder(BorderFactory.createTitledBorder(localizationService.get(KEY_CONTROLS_TITLE)));
 
         newGameButton.setText(localizationService.get(KEY_NEW_GAME));
         exitButton.setText(localizationService.get(KEY_EXIT));

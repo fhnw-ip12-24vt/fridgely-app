@@ -15,7 +15,8 @@ CREATE TABLE Products (
     DescriptionFR TEXT,
     IsDefaultProduct BOOLEAN DEFAULT 0,
     IsBio BOOLEAN DEFAULT 0,
-    IsLocal BOOLEAN DEFAULT 0
+    IsLocal BOOLEAN DEFAULT 0,
+    IsLowCO2 BOOLEAN DEFAULT 0
 );
 
 -- Create Recipes table
