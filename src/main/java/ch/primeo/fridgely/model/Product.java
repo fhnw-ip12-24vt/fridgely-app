@@ -155,6 +155,10 @@ public class Product {
     }
 
     public String getProductImagePath() {
+        if (barcode == null) {
+            return "/ch/primeo/fridgely/productimages/notfound.png";
+        }
+
         return "/ch/primeo/fridgely/productimages/" + barcode + ".png";
     }
 
