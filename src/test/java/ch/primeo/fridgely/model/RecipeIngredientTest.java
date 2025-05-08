@@ -58,6 +58,7 @@ class RecipeIngredientTest {
         recipe.setRecipeId(1);
         Product product = new Product();
         product.setBarcode("123456789");
+        recipeIngredient.setId(42L);
         recipeIngredient.setRecipe(recipe);
         recipeIngredient.setProduct(product);
 
@@ -65,6 +66,57 @@ class RecipeIngredientTest {
         String actualString = recipeIngredient.toString();
 
         // Assert
-        assertEquals("RecipeIngredient{id=null, recipeId=1, productBarcode='123456789'}", actualString);
+        String expectedString = "RecipeIngredient{id=42, recipeId=1, productBarcode='123456789'}";
+        assertEquals(expectedString, actualString, "toString should correctly format the RecipeIngredient");
+    }
+
+    @Test
+    void testToStringWithNullRecipe() {
+        // Arrange
+        RecipeIngredient recipeIngredient = new RecipeIngredient();
+        Product product = new Product();
+        product.setBarcode("123456789");
+        recipeIngredient.setId(42L);
+        recipeIngredient.setProduct(product);
+        // recipe is null
+
+        // Act
+        String actualString = recipeIngredient.toString();
+
+        // Assert
+        String expectedString = "RecipeIngredient{id=42, recipeId=null, productBarcode='123456789'}";
+        assertEquals(expectedString, actualString, "toString should handle null recipe correctly");
+    }
+
+    @Test
+    void testToStringWithNullProduct() {
+        // Arrange
+        RecipeIngredient recipeIngredient = new RecipeIngredient();
+        Recipe recipe = new Recipe();
+        recipe.setRecipeId(1);
+        recipeIngredient.setId(42L);
+        recipeIngredient.setRecipe(recipe);
+        // product is null
+
+        // Act
+        String actualString = recipeIngredient.toString();
+
+        // Assert
+        String expectedString = "RecipeIngredient{id=42, recipeId=1, productBarcode='null'}";
+        assertEquals(expectedString, actualString, "toString should handle null product correctly");
+    }
+
+    @Test
+    void testToStringWithAllNulls() {
+        // Arrange
+        RecipeIngredient recipeIngredient = new RecipeIngredient();
+        // id, recipe, and product are all null
+
+        // Act
+        String actualString = recipeIngredient.toString();
+
+        // Assert
+        String expectedString = "RecipeIngredient{id=null, recipeId=null, productBarcode='null'}";
+        assertEquals(expectedString, actualString, "toString should handle all null values correctly");
     }
 }
