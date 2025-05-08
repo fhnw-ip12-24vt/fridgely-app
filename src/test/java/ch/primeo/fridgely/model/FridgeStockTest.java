@@ -4,7 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FridgeStockTest {
+/**
+ * Test class for the FridgeStock entity.
+ */
+public class FridgeStockTest {
 
     @Test
     void testGetAndSetBarcode() {
@@ -90,5 +93,38 @@ class FridgeStockTest {
 
         // Act & Assert
         assertNotEquals(fridgeStock1.hashCode(), fridgeStock2.hashCode());
+    }
+
+    @Test
+    void testEquals() {
+        // Create identical FridgeStock objects
+        FridgeStock stock1 = new FridgeStock("12345");
+        FridgeStock stock2 = new FridgeStock("12345");
+        FridgeStock stock3 = new FridgeStock("67890");
+
+        // Test equality with same object
+        assertTrue(stock1.equals(stock1), "An object should be equal to itself");
+
+        // Test equality with equivalent object
+        assertTrue(stock1.equals(stock2), "Objects with the same barcode should be equal");
+        assertTrue(stock2.equals(stock1), "Equality should be symmetric");
+
+        // Test inequality with different barcode
+        assertFalse(stock1.equals(stock3), "Objects with different barcodes should not be equal");
+
+        // Test inequality with null
+        assertFalse(stock1.equals(null), "Object should not be equal to null");
+
+        // Test inequality with different class
+        assertFalse(stock1.equals("12345"), "Object should not be equal to an instance of a different class");
+    }
+
+    @Test
+    void testHashCode() {
+        FridgeStock stock1 = new FridgeStock("12345");
+        FridgeStock stock2 = new FridgeStock("12345");
+
+        // Equal objects must have equal hash codes
+        assertEquals(stock1.hashCode(), stock2.hashCode(), "Equal objects must have equal hash codes");
     }
 }
