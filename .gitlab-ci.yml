@@ -1,12 +1,13 @@
-image: maven:3.9-eclipse-temurin-21
-
 stages:
+  - update-contributors
   - validate
   - test
   - package
   - deploy
   - site
   - pages
+
+image: maven:3.9-eclipse-temurin-21
 
 variables:
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true"
@@ -20,10 +21,40 @@ cache:
     - .m2/repository
   policy: pull-push
 
+# Update contributors in README.md
+update-contributors:
+  stage: update-contributors
+  script:
+    - echo "Generating detailed contributors list for README..."
+    - git fetch --all # Make sure we have the latest data
+    - >-
+      echo "# Project Contributors" > temp_readme.md
+      echo "The list below includes commit counts, additions, and deletions per contributor." >> temp_readme.md
+    - >-
+      # We fetch the contributions since the beginning of the repository (no --since flag)
+      git log --numstat --pretty="%an" | awk 'BEGIN { FS="\t" } 
+        { if (NF == 3) { add[$1]+=$1; del[$1]+=$2; commits[$1]++ } } 
+        END { for (user in commits) print user ": " commits[user] " commits, " add[user] " lines added, " del[user] " lines deleted" }' >> temp_readme.md
+    - sed -i '/# Project Contributors/,$d' README.md # Remove old contributor data from README.md
+    - cat temp_readme.md >> README.md # Append new contributor data to README.md
+    - git add README.md
+    - git commit -m "Update contributors stats in README [skip ci]" # Commit with skip ci to prevent a recursive pipeline
+    - git push
+  only:
+    - master  # Or your desired branch
+  rules:
+    - if: '$CI_COMMIT_MESSAGE !~ /skip ci/'
+    - if: '$CI_COMMIT_REF_NAME == "main"'
+
+# Other jobs:
 validate:
   stage: validate
   script:
     - mvn $MAVEN_CLI_OPTS validate
+  rules:
+    - changes:
+        - '**/*'
+    - when: always
 
 test:
   stage: test
@@ -33,6 +64,10 @@ test:
     reports:
       junit:
         - target/surefire-reports/TEST-*.xml
+  rules:
+    - changes:
+        - '**/*'  # Tracks any changes except README.md
+    - when: always
 
 package:
   stage: package
@@ -43,6 +78,10 @@ package:
     paths:
       - target/*.jar
     expire_in: 1 week
+  rules:
+    - changes:
+        - '**/*'
+    - when: always
 
 site:
   stage: site
@@ -54,6 +93,10 @@ site:
     expire_in: 1 week
   only:
     - main
+  rules:
+    - changes:
+        - '**/*'
+    - when: always
 
 pages:
   stage: pages
@@ -68,6 +111,10 @@ pages:
     expire_in: 1 week
   only:
     - main
+  rules:
+    - changes:
+        - '**/*'
+    - when: always
 
 deploy:
   stage: deploy
@@ -93,3 +140,7 @@ deploy:
   only:
     - main
   when: on_success
+  rules:
+    - changes:
+        - '**/*'
+    - when: always
