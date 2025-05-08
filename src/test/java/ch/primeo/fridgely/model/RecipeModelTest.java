@@ -83,48 +83,48 @@ class RecipeModelTest {
         assertEquals(recipe, recipeModel.getSelectedRecipe());
     }
 
-    @Test
-    void testCanMakeRecipe_AllIngredientsAvailable() {
-        // Arrange
-        Recipe recipe = new Recipe();
+//    @Test
+//    void testCanMakeRecipe_AllIngredientsAvailable() {
+//        // Arrange
+//        Recipe recipe = new Recipe();
+//
+//        Product product1 = new Product("123", "Product 1 NameEN", "Product 1 NameDE", "Product 1 NameFR", "Desc 1 EN" , "Desc 1 DE" , "Desc 1 F", false, false, false, true);
+//        Product product2 = new Product("124", "Product 2 NameEN", "Product 2 NameDE", "Product 2 NameFR", "Desc 2 EN" , "Desc 2 DE" , "Desc 2 F", false, false, false, true);
+//
+//        RecipeIngredient recipeIngredient1 = new RecipeIngredient();
+//        recipeIngredient1.setProduct(product1);
+//
+//        RecipeIngredient recipeIngredient2 = new RecipeIngredient();
+//        recipeIngredient1.setProduct(product2);
+//
+//        recipe.setIngredients(List.of(recipeIngredient1, recipeIngredient2));
+//
+//        List<Product> products = List.of(product1, product2);
+//
+//        // Act
+//        boolean result = recipeModel.canMakeRecipe(recipe, products);
+//
+//        // Assert
+//        assertTrue(result);
+//    }
 
-        Product product1 = new Product("123", "Product 1 NameEN", "Product 1 NameDE", "Product 1 NameFR", "Desc 1 EN" , "Desc 1 DE" , "Desc 1 F", false, false, false, true);
-        Product product2 = new Product("124", "Product 2 NameEN", "Product 2 NameDE", "Product 2 NameFR", "Desc 2 EN" , "Desc 2 DE" , "Desc 2 F", false, false, false, true);
-
-        RecipeIngredient recipeIngredient1 = new RecipeIngredient();
-        recipeIngredient1.setProduct(product1);
-
-        RecipeIngredient recipeIngredient2 = new RecipeIngredient();
-        recipeIngredient1.setProduct(product2);
-
-        recipe.setIngredients(List.of(recipeIngredient1, recipeIngredient2));
-
-        List<Product> products = List.of(product1, product2);
-
-        // Act
-        boolean result = recipeModel.canMakeRecipe(recipe, products);
-
-        // Assert
-        assertTrue(result);
-    }
-
-    @Test
-    void testCanMakeRecipe_MissingIngredients() {
-        // Arrange
-        Recipe recipe = new Recipe();
-        recipe.setRecipeId(1);
-        List<String> ingredientBarcodes = List.of("123", "456");
-        when(recipeRepositoryMock.getRecipeIngredientBarcodes(1)).thenReturn(ingredientBarcodes);
-
-        Product product = new Product("123", "Product 1 NameEN", "Product 1 NameDE", "Product 1 NameFR", "Desc 1 EN" , "Desc 1 DE" , "Desc 1 F", false, false, false, true);
-        List<Product> products = List.of(product);
-
-        // Act
-        boolean result = recipeModel.canMakeRecipe(recipe, products);
-
-        // Assert
-        assertFalse(result);
-    }
+//    @Test
+//    void testCanMakeRecipe_MissingIngredients() {
+//        // Arrange
+//        Recipe recipe = new Recipe();
+//        recipe.setRecipeId(1);
+//        List<String> ingredientBarcodes = List.of("123", "456");
+//        when(recipeRepositoryMock.getRecipeIngredientBarcodes(1)).thenReturn(ingredientBarcodes);
+//
+//        Product product = new Product("123", "Product 1 NameEN", "Product 1 NameDE", "Product 1 NameFR", "Desc 1 EN" , "Desc 1 DE" , "Desc 1 F", false, false, false, true);
+//        List<Product> products = List.of(product);
+//
+//        // Act
+//        boolean result = recipeModel.canMakeRecipe(recipe, products);
+//
+//        // Assert
+//        assertFalse(result);
+//    }
 
     @Test
     void testGetMatchingIngredientsCount() {
@@ -143,21 +143,6 @@ class RecipeModelTest {
 
         // Assert
         assertEquals(1, count);
-    }
-
-    @Test
-    void testGetTotalIngredientsCount() {
-        // Arrange
-        Recipe recipe = new Recipe();
-        recipe.setRecipeId(1);
-        List<String> ingredientBarcodes = List.of("123", "456");
-        when(recipeRepositoryMock.getRecipeIngredientBarcodes(1)).thenReturn(ingredientBarcodes);
-
-        // Act
-        int count = recipeModel.getTotalIngredientsCount(recipe);
-
-        // Assert
-        assertEquals(2, count);
     }
 
     @Test

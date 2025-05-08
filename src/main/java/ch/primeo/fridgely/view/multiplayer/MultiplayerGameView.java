@@ -6,6 +6,7 @@ import ch.primeo.fridgely.model.multiplayer.MultiplayerGameStateModel;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import ch.primeo.fridgely.service.localization.LocalizationObserver;
 import ch.primeo.fridgely.util.ImageLoader;
+import ch.primeo.fridgely.view.component.PenguinScorePanel;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -17,11 +18,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.Window;
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -53,20 +50,15 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
     private MultiplayerPlayer1View player1View;
     private MultiplayerPlayer2View player2View;
 
+    private PenguinScorePanel penguinScorePanel;
 
-
-    private JPanel mainPanel;
     private JPanel playerPanel;
     private JPanel gameInfoPanel;
-    private JPanel penguinPanel;
     private JPanel scorePanel;
     private JPanel controlPanel;
 
-    private JLabel penguinImageLabel;
-    private JLabel penguinHPLabel;
     private JLabel roundLabel;
-    private JLabel player1ScoreLabel;
-    private JLabel player2ScoreLabel;
+    private JLabel scoreLabel;
     private JButton newGameButton;
     private JButton exitButton;
 
@@ -92,69 +84,46 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
     }
 
     private void initializeComponents() {
-        mainPanel = new JPanel();
-        gameInfoPanel = new JPanel();
-        penguinPanel = new JPanel();
-        scorePanel = new JPanel();
-        controlPanel = new JPanel();
-
         player1View = new MultiplayerPlayer1View(gameController, localizationService, imageLoader);
         player2View = new MultiplayerPlayer2View(gameController, localizationService, imageLoader);
+        penguinScorePanel = new PenguinScorePanel(imageLoader);
+
+        gameInfoPanel = new JPanel();
+        scorePanel = new JPanel();
+        controlPanel = new JPanel();
 
         playerCardLayout = new CardLayout();
         playerPanel = new JPanel(playerCardLayout);
         playerPanel.add(player1View, "player1");
         playerPanel.add(player2View, "player2");
 
-        penguinImageLabel = new JLabel();
-        try {
-            ImageIcon penguinIcon = imageLoader.loadImage("/ch/primeo/fridgely/sprites/happy.png");
-            Image scaledImage = penguinIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-            penguinImageLabel.setIcon(new ImageIcon(scaledImage));
-        } catch (Exception e) {
-            penguinImageLabel.setText("");
-        }
-
-        penguinHPLabel = new JLabel();
         roundLabel = new JLabel();
-        player1ScoreLabel = new JLabel();
-        player2ScoreLabel = new JLabel();
+        roundLabel.setFont(new Font(roundLabel.getFont().getName(), Font.BOLD, 24));
+        scoreLabel = new JLabel();
+        scoreLabel.setFont(new Font(scoreLabel.getFont().getName(), Font.BOLD, 24));
         newGameButton = new JButton();
         exitButton = new JButton();
     }
 
     private void setupLayout() {
-        setLayout(new BorderLayout());
-        mainPanel.setLayout(new BorderLayout(10, 10));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        setLayout(new BorderLayout(20, 10));
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        gameInfoPanel.setLayout(new BoxLayout(gameInfoPanel, BoxLayout.X_AXIS));
-        gameInfoPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+        add(gameInfoPanel, BorderLayout.NORTH);
+        add(playerPanel, BorderLayout.CENTER);
 
-        penguinPanel.setLayout(new BoxLayout(penguinPanel, BoxLayout.Y_AXIS));
-        penguinPanel.add(penguinImageLabel);
-        penguinPanel.add(Box.createVerticalStrut(5));
-        penguinPanel.add(penguinHPLabel);
+        gameInfoPanel.setLayout(new BorderLayout(0, 10));
+        gameInfoPanel.add(penguinScorePanel, BorderLayout.WEST);
+        gameInfoPanel.add(scorePanel, BorderLayout.CENTER);
+        gameInfoPanel.add(controlPanel, BorderLayout.EAST);
 
-        scorePanel.setLayout(new GridLayout(3, 1, 5, 5));
+        scorePanel.setLayout(new GridLayout(2, 1, 5, 5));
         scorePanel.add(roundLabel);
-        scorePanel.add(player1ScoreLabel);
-        scorePanel.add(player2ScoreLabel);
+        scorePanel.add(scoreLabel);
 
         controlPanel.setLayout(new GridLayout(2, 1, 5, 5));
         controlPanel.add(newGameButton);
         controlPanel.add(exitButton);
-
-        gameInfoPanel.add(penguinPanel);
-        gameInfoPanel.add(Box.createHorizontalStrut(10));
-        gameInfoPanel.add(scorePanel);
-        gameInfoPanel.add(Box.createHorizontalStrut(10));
-        gameInfoPanel.add(controlPanel);
-
-        mainPanel.add(gameInfoPanel, BorderLayout.NORTH);
-        mainPanel.add(playerPanel, BorderLayout.CENTER);
-
-        add(mainPanel);
     }
 
     private void registerListeners() {
@@ -182,18 +151,12 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
         roundLabel.setText(String.format(localizationService.get(KEY_ROUND_LABEL), gameState.getCurrentRound(),
                 gameState.getTotalRounds()));
 
-        player1ScoreLabel.setText(
-                String.format(localizationService.get(KEY_PLAYER1_SCORE), gameState.getScore()));
-        player2ScoreLabel.setText(
-                String.format(localizationService.get(KEY_PLAYER2_SCORE), gameState.getScore()));
+        scoreLabel.setText(
+                String.format(localizationService.get(KEY_PLAYER1_SCORE), gameState.getScore())
+        );
 
-        penguinHPLabel.setText(String.format(localizationService.get(KEY_HP_LABEL), penguinModel.getHP(), 60));
 
-        try {
-            penguinImageLabel.setIcon(imageLoader.loadScaledImage(penguinModel.getImagePathForHP(), 100, 100));
-        } catch (Exception e) {
-            penguinImageLabel.setText(localizationService.get(KEY_PENGUIN_PLACEHOLDER));
-        }
+        penguinScorePanel.updatePenguinImage(gameState.getScore());
 
         if (gameState.isGameOver()) {
             MultiplayerGameStateModel.Player winner = gameState.getWinner();
@@ -213,6 +176,7 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
 
         if (confirm == JOptionPane.YES_OPTION) {
             gameController.startNewGame();
+
         }
     }
 

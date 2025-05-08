@@ -133,7 +133,7 @@ public class MultiplayerPlayer1Controller {
         }
 
         // Ensure minimum number of products are in the fridge
-        if (fridgeStockModel.getProducts().size() < GameConfig.MIN_PRODUCTS_PER_ROUND) {
+        if (fridgeStockModel.getFridgeProducts().size() < GameConfig.MIN_PRODUCTS_PER_ROUND) {
             return;
         }
 

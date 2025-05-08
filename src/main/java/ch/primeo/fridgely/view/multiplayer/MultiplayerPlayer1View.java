@@ -11,20 +11,17 @@ import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import ch.primeo.fridgely.service.localization.LocalizationObserver;
 import ch.primeo.fridgely.util.ImageLoader;
 import ch.primeo.fridgely.view.PenguinReactionOverlay;
+import ch.primeo.fridgely.view.component.FinishTurnButton;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.awt.Window;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import java.awt.KeyboardFocusManager;
-import java.awt.KeyEventDispatcher;
 import java.awt.event.KeyEvent;
 
 /**
@@ -35,7 +32,6 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
 
     // localization keys
     private static final String KEY_SCAN_PROMPT_BASE = "scan_prompt_base";
-    private static final String KEY_FINISH_TURN_BUTTON = "finish_turn_button";
     private static final String KEY_STATUS_PLAYER1_TURN_SCAN = "status_player1_turn_scan";
     private static final String KEY_MIN_PRODUCTS_INITIAL_FMT = "min_products_initial_fmt";
     private static final String KEY_SCANNING_PRODUCT = "scanning_product";
@@ -89,9 +85,13 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
      */
     private void initializeComponents() {
         scanPromptLabel = new JLabel("", SwingConstants.CENTER);
-        finishTurnButton = new JButton("");
+        scanPromptLabel.setFont(new Font(scanPromptLabel.getFont().getName(), Font.BOLD, 24));
+        finishTurnButton = new FinishTurnButton(localizationService);
         statusLabel = new JLabel("");
+        statusLabel.setFont(new Font(statusLabel.getFont().getName(), Font.BOLD, 24));
         minProductsLabel = new JLabel("");
+        minProductsLabel.setFont(new Font(minProductsLabel.getFont().getName(), Font.BOLD, 24));
+
     }
 
     /**
@@ -295,7 +295,6 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
     public void onLocaleChanged() {
         scanPromptBase = localizationService.get(KEY_SCAN_PROMPT_BASE);
         scanPromptLabel.setText(scanPromptBase);
-        finishTurnButton.setText(localizationService.get(KEY_FINISH_TURN_BUTTON));
         statusLabel.setText(localizationService.get(KEY_STATUS_PLAYER1_TURN_SCAN));
         minProductsLabel.setText(String.format(localizationService.get(KEY_MIN_PRODUCTS_INITIAL_FMT),
                 GameConfig.MIN_PRODUCTS_PER_ROUND));

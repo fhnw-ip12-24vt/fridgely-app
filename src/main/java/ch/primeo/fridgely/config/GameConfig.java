@@ -84,12 +84,11 @@ public class GameConfig {
     public static final int SCORE_PLAYER2_DECREASE = -6;
 
     /**
-     * Score for each matching recipe ingredient.
+     * Score values for the rounds;
      */
-    public static final int SCORE_MATCHING_INGREDIENT = 10;
-    
-    /**
-     * Bonus score for a complete recipe match.
-     */
-    public static final int SCORE_FULL_MATCH = 10;
+    public static final int SCORE_EXCELLENT = 24;
+    public static final int SCORE_GOOD = 12;
+    public static final int SCORE_OKAY = 0;
+    public static final int SCORE_CRITICAL = -12;
+    public static final int SCORE_DEAD = -24;
 }
