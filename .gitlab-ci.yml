@@ -21,7 +21,6 @@ cache:
     - .m2/repository
   policy: pull-push
 
-# Update contributors in README.md
 update-contributors:
   stage: update-contributors
   script:
@@ -31,10 +30,14 @@ update-contributors:
       echo "# Project Contributors" > temp_readme.md
       echo "The list below includes commit counts, additions, and deletions per contributor." >> temp_readme.md
     - >-
-      # We fetch the contributions since the beginning of the repository (no --since flag)
+      # Fetch contributions since the beginning of the repository (no --since flag)
       git log --numstat --pretty="%an" | awk 'BEGIN { FS="\t" } 
         { if (NF == 3) { add[$1]+=$1; del[$1]+=$2; commits[$1]++ } } 
-        END { for (user in commits) print user ": " commits[user] " commits, " add[user] " lines added, " del[user] " lines deleted" }' >> temp_readme.md
+        END { 
+          for (user in commits) {
+            print user ": " commits[user] " commits, " add[user] " lines added, " del[user] " lines deleted"
+          }
+        }' >> temp_readme.md
     - sed -i '/# Project Contributors/,$d' README.md # Remove old contributor data from README.md
     - cat temp_readme.md >> README.md # Append new contributor data to README.md
     - git add README.md
@@ -45,6 +48,7 @@ update-contributors:
     - changes:
         - '**/*'
     - when: always
+
 
 # Other jobs:
 validate:
