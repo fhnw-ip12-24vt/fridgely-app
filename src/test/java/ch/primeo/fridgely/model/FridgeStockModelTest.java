@@ -18,14 +18,14 @@ class FridgeStockModelTest {
     @BeforeEach
     void setUp() {
         fridgeStockModel = new FridgeStockModel();
-        product1 = new Product("123456789", "Apple", "Apfel", "Pomme", "Fresh apple", "Frischer Apfel", "Pomme fraîche", true, true, false);
-        product2 = new Product("987654321", "Banana", "Banane", "Banane", "Fresh banana", "Frische Banane", "Banane fraîche", false, false, true);
+        product1 = new Product("123456789", "Apple", "Apfel", "Pomme", "Fresh apple", "Frischer Apfel", "Pomme fraîche", true, true, false, true);
+        product2 = new Product("987654321", "Banana", "Banane", "Banane", "Fresh banana", "Frische Banane", "Banane fraîche", false, false, true, true);
     }
 
     @Test
     void testAddProduct() {
         // Arrange
-        Product product = new Product("123456789", "Apple", "Apfel", "Pomme", "Fresh apple", "Frischer Apfel", "Pomme fraîche", true, true, false);
+        Product product = new Product("123456789", "Apple", "Apfel", "Pomme", "Fresh apple", "Frischer Apfel", "Pomme fraîche", true, true, false, true);
 
         // Act
         boolean firstAddResult = fridgeStockModel.addProduct(product);

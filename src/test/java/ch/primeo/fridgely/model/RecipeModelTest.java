@@ -88,8 +88,8 @@ class RecipeModelTest {
         // Arrange
         Recipe recipe = new Recipe();
 
-        Product product1 = new Product("123", "Product 1 NameEN", "Product 1 NameDE", "Product 1 NameFR", "Desc 1 EN" , "Desc 1 DE" , "Desc 1 F", false, false, false);
-        Product product2 = new Product("124", "Product 2 NameEN", "Product 2 NameDE", "Product 2 NameFR", "Desc 2 EN" , "Desc 2 DE" , "Desc 2 F", false, false, false);
+        Product product1 = new Product("123", "Product 1 NameEN", "Product 1 NameDE", "Product 1 NameFR", "Desc 1 EN" , "Desc 1 DE" , "Desc 1 F", false, false, false, true);
+        Product product2 = new Product("124", "Product 2 NameEN", "Product 2 NameDE", "Product 2 NameFR", "Desc 2 EN" , "Desc 2 DE" , "Desc 2 F", false, false, false, true);
 
         RecipeIngredient recipeIngredient1 = new RecipeIngredient();
         recipeIngredient1.setProduct(product1);
@@ -116,7 +116,7 @@ class RecipeModelTest {
         List<String> ingredientBarcodes = List.of("123", "456");
         when(recipeRepositoryMock.getRecipeIngredientBarcodes(1)).thenReturn(ingredientBarcodes);
 
-        Product product = new Product("123", "Product 1 NameEN", "Product 1 NameDE", "Product 1 NameFR", "Desc 1 EN" , "Desc 1 DE" , "Desc 1 F", false, false, false);
+        Product product = new Product("123", "Product 1 NameEN", "Product 1 NameDE", "Product 1 NameFR", "Desc 1 EN" , "Desc 1 DE" , "Desc 1 F", false, false, false, true);
         List<Product> products = List.of(product);
 
         // Act
@@ -134,8 +134,8 @@ class RecipeModelTest {
         List<String> ingredientBarcodes = List.of("123", "456");
         when(recipeRepositoryMock.getRecipeIngredientBarcodes(1)).thenReturn(ingredientBarcodes);
 
-        Product product1 = new Product("123", "Product 1 NameEN", "Product 1 NameDE", "Product 1 NameFR", "Desc 1 EN" , "Desc 1 DE" , "Desc 1 F", false, false, false);
-        Product product2 = new Product("124", "Product 2 NameEN", "Product 2 NameDE", "Product 2 NameFR", "Desc 2 EN" , "Desc 2 DE" , "Desc 2 F", false, false, false);
+        Product product1 = new Product("123", "Product 1 NameEN", "Product 1 NameDE", "Product 1 NameFR", "Desc 1 EN" , "Desc 1 DE" , "Desc 1 F", false, false, false, true);
+        Product product2 = new Product("124", "Product 2 NameEN", "Product 2 NameDE", "Product 2 NameFR", "Desc 2 EN" , "Desc 2 DE" , "Desc 2 F", false, false, false, true);
         List<Product> products = List.of(product1, product2);
 
         // Act

@@ -105,4 +105,26 @@ class ProductTest {
         // Assert
         assertTrue(product.isLocal());
     }
+
+    @Test
+    void testLanguageKeyGeneration(){
+        Product product = new Product("", "", "", "", "something random", "", "", false, true, false, true);
+        String key = product.getExplanationKey();
+        String validKey = "product.bio.foreign.lowCO2";
+        assertEquals(validKey, key);
+        product.setDescription("meat");
+        product.setLocal(true);
+        key = product.getExplanationKey();
+        validKey = "product.bio.local.meat";
+        assertEquals(validKey, key);
+        product.setDescription("water_intensive");
+        product.setBio(false);
+        key = product.getExplanationKey();
+        validKey = "product.non_bio.local.water_intensive";
+        assertEquals(validKey, key);
+        product.setDescription("coffee_belt");
+        key = product.getExplanationKey();
+        validKey = "product.non_bio.local.coffee_belt";
+        assertEquals(validKey, key);
+    }
 }
