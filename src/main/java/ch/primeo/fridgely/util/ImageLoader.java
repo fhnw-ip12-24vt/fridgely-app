@@ -150,8 +150,7 @@ public class ImageLoader {
         String[] productSprites;
 
         try {
-            PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-            Resource[] resources = resolver.getResources("classpath:/ch/primeo/fridgely/productimages/*.png");
+            Resource[] resources = resolveProductImageResources();
 
             productSprites = Arrays.stream(resources)
                     .map(resource -> "/ch/primeo/fridgely/productimages/" + resource.getFilename())
@@ -169,5 +168,11 @@ public class ImageLoader {
         };
 
         preloadImages(uiElements);
+    }
+
+    // This method is added for testing purposes apart from the main logic.
+    protected Resource[] resolveProductImageResources() throws IOException {
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        return resolver.getResources("classpath:/ch/primeo/fridgely/productimages/*.png");
     }
 }
