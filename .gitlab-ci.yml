@@ -25,7 +25,7 @@ update-contributors:
   stage: update-contributors
   script:
     - echo "Generating detailed contributors list for README..."
-    - git fetch --all # Make sure we have the latest data
+    - git fetch --all
     - echo "# Project Contributors" > temp_readme.md
     - echo "The list below includes commit counts, additions, and deletions per contributor." >> temp_readme.md
     - |
@@ -43,13 +43,12 @@ update-contributors:
     - git config --global user.name "CI Bot" # Set default name
     - git add README.md
     - git commit -m "Update contributors stats in README [skip ci]" # Commit with skip ci to prevent a recursive pipeline
-    - git push origin HEAD:main # Explicitly specify where to push the changes (e.g., 'main' branch)
+    - git push https://oauth2:${CI_BOT_TOKEN}@gitlab.fhnw.ch/ip12-24vt/ip12-24vt_fridgely/FridgelyAppV3.git HEAD:main
   rules:
     - if: '$CI_COMMIT_REF_NAME == "main" && $CI_COMMIT_MESSAGE !~ /skip ci/'
     - changes:
         - '**/*'
     - when: always
-
 
 # Other jobs:
 validate:
