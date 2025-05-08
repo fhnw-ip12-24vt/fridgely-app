@@ -1,6 +1,5 @@
 package ch.primeo.fridgely.model.multiplayer;
 
-import ch.primeo.fridgely.config.GameConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -145,6 +144,43 @@ class MultiplayerGameStateModelTest {
         // Assert
         assertNull(winner);
     }
+@Test
+    void testGetWinner_Player2Wins_ExplicitBranchCoverage() {
+        // Arrange
+        // Scores ensure player 2 has more points
+        gameState.addPlayer1Score(5);
+        gameState.addPlayer2Score(25);
+
+        // Act
+        // Play through all rounds until the game is over
+        while (!gameState.isGameOver()) {
+            gameState.nextPlayer();
+        }
+        MultiplayerGameStateModel.Player winner = gameState.getWinner();
+
+        // Assert
+        // Verify that Player 2 is the winner
+        assertEquals(MultiplayerGameStateModel.Player.PLAYER2, winner, "Player 2 should win when their score is higher.");
+    }
+
+    @Test
+    void testGetWinner_TieGame_ExplicitBranchCoverage() {
+        // Arrange
+        // Scores are equal for a tie
+        gameState.addPlayer1Score(10);
+        gameState.addPlayer2Score(10);
+
+        // Act
+        // Play through all rounds until the game is over
+        while (!gameState.isGameOver()) {
+            gameState.nextPlayer();
+        }
+        MultiplayerGameStateModel.Player winner = gameState.getWinner();
+
+        // Assert
+        // Verify that the result is null for a tie game
+        assertNull(winner, "Winner should be null in a tie game.");
+    }
 
     @Test
     void testResetGame() {
@@ -182,5 +218,21 @@ class MultiplayerGameStateModelTest {
         // Act & Assert
         // Listener wird automatisch geprüft
         assertDoesNotThrow(() -> gameState.nextPlayer()); // Sicherstellen, dass keine Exception geworfen wird
+    }
+
+    @Test
+    void testRemovePropertyChangeListener() {
+        // Arrange
+        final boolean[] listenerCalled = {false};
+        PropertyChangeListener mockListener = evt -> listenerCalled[0] = true;
+
+        gameState.addPropertyChangeListener(mockListener);
+        gameState.removePropertyChangeListener(mockListener);
+
+        // Act
+        gameState.nextPlayer(); // Trigger a property change
+
+        // Assert
+        assertFalse(listenerCalled[0], "Listener should not be called after being removed.");
     }
 }
