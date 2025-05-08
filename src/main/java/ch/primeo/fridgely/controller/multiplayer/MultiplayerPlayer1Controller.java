@@ -64,9 +64,9 @@ public class MultiplayerPlayer1Controller {
                 return null;
             }
 
-            // Calculate and add score
-            int score = calculateProductScore(product);
-            gameStateModel.addPlayer1Score(score);
+            roundScore += calculateProductScore(product);
+            roundScannedItems++;
+            //gameStateModel.addScore(score);
 
             // Update penguin HP
             updatePenguinHPForProduct(product);
@@ -84,20 +84,12 @@ public class MultiplayerPlayer1Controller {
      */
     private int calculateProductScore(Product product) {
         int score = 0;
-
-        if (product.isBio()) {
-            score += GameConfig.SCORE_BIO;
-        }
-
-        if (product.isLocal()) {
-            score += GameConfig.SCORE_LOCAL;
-        }
-
+        //Check if product is bio or not and add score
+        score += product.isBio() ? GameConfig.SCORE_BIO : GameConfig.SCORE_NON_BIO;
         // Check if imported (for now, we consider non-local products as imported)
-        if (!product.isLocal()) {
-            score += GameConfig.SCORE_IMPORTED; // This is negative in the config
-        }
-
+        score += product.isLocal() ? GameConfig.SCORE_LOCAL : GameConfig.SCORE_NON_LOCAL;
+        // Check if product has a low or high co2 footprint and add score
+        score += product.isLowCo2() ? GameConfig.SCORE_LOW_CO2 : GameConfig.SCORE_HIGH_CO2;
         return score;
     }
 
@@ -141,22 +133,16 @@ public class MultiplayerPlayer1Controller {
         }
 
         // Ensure minimum number of products are in the fridge
-        if (fridgeStockModel.getProductCount() < GameConfig.MIN_PRODUCTS_PER_ROUND) {
+        if (fridgeStockModel.getProducts().size() < GameConfig.MIN_PRODUCTS_PER_ROUND) {
             return;
         }
 
-        // Switch to player 2's turn
+        // Switch to player 2's turn and add the score of player 1 round
+        gameStateModel.addScore(calculateRoundScore());
         gameStateModel.nextPlayer();
 
         //reset for next round
         roundScore = 0;
         roundScannedItems = 0;
-    }
-
-    /**
-     * Resets Player 1's state for a new round.
-     */
-    public void resetForNewRound() {
-        fridgeStockModel.clear();
     }
 }

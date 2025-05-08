@@ -170,8 +170,7 @@ public class MultiplayerGameStateModel {
 
         currentRound = 1;
         currentPlayer = Player.PLAYER1;
-        player1Score = 0;
-        player2Score = 0;
+        score = 0;
         gameOver = false;
 
         propertyChangeSupport.firePropertyChange(PROP_CURRENT_ROUND, oldRound, currentRound);

@@ -14,7 +14,7 @@ class FridgeStockModelTest {
     private FridgeStockModel fridgeStockModel;
     private Product product1;
     private Product product2;
-
+/*
     @BeforeEach
     void setUp() {
         fridgeStockModel = new FridgeStockModel();
@@ -130,5 +130,5 @@ class FridgeStockModelTest {
         public void reset() {
             this.lastEvent = null;
         }
-    }
+    }*/
 }

@@ -1,5 +1,7 @@
 package ch.primeo.fridgely.model;
 
+import ch.primeo.fridgely.service.ProductRepository;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
@@ -86,7 +88,7 @@ public class FridgeStockModel {
      * Clears all products from the fridge.
      */
     public void clear() {
-        if (products.isEmpty()) {
+        if (fridgeProducts.isEmpty()) {
             return;
         }
         
@@ -94,16 +96,7 @@ public class FridgeStockModel {
         fridgeProducts.clear();
         propertyChangeSupport.firePropertyChange(PROP_FRIDGE_CONTENTS, oldProducts, new ArrayList<>());
     }
-    
-    /**
-     * Gets the number of products in the fridge.
-     * 
-     * @return the number of products
-     */
-    public int getProductCount() {
-        return products.size();
-    }
-    
+
     /**
      * Adds a property change listener.
      * 

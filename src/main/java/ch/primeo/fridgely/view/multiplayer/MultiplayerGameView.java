@@ -183,9 +183,9 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
                 gameState.getTotalRounds()));
 
         player1ScoreLabel.setText(
-                String.format(localizationService.get(KEY_PLAYER1_SCORE), gameState.getPlayer1Score()));
+                String.format(localizationService.get(KEY_PLAYER1_SCORE), gameState.getScore()));
         player2ScoreLabel.setText(
-                String.format(localizationService.get(KEY_PLAYER2_SCORE), gameState.getPlayer2Score()));
+                String.format(localizationService.get(KEY_PLAYER2_SCORE), gameState.getScore()));
 
         penguinHPLabel.setText(String.format(localizationService.get(KEY_HP_LABEL), penguinModel.getHP(), 60));
 

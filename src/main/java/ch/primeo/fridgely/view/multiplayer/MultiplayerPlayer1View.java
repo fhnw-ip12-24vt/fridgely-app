@@ -236,7 +236,7 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
 
         boolean isPlayer1Turn = gameStateModel.getCurrentPlayer() == MultiplayerGameStateModel.Player.PLAYER1;
         boolean isGameOver = gameStateModel.isGameOver();
-        boolean hasEnoughProducts = fridgeStockModel.getProductCount() >= GameConfig.MIN_PRODUCTS_PER_ROUND;
+        boolean hasEnoughProducts = fridgeStockModel.getProducts().size() >= GameConfig.MIN_PRODUCTS_PER_ROUND;
 
         finishTurnButton.setEnabled(isPlayer1Turn && !isGameOver && hasEnoughProducts);
 

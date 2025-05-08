@@ -94,8 +94,24 @@ public class RecipeModel {
     public List<Recipe> getAvailableRecipes() {
         return List.copyOf(availableRecipes);
     }
-    
+
+
+
     /**
+     * Gets a list of recipes that can be made with the given products.
+     *
+     * @param productsInStorage the products available in the storage (fridge + default)
+     * @return a list of possible recipes
+     */
+    public List<Recipe> getPossibleRecipes(List<Product> productsInStorage){
+       List<Recipe> recipesTest = availableRecipes;
+        return availableRecipes.stream()
+                .filter(recipe -> canMakeRecipe(recipe, productsInStorage))
+                .toList();
+    }
+
+    /**
+
      * Gets the currently selected recipe.
      * 
      * @return the selected recipe, or null if none is selected
@@ -138,11 +154,11 @@ public class RecipeModel {
      * Checks if a recipe can be made with the given products.
      * 
      * @param recipe the recipe to check
-     * @param products the available products
+     * @param productsInStorage the available products in the storage
      * @return true if the recipe can be made, false otherwise
      */
-    public boolean canMakeRecipe(Recipe recipe, List<Product> products) {
-        if (recipe == null || products == null) {
+    public boolean canMakeRecipe(Recipe recipe, List<Product> productsInStorage) {
+        if (recipe == null || productsInStorage == null) {
             return false;
         }
 

@@ -106,21 +106,24 @@ public class UnifiedRecipePanel extends JPanel {
     public void setRecipeSelectionListener(RecipeSelectionListener listener) {
         this.recipeSelectionListener = listener;
     }
-
     /**
      * Updates the recipe list with the current recipes from the model. This clears and reloads the entire list.
      */
     public void updateRecipeList() {
+        // Get fresh recipe data and randomize
+        List<Product> productsInStorage = gameController.getFridgeStockModel().getProducts();
+        possibleRecipes = new ArrayList<>(recipeModel.getPossibleRecipes(productsInStorage));
+        Collections.shuffle(possibleRecipes);  // Randomize recipe order
+        updateRecipeList(possibleRecipes);
+    }
+
+    public void updateRecipeList(List<Recipe> recipes) {
         // Clear old data
         recipesViewport.removeAll();
         loadedRecipeCards.clear();
 
-        // Get fresh recipe data and randomize
-        allRecipes = new ArrayList<>(recipeModel.getAvailableRecipes());
-        Collections.shuffle(allRecipes);  // Randomize recipe order
-
         // Create placeholder panels for each recipe
-        for (Recipe recipe : allRecipes) {
+        for (Recipe recipe : recipes) {
             JPanel placeholder = createRecipePlaceholder(recipe);
             recipesViewport.add(placeholder);
             recipesViewport.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -136,6 +139,7 @@ public class UnifiedRecipePanel extends JPanel {
         // Check visible recipes after layout is complete
         SwingUtilities.invokeLater(this::checkVisibleRecipes);
     }
+
 
     /**
      * Creates a lightweight placeholder panel for a recipe. This will be replaced with the full card when it becomes
