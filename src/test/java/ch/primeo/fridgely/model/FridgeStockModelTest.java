@@ -39,6 +39,20 @@ class FridgeStockModelTest {
     }
 
     @Test
+    void testAddNullProduct() {
+        // Arrange
+        Product nullProduct = null;
+
+        // Act
+        boolean result = fridgeStockModel.addProduct(nullProduct);
+        int productCount = fridgeStockModel.getProductCount();
+
+        // Assert
+        assertFalse(result);
+        assertEquals(0, productCount);
+    }
+
+    @Test
     void testRemoveProduct() {
         // Arrange
         fridgeStockModel.addProduct(product1);
@@ -52,6 +66,21 @@ class FridgeStockModelTest {
         assertTrue(firstRemoveResult);
         assertFalse(secondRemoveResult); // Not in stock
         assertEquals(0, productCount);
+    }
+
+    @Test
+    void testRemoveNullProduct() {
+        // Arrange
+        Product nullProduct = null;
+        fridgeStockModel.addProduct(product1);
+
+        // Act
+        boolean result = fridgeStockModel.removeProduct(nullProduct);
+        int productCount = fridgeStockModel.getProductCount();
+
+        // Assert
+        assertFalse(result);
+        assertEquals(1, productCount);
     }
 
     @Test
