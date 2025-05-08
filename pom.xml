@@ -68,6 +68,14 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>5.17.0</version>
+			<scope>test</scope>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->
 		<dependency>
 			<groupId>org.xerial</groupId>
@@ -133,6 +141,9 @@
 						<exclude>ch/primeo/fridgely/view/**</exclude>
 						<!-- Exclude generated QueryDSL Q classes -->
 						<exclude>**/Q*.class</exclude>
+						<!-- Exclude specific files -->
+						<exclude>ch/primeo/fridgely/factory/DefaultFrameFactory.class</exclude>
+						<exclude>ch/primeo/fridgely/Fridgely.class</exclude>
 					</excludes>
 				</configuration>
 				<reportSets>
@@ -212,6 +223,9 @@
 						<exclude>ch/primeo/fridgely/view/**</exclude>
 						<!-- Exclude generated QueryDSL Q classes -->
 						<exclude>**/Q*.class</exclude>
+						<!-- Exclude specific files -->
+						<exclude>ch/primeo/fridgely/factory/DefaultFrameFactory.class</exclude>
+						<exclude>ch/primeo/fridgely/Fridgely.class</exclude>
 					</excludes>
 				</configuration>
 				<executions>
