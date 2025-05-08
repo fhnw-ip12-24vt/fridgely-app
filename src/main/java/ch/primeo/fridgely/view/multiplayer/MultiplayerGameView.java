@@ -82,7 +82,6 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
 
         localizationService.subscribe(this); // Register for future locale changes
 
-        frame.setContentPane(this);
         frame.setVisible(true);
     }
 

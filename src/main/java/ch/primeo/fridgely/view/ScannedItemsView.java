@@ -68,7 +68,6 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         // subscribe and apply localization
         localizationService.subscribe(this);
         onLocaleChanged();
-        frame.setContentPane(this);
 
         // Handle multi-monitor setup for the second display
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
