@@ -2,6 +2,7 @@ package ch.primeo.fridgely.service;
 
 import ch.primeo.fridgely.model.Product;
 import ch.primeo.fridgely.model.QProduct; // Import the generated Q-class
+import ch.primeo.fridgely.model.ProductDTO;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Service;

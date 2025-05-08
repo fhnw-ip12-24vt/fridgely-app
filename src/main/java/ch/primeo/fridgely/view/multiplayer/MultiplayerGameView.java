@@ -50,6 +50,11 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
     private static final String KEY_CONFIRM_EXIT_GAME_TITLE = "confirm.exit_game.title";
     private static final String KEY_PENGUIN_PLACEHOLDER = "placeholder.penguin";
 
+    private MultiplayerPlayer1View player1View;
+    private MultiplayerPlayer2View player2View;
+
+
+
     private JPanel mainPanel;
     private JPanel playerPanel;
     private JPanel gameInfoPanel;
@@ -93,8 +98,8 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
         scorePanel = new JPanel();
         controlPanel = new JPanel();
 
-        MultiplayerPlayer1View player1View = new MultiplayerPlayer1View(gameController, localizationService, imageLoader);
-        MultiplayerPlayer2View player2View = new MultiplayerPlayer2View(gameController, localizationService, imageLoader);
+        player1View = new MultiplayerPlayer1View(gameController, localizationService, imageLoader);
+        player2View = new MultiplayerPlayer2View(gameController, localizationService, imageLoader);
 
         playerCardLayout = new CardLayout();
         playerPanel = new JPanel(playerCardLayout);
@@ -166,6 +171,7 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
             playerCardLayout.show(playerPanel, "player1");
         } else {
             playerCardLayout.show(playerPanel, "player2");
+            player2View.updateRecipeList();
         }
     }
 

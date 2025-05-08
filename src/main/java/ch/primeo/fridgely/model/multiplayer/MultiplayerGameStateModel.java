@@ -37,14 +37,9 @@ public class MultiplayerGameStateModel {
     public static final String PROP_CURRENT_PLAYER = "currentPlayer";
 
     /**
-     * Property name for changes in player 1's score.
+     * Property name for changes in score.
      */
-    public static final String PROP_PLAYER1_SCORE = "player1Score";
-
-    /**
-     * Property name for changes in player 2's score.
-     */
-    public static final String PROP_PLAYER2_SCORE = "player2Score";
+    public static final String PROP_SCORE = "score";
 
     /**
      * Property name for changes in the game over status.
@@ -53,8 +48,7 @@ public class MultiplayerGameStateModel {
 
     private int currentRound;
     private Player currentPlayer;
-    private int player1Score;
-    private int player2Score;
+    private int score;
     private boolean gameOver;
     private final int totalRounds;
     private final PropertyChangeSupport propertyChangeSupport;
@@ -74,8 +68,7 @@ public class MultiplayerGameStateModel {
     public MultiplayerGameStateModel(int totRounds) {
         this.currentRound = 1;
         this.currentPlayer = Player.PLAYER1;
-        this.player1Score = 0;
-        this.player2Score = 0;
+        this.score = 0;
         this.gameOver = false;
         this.totalRounds = totRounds;
         this.propertyChangeSupport = new PropertyChangeSupport(this);
@@ -109,21 +102,12 @@ public class MultiplayerGameStateModel {
     }
 
     /**
-     * Gets player 1's score.
+     * Gets score.
      *
-     * @return player 1's score
+     * @return score
      */
-    public int getPlayer1Score() {
-        return player1Score;
-    }
-
-    /**
-     * Gets player 2's score.
-     *
-     * @return player 2's score
-     */
-    public int getPlayer2Score() {
-        return player2Score;
+    public int getScore() {
+        return score;
     }
 
     /**
@@ -165,25 +149,14 @@ public class MultiplayerGameStateModel {
     }
 
     /**
-     * Adds points to player 1's score.
+     * Adds points to score.
      *
      * @param points the points to add
      */
-    public void addPlayer1Score(int points) {
-        int oldScore = player1Score;
-        player1Score += points;
-        propertyChangeSupport.firePropertyChange(PROP_PLAYER1_SCORE, oldScore, player1Score);
-    }
-
-    /**
-     * Adds points to player 2's score.
-     *
-     * @param points the points to add
-     */
-    public void addPlayer2Score(int points) {
-        int oldScore = player2Score;
-        player2Score += points;
-        propertyChangeSupport.firePropertyChange(PROP_PLAYER2_SCORE, oldScore, player2Score);
+    public void addScore(int points) {
+        int oldScore = score;
+        score += points;
+        propertyChangeSupport.firePropertyChange(PROP_SCORE, oldScore, score);
     }
 
     /**
@@ -192,8 +165,7 @@ public class MultiplayerGameStateModel {
     public void resetGame() {
         int oldRound = currentRound;
         Player oldPlayer = currentPlayer;
-        int oldPlayer1Score = player1Score;
-        int oldPlayer2Score = player2Score;
+        int oldScore = score;
         boolean oldGameOver = gameOver;
 
         currentRound = 1;
@@ -204,8 +176,7 @@ public class MultiplayerGameStateModel {
 
         propertyChangeSupport.firePropertyChange(PROP_CURRENT_ROUND, oldRound, currentRound);
         propertyChangeSupport.firePropertyChange(PROP_CURRENT_PLAYER, oldPlayer, currentPlayer);
-        propertyChangeSupport.firePropertyChange(PROP_PLAYER1_SCORE, oldPlayer1Score, player1Score);
-        propertyChangeSupport.firePropertyChange(PROP_PLAYER2_SCORE, oldPlayer2Score, player2Score);
+        propertyChangeSupport.firePropertyChange(PROP_SCORE, oldScore, score);
         propertyChangeSupport.firePropertyChange(PROP_GAME_OVER, oldGameOver, gameOver);
     }
 
@@ -236,13 +207,8 @@ public class MultiplayerGameStateModel {
         if (!gameOver) {
             return null;
         }
+        return null;
 
-        if (player1Score > player2Score) {
-            return Player.PLAYER1;
-        } else if (player2Score > player1Score) {
-            return Player.PLAYER2;
-        } else {
-            return null; // Tie
-        }
+      // TODO
     }
 }

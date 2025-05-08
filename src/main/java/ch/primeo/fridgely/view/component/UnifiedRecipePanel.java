@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * A unified panel that displays recipes with their ingredients inline. This combines the recipe list and ingredient
@@ -48,7 +49,7 @@ public class UnifiedRecipePanel extends JPanel {
     private final JScrollPane scrollPane;  // Main scroll container
 
     // Recipe data
-    private List<Recipe> allRecipes;
+    private List<Recipe> possibleRecipes;
     private Recipe selectedRecipe;
 
     // Lazy loading support
@@ -68,7 +69,6 @@ public class UnifiedRecipePanel extends JPanel {
         this.recipeModel = gameController.getRecipeModel();
         this.productRepository = productRepo;
         this.loadedRecipeCards = new HashMap<>();
-        this.allRecipes = new ArrayList<>();
         this.imageLoader = imageLoader;
 
         setLayout(new BorderLayout(10, 10));

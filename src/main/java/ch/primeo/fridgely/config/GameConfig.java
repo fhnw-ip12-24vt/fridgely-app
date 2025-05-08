@@ -45,22 +45,44 @@ public class GameConfig {
      * HP decrease for environmentally unfriendly products.
      */
     public static final int HP_DECREASE = -5;
-    
+
+
+    public static final int SCORE_PLAYER1_INCREASE = 8;
+    public static final int SCORE_PLAYER1_DECREASE = -12;
+
     /**
      * Score for Bio products.
      */
-    public static final int SCORE_BIO = 15;
-    
+    public static final int SCORE_BIO = 1;
+
+    /**
+     * Penalty for non-bio products
+     */
+    public static final int SCORE_NON_BIO = 0;
+
     /**
      * Score for Local products.
      */
-    public static final int SCORE_LOCAL = 15;
+    public static final int SCORE_LOCAL = 2;
     
     /**
      * Score penalty for Imported products.
      */
-    public static final int SCORE_IMPORTED = -10;
-    
+    public static final int SCORE_NON_LOCAL = -2;
+
+    /**
+     * Score penalty for high co2 products.
+     */
+    public static final int SCORE_HIGH_CO2 = -3;
+
+    /**
+     * Score for products with low co2
+     */
+    public static final int SCORE_LOW_CO2 = 1;
+
+    public static final int SCORE_PLAYER2_INCREASE = 8;
+    public static final int SCORE_PLAYER2_DECREASE = -6;
+
     /**
      * Score for each matching recipe ingredient.
      */

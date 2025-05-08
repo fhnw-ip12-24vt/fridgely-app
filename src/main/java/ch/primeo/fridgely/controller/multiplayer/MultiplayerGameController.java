@@ -24,15 +24,15 @@ public class MultiplayerGameController {
     /**
      * Constructs a new game controller.
      * 
-     * @param productRepo the repository for accessing products
+     * @param productRepository the repository for accessing products
      * @param recipeRepository the repository for accessing recipes
      */
-    public MultiplayerGameController(ProductRepository productRepo, RecipeRepository recipeRepository) {
-        this.productRepository = productRepo;
+    public MultiplayerGameController(ProductRepository productRepository, RecipeRepository recipeRepository) {
+        this.productRepository = productRepository;
         // Initialize models
         this.gameStateModel = new MultiplayerGameStateModel();
         this.penguinModel = new PenguinModel();
-        this.fridgeStockModel = new FridgeStockModel();
+        this.fridgeStockModel = new FridgeStockModel(productRepository);
         this.recipeModel = new RecipeModel(recipeRepository);
         
         // Initialize controllers

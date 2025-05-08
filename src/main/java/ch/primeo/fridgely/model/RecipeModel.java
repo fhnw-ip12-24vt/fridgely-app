@@ -83,7 +83,7 @@ public class RecipeModel {
         }
         
         System.out.println("Loaded " + availableRecipes.size() + " recipes");
-        propertyChangeSupport.firePropertyChange(PROP_AVAILABLE_RECIPES, oldRecipes, new ArrayList<>(availableRecipes));
+        //propertyChangeSupport.firePropertyChange(PROP_AVAILABLE_RECIPES, oldRecipes, new ArrayList<>(availableRecipes));
     }
     
     /**
@@ -133,7 +133,7 @@ public class RecipeModel {
             return List.of();
         }
     }
-    
+
     /**
      * Checks if a recipe can be made with the given products.
      * 
@@ -145,24 +145,18 @@ public class RecipeModel {
         if (recipe == null || products == null) {
             return false;
         }
-        
-        // Get the ingredient barcodes for the recipe
-        List<String> ingredientBarcodes = getRecipeIngredientBarcodes(recipe);
-        
-        // Create a set of product barcodes for quick lookup
-        Map<String, Product> productMap = new HashMap<>();
-        for (Product product : products) {
-            productMap.put(product.getBarcode(), product);
+
+        List<Product> recipeProducts = recipe.getProducts();
+
+        if (recipeProducts.size() > productsInStorage.size()) {
+            return false;
         }
-        
-        // Check if all ingredients are available
-        for (String barcode : ingredientBarcodes) {
-            if (!productMap.containsKey(barcode)) {
-                return false;
-            }
-        }
-        
-        return true;
+
+        // Sequential search for matching products
+        int i = 0;
+        while(i < recipeProducts.size() && productsInStorage.contains(recipeProducts.get(i))) i++;
+
+        return i == recipeProducts.size();
     }
     
     /**
@@ -195,21 +189,6 @@ public class RecipeModel {
         }
         
         return count;
-    }
-    
-    /**
-     * Gets the total number of ingredients for a recipe.
-     * 
-     * @param recipe the recipe to check
-     * @return the total number of ingredients
-     */
-    public int getTotalIngredientsCount(Recipe recipe) {
-        if (recipe == null) {
-            return 0;
-        }
-        
-        List<String> ingredientBarcodes = getRecipeIngredientBarcodes(recipe);
-        return ingredientBarcodes.size();
     }
     
     /**

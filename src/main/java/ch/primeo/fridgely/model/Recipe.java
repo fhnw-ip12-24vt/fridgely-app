@@ -55,7 +55,7 @@ public class Recipe {
     /**
      * List of ingredients associated with this recipe. Mapped by the 'recipe' field in the RecipeIngredient entity.
      */
-    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<RecipeIngredient> ingredients = new ArrayList<>();
 
     /**
@@ -111,6 +111,18 @@ public class Recipe {
 
     public List<RecipeIngredient> getIngredients() {
         return ingredients;
+    }
+
+    public List<Product> getProducts() {
+        return ingredients.stream().map(RecipeIngredient::getProduct).toList();
+    }
+
+    public List<Product> getDefaultProducts() {
+        return ingredients.stream().map(RecipeIngredient::getProduct).filter(Product::isDefaultProduct).toList();
+    }
+
+    public List<Product> getFridgeProducts() {
+        return ingredients.stream().map(RecipeIngredient::getProduct).filter(Product::isNotDefaultProduct).toList();
     }
 
     // --- Setters ---

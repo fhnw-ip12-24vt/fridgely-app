@@ -151,9 +151,9 @@ public class Product {
         this.descriptionFR = descriptionF;
     }
 
-    public boolean isDefaultProduct() {
-        return isDefaultProduct;
-    }
+    public boolean isDefaultProduct() { return isDefaultProduct; }
+
+    public boolean isNotDefaultProduct() { return !isDefaultProduct; }
 
     public void setDefaultProduct(boolean defaultProduct) {
         this.isDefaultProduct = defaultProduct;

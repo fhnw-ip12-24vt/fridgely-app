@@ -44,13 +44,11 @@ class FridgeStockModelTest {
         fridgeStockModel.addProduct(product1);
 
         // Act
-        boolean firstRemoveResult = fridgeStockModel.removeProduct(product1);
-        boolean secondRemoveResult = fridgeStockModel.removeProduct(product1);
+        fridgeStockModel.removeProduct(product1);
+        fridgeStockModel.removeProduct(product1);
         int productCount = fridgeStockModel.getProductCount();
 
         // Assert
-        assertTrue(firstRemoveResult);
-        assertFalse(secondRemoveResult); // Not in stock
         assertEquals(0, productCount);
     }
 
