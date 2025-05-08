@@ -100,6 +100,77 @@ class PenguinModelTest {
     }
 
     @Test
+    void testGetImagePathForHP_MaxHP() {
+        // Arrange
+        penguinModel.modifyHP(GameConfig.MAX_HP - GameConfig.STARTING_HP);
+        String expectedPath = "/ch/primeo/fridgely/sprites/ice_big_size.png";
+
+        // Act
+        String actualPath = penguinModel.getImagePathForHP();
+
+        // Assert
+        assertEquals(expectedPath, actualPath);
+    }
+
+    @Test
+    void testGetImagePathForHP_AboveStartingHP() {
+        // Arrange
+        // Set HP between STARTING_HP and MAX_HP
+        penguinModel.modifyHP(10); // Assuming this puts HP above STARTING_HP but below MAX_HP
+        String expectedPath = "/ch/primeo/fridgely/sprites/ice_middle_size.png";
+
+        // Act
+        String actualPath = penguinModel.getImagePathForHP();
+
+        // Assert
+        assertEquals(expectedPath, actualPath);
+    }
+
+    @Test
+    void testGetImagePathForHP_ExactlyThirty() {
+        // Arrange
+        // Set HP to exactly 30
+        penguinModel.resetHP(); // Reset first to ensure we're at STARTING_HP
+        penguinModel.modifyHP(30 - GameConfig.STARTING_HP); // Adjust to exactly 30
+        String expectedPath = "/ch/primeo/fridgely/sprites/penguin_on_small_block_of_ice.png";
+
+        // Act
+        String actualPath = penguinModel.getImagePathForHP();
+
+        // Assert
+        assertEquals(expectedPath, actualPath);
+    }
+
+    @Test
+    void testGetImagePathForHP_BetweenZeroAndThirty() {
+        // Arrange
+        // Set HP between 0 and 30 (exclusive of 30)
+        penguinModel.resetHP();
+        penguinModel.modifyHP(-(GameConfig.STARTING_HP - 15)); // Set HP to 15
+        String expectedPath = "/ch/primeo/fridgely/sprites/penguin_swimming.png";
+
+        // Act
+        String actualPath = penguinModel.getImagePathForHP();
+
+        // Assert
+        assertEquals(expectedPath, actualPath);
+    }
+
+    @Test
+    void testGetImagePathForHP_ZeroOrLess() {
+        // Arrange
+        // Set HP to 0 (minimum)
+        penguinModel.modifyHP(-GameConfig.MAX_HP); // Large negative number to ensure reaching MIN_HP
+        String expectedPath = "/ch/primeo/fridgely/sprites/penguin_unalive.png";
+
+        // Act
+        String actualPath = penguinModel.getImagePathForHP();
+
+        // Assert
+        assertEquals(expectedPath, actualPath);
+    }
+
+    @Test
     void testPropertyChangeListener() {
         // Arrange
         PropertyChangeListenerMock listener = new PropertyChangeListenerMock();
