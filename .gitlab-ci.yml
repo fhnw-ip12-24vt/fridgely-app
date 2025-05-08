@@ -26,10 +26,9 @@ update-contributors:
   script:
     - echo "Generating detailed contributors list for README..."
     - git fetch --all # Make sure we have the latest data
-    - >-
-      echo "# Project Contributors" > temp_readme.md
-      echo "The list below includes commit counts, additions, and deletions per contributor." >> temp_readme.md
-    - >-
+    - echo "# Project Contributors" > temp_readme.md
+    - echo "The list below includes commit counts, additions, and deletions per contributor." >> temp_readme.md
+    - |
       # Fetch contributions since the beginning of the repository (no --since flag)
       git log --numstat --pretty="%an" | awk 'BEGIN { FS="\t" } 
         { if (NF == 3) { add[$1]+=$1; del[$1]+=$2; commits[$1]++ } } 
@@ -48,7 +47,6 @@ update-contributors:
     - changes:
         - '**/*'
     - when: always
-
 
 # Other jobs:
 validate:
