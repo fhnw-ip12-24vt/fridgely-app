@@ -40,11 +40,11 @@ update-contributors:
     - git add README.md
     - git commit -m "Update contributors stats in README [skip ci]" # Commit with skip ci to prevent a recursive pipeline
     - git push
-  only:
-    - master  # Or your desired branch
   rules:
-    - if: '$CI_COMMIT_MESSAGE !~ /skip ci/'
-    - if: '$CI_COMMIT_REF_NAME == "main"'
+    - if: '$CI_COMMIT_REF_NAME == "main" && $CI_COMMIT_MESSAGE !~ /skip ci/'
+    - changes:
+        - '**/*'
+    - when: always
 
 # Other jobs:
 validate:
@@ -91,8 +91,6 @@ site:
     paths:
       - target/site
     expire_in: 1 week
-  only:
-    - main
   rules:
     - changes:
         - '**/*'
@@ -109,8 +107,6 @@ pages:
     paths:
       - public
     expire_in: 1 week
-  only:
-    - main
   rules:
     - changes:
         - '**/*'
@@ -137,9 +133,6 @@ deploy:
     paths:
       - fridgely-latest.jar
     expire_in: 1 week
-  only:
-    - main
-  when: on_success
   rules:
     - changes:
         - '**/*'
