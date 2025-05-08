@@ -13,11 +13,13 @@ import ch.primeo.fridgely.model.multiplayer.MultiplayerGameStateModel;
 class MultiplayerGameControllerTest {
 
     private MultiplayerGameController controller;
+    private ProductRepository productRepository;
+    private RecipeRepository recipeRepository;
 
     @BeforeEach
     void setUp() {
-        ProductRepository productRepository = mock(ProductRepository.class);
-        RecipeRepository recipeRepository = mock(RecipeRepository.class);
+        productRepository = mock(ProductRepository.class);
+        recipeRepository = mock(RecipeRepository.class);
         controller = new MultiplayerGameController(productRepository, recipeRepository);
     }
 
@@ -47,5 +49,10 @@ class MultiplayerGameControllerTest {
         assertNotNull(controller.getRecipeModel());
         assertNotNull(controller.getPlayer1Controller());
         assertNotNull(controller.getPlayer2Controller());
+    }
+    
+    @Test
+    void testGetProductRepository() {
+        assertSame(productRepository, controller.getProductRepository());
     }
 }
