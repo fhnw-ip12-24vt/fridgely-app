@@ -5,6 +5,7 @@ import ch.primeo.fridgely.controller.multiplayer.MultiplayerGameController;
 import ch.primeo.fridgely.controller.multiplayer.MultiplayerPlayer1Controller;
 import ch.primeo.fridgely.model.FridgeStockModel;
 import ch.primeo.fridgely.model.PenguinFacialExpression;
+import ch.primeo.fridgely.model.PenguinHPState;
 import ch.primeo.fridgely.model.Product;
 import ch.primeo.fridgely.model.multiplayer.MultiplayerGameStateModel;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
@@ -50,6 +51,7 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
     private final ImageLoader imageLoader;
 
     private JLabel scanPromptLabel;
+    private JLabel scanningPenguinLabel;
     private String scanPromptBase;
     private int scanPromptDotCount = 0;
     private javax.swing.Timer scanPromptTimer;
@@ -87,8 +89,9 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
         scanPromptLabel = new JLabel("", SwingConstants.CENTER);
         finishTurnButton = new FinishTurnButton(localizationService);
         statusLabel = new JLabel("");
+        scanningPenguinLabel = new JLabel();
         minProductsLabel = new JLabel("");
-
+        scanningPenguinLabel.setIcon(imageLoader.loadScaledImage("/ch/primeo/fridgely/sprites/penguin_scanning.png", 250, 250));
     }
 
     /**
@@ -103,10 +106,13 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
         statusPanel.add(statusLabel);
         add(statusPanel, BorderLayout.NORTH);
 
+        scanningPenguinLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
         // Centered scan prompt label
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.setOpaque(false);
-        centerPanel.add(scanPromptLabel, BorderLayout.CENTER);
+        centerPanel.add(scanPromptLabel, BorderLayout.SOUTH);
+        centerPanel.add(scanningPenguinLabel, BorderLayout.CENTER);
         add(centerPanel, BorderLayout.CENTER);
 
         // Finish turn button at the bottom
