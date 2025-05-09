@@ -39,13 +39,13 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
     private JPanel defaultProductCardsPanel; // Default products
     //private JLabel headerLabel;
 
-    //define scale of Panels
-    private static final double PERCENTAGE_CARDHEIGHT = .17;
-    private static final double PERCENTAGE_CARDWIDTH = .17;
-    private static final double PERCENTAGE_VGAPSIZE = .03;
-    private static final double PERCENTAGE_HGAPSIZE = .029;
-    private static final double PERCENTAGE_FONTSIZE = .02;
-    private static final int CARD_OPACITY = 220;
+    private static final double PERCENTAGE_CARDHEIGHT = .168;
+    private static final double PERCENTAGE_CARDWIDTH = .16;
+    private static final double PERCENTAGE_VGAPSIZE = .026;
+    private static final double PERCENTAGE_HGAPSIZE = .03;
+    private static final double PERCENTAGE_FONTSIZE = .009;
+    private static final double PERCENTAGE_IMAGESIZE = .75;
+    private static final int CARD_OPACITY = 1;
     private static final int BG_CARD_OPACITY = 200;
     private final Dimension screenSize;
     private final Dimension cardSize;
@@ -68,7 +68,7 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         this.imageLoader = imageLoader;
         screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         cardSize = new Dimension((int)(screenSize.width * PERCENTAGE_CARDWIDTH), (int)(screenSize.height * PERCENTAGE_CARDHEIGHT));
-        imageSize = (int)(cardSize.width * .80);
+        imageSize = (int)(cardSize.width * PERCENTAGE_IMAGESIZE);
         gapSizeH = (int)((screenSize.width * PERCENTAGE_HGAPSIZE));
         gapSizeV = (int)((screenSize.height * PERCENTAGE_VGAPSIZE));
         fontSize = (int)(screenSize.height * PERCENTAGE_FONTSIZE);
@@ -179,7 +179,7 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         card.setOpaque(true); // Enable background painting
         card.setBackground(new Color(255, 255, 255, CARD_OPACITY)); // Semi-opaque white
         card.setBorder(
-                BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(180, 180, 180), 2, true),
+                BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(180, 180, 180), 0, true),
                         BorderFactory.createEmptyBorder(8, 8, 8, 8)));
         // Title at the top
         JLabel nameLabel = new JLabel(product.getName(localizationService.getLanguage()));
@@ -206,7 +206,7 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         JLabel bioLabel = new JLabel(
                 product.isBio() ? localizationService.get(KEY_LABEL_BIO) : localizationService.get(KEY_LABEL_NON_BIO));
         bioLabel.setOpaque(true);
-        bioLabel.setFont(new Font(nameLabel.getFont().getName(), Font.BOLD, fontSize));
+        bioLabel.setFont(new Font(nameLabel.getFont().getName(), Font.BOLD, (int)(fontSize*.6)));
         bioLabel.setForeground(Color.WHITE);
         bioLabel.setBackground(product.isBio() ? new Color(46, 204, 113) : new Color(189, 195, 199));
         bioLabel.setBorder(BorderFactory.createCompoundBorder(
@@ -218,7 +218,7 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
                 ? localizationService.get(KEY_LABEL_LOCAL)
                 : localizationService.get(KEY_LABEL_NON_LOCAL));
         localLabel.setOpaque(true);
-        localLabel.setFont(new Font(nameLabel.getFont().getName(), Font.BOLD, fontSize));
+        localLabel.setFont(new Font(nameLabel.getFont().getName(), Font.BOLD, (int)(fontSize*.6)));
         localLabel.setForeground(Color.WHITE);
         localLabel.setBackground(product.isLocal() ? new Color(52, 152, 219) : new Color(189, 195, 199));
         localLabel.setBorder(BorderFactory.createCompoundBorder(
