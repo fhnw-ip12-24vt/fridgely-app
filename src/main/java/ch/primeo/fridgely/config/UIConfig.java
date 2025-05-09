@@ -15,6 +15,9 @@ public class UIConfig {
         throw new UnsupportedOperationException("GameConfig is a utility class and cannot be instantiated");
     }
 
+    public static final Color ACTIVE_COLOR = new Color(131, 180, 225);
+    public static final Color DISABLED_COLOR = new Color(193, 193, 193);
+
     /**
      * Default number of rounds in a game.
      */

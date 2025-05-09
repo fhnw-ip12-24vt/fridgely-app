@@ -1,5 +1,6 @@
 package ch.primeo.fridgely.view.component;
 
+import ch.primeo.fridgely.config.UIConfig;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -12,15 +13,11 @@ import java.awt.event.MouseEvent;
 /**
  * A button for switching the application language.
  */
-@Component
-@Scope("singleton")
 public class FinishTurnButton extends JButton {
 
     private final AppLocalizationService localizationService;
 
     private static final int BUTTON_HEIGHT = 50;
-    private static final Color BUTTON_COLOR = new Color(255, 255, 255);
-    private static final Color HOVER_COLOR = new Color(240, 240, 240);
 
     /**
      * Constructs a LanguageSwitchButton and subscribes to localization changes.
@@ -32,9 +29,9 @@ public class FinishTurnButton extends JButton {
         this.localizationService = localization;
 
         configureButton();
-        setupBehavior();
         localization.subscribe(this::updateText);
         updateText();
+        setEnabled(isEnabled());
     }
 
     /**
@@ -47,8 +44,6 @@ public class FinishTurnButton extends JButton {
         setBorderPainted(false);
 
         // Set visual properties
-        setBackground(BUTTON_COLOR);
-        setForeground(Color.BLACK);
         setFont(new Font("SansSerif", Font.BOLD, 24));
 
         // Fix sizing issues
@@ -65,28 +60,6 @@ public class FinishTurnButton extends JButton {
 
         // Override layout hints for parent containers
         putClientProperty("JComponent.sizeVariant", "large");
-    }
-
-    /**
-     * Sets up the button's behavior, including click and hover effects.
-     */
-    private void setupBehavior() {
-        addActionListener(e -> localizationService.toggleLocale());
-
-        // Add hover effect
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                setBackground(HOVER_COLOR);
-                setCursor(new Cursor(Cursor.HAND_CURSOR));
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                setBackground(BUTTON_COLOR);
-                setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-            }
-        });
     }
 
     /**
@@ -109,6 +82,16 @@ public class FinishTurnButton extends JButton {
     public Dimension getMinimumSize() {
         Dimension size = super.getMinimumSize();
         return new Dimension(Math.max(size.width, 100), BUTTON_HEIGHT);
+    }
+
+    @Override
+    public void setEnabled(boolean b) {
+        super.setEnabled(b);
+        if(b) {
+            setBackground(UIConfig.ACTIVE_COLOR);
+        } else {
+            setBackground(UIConfig.DISABLED_COLOR);
+        }
     }
 
     /**
