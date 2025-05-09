@@ -29,6 +29,10 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
     private static final String KEY_LABEL_NON_BIO = "label.non_bio";
     private static final String KEY_LABEL_LOCAL = "label.local";
     private static final String KEY_LABEL_NON_LOCAL = "label.non_local";
+    private final ImageIcon LABEL_NON_LOCAL;
+    private final ImageIcon LABEL_LOCAL;
+    private final ImageIcon LABEL_NON_BIO;
+    private final ImageIcon LABEL_BIO;
 
     private final MultiplayerGameController gameController;
     private final AppLocalizationService localizationService;
@@ -44,10 +48,10 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
     private static final double PERCENTAGE_VGAPSIZE = .026;
     private static final double PERCENTAGE_HGAPSIZE = .03;
     private static final double PERCENTAGE_FONTSIZE = .009;
-    private static final double PERCENTAGE_IMAGESIZE = .75;
-    private static final int CARD_OPACITY = 1;
-    private static final int BG_CARD_OPACITY = 200;
-    private final Dimension screenSize;
+    private static final double PERCENTAGE_IMAGESIZE = .85;
+    private static final int CARD_OPACITY = 180;
+    private static final int BG_CARD_OPACITY = 120;
+    private final Dimension screenSize = new Dimension(1080, 1920);
     private final Dimension cardSize;
     private final int imageSize;
     private final int gapSizeH;
@@ -66,14 +70,18 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         this.gameController = controller;
         this.localizationService = localization;
         this.imageLoader = imageLoader;
-        screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        //screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         cardSize = new Dimension((int)(screenSize.width * PERCENTAGE_CARDWIDTH), (int)(screenSize.height * PERCENTAGE_CARDHEIGHT));
         imageSize = (int)(cardSize.width * PERCENTAGE_IMAGESIZE);
         gapSizeH = (int)((screenSize.width * PERCENTAGE_HGAPSIZE));
         gapSizeV = (int)((screenSize.height * PERCENTAGE_VGAPSIZE));
         fontSize = (int)(screenSize.height * PERCENTAGE_FONTSIZE);
 
-        // Load fridge background image
+        // Load images
+        LABEL_LOCAL = imageLoader.loadScaledImage("/ch/primeo/fridgely/sprites/LocalAndBio/local.png", 50, 50);
+        LABEL_NON_LOCAL = imageLoader.loadScaledImage("/ch/primeo/fridgely/sprites/LocalAndBio/non-local.png", 50, 50);
+        LABEL_BIO = imageLoader.loadScaledImage("/ch/primeo/fridgely/sprites/LocalAndBio/bio.png", 50, 50);
+        LABEL_NON_BIO = imageLoader.loadScaledImage("/ch/primeo/fridgely/sprites/LocalAndBio/non-bio.png", 50, 50);
         backgroundImg = imageLoader.loadImage("/ch/primeo/fridgely/sprites/fridge_interior.png").getImage();
         initializeComponents();
         setupLayout();
@@ -175,18 +183,27 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
     private JPanel createProductCard(Product product) {
         JPanel card = new JPanel();
         card.setLayout(new BorderLayout(0, 0));
-        card.setPreferredSize(cardSize); // Smaller card
-        card.setOpaque(true); // Enable background painting
-        card.setBackground(new Color(255, 255, 255, CARD_OPACITY)); // Semi-opaque white
-        card.setBorder(
-                BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(180, 180, 180), 0, true),
-                        BorderFactory.createEmptyBorder(8, 8, 8, 8)));
+        card.setPreferredSize(cardSize);
+        card.setOpaque(true);
+        card.setBackground(new Color(255, 255, 255, 0)); // Semi-opaque white
+        //card.setBorder(BorderFactory.createLineBorder(new Color(180, 180, 180), 3));
+
+        JPanel text = new JPanel();
+        text.setLayout(new BorderLayout(0, 0));
+
+        text.setOpaque(true); // Enable background painting
+        text.setBackground(new Color(255, 255, 255, CARD_OPACITY)); // Semi-opaque white
+        text.setBorder(
+                BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(180, 180, 180), 2, true),
+                        BorderFactory.createEmptyBorder(4, 8, 8, 8)));
+
         // Title at the top
-        JLabel nameLabel = new JLabel(product.getName(localizationService.getLanguage()));
+        String name = product.getName(localizationService.getLanguage());
+        JLabel nameLabel = new JLabel(name);
         nameLabel.setFont(new Font(nameLabel.getFont().getName(), Font.BOLD, fontSize));
         nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        card.add(nameLabel, BorderLayout.NORTH);
-        // Product image in the center
+        text.add(nameLabel, BorderLayout.NORTH);
+        // Product image in the bottom
         ImageIcon icon = imageLoader.loadScaledImage(product.getProductImagePath(), imageSize, imageSize);
         JLabel imageLabel = new JLabel();
 
@@ -203,29 +220,35 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         JPanel tagsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 6, 0));
         tagsPanel.setOpaque(false);
         // bio tag
-        JLabel bioLabel = new JLabel(
-                product.isBio() ? localizationService.get(KEY_LABEL_BIO) : localizationService.get(KEY_LABEL_NON_BIO));
-        bioLabel.setOpaque(true);
-        bioLabel.setFont(new Font(nameLabel.getFont().getName(), Font.BOLD, (int)(fontSize*.6)));
-        bioLabel.setForeground(Color.WHITE);
-        bioLabel.setBackground(product.isBio() ? new Color(46, 204, 113) : new Color(189, 195, 199));
-        bioLabel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(product.isBio() ? new Color(39, 174, 96) : new Color(127, 140, 141), 1,
-                        true), BorderFactory.createEmptyBorder(2, 8, 2, 8)));
+        JLabel bioLabel = new JLabel();
+        bioLabel.setIcon(product.isBio()? LABEL_BIO : LABEL_NON_BIO);
+        bioLabel.setMaximumSize(new Dimension(cardSize.width / 3, cardSize.height / 3));
+//        bioLabel.setOpaque(true);
+//        bioLabel.setFont(new Font(nameLabel.getFont().getName(), Font.BOLD, (int)(fontSize*.6)));
+//        bioLabel.setForeground(Color.WHITE);
+//        bioLabel.setBackground(product.isBio() ? new Color(46, 204, 113) : new Color(189, 195, 199));
+//        bioLabel.setBorder(BorderFactory.createCompoundBorder(
+//                BorderFactory.createLineBorder(product.isBio() ? new Color(39, 174, 96) : new Color(127, 140, 141), 1,
+//                        true), BorderFactory.createEmptyBorder(2, 8, 2, 8)));
         tagsPanel.add(bioLabel);
         // local tag
-        JLabel localLabel = new JLabel(product.isLocal()
-                ? localizationService.get(KEY_LABEL_LOCAL)
-                : localizationService.get(KEY_LABEL_NON_LOCAL));
-        localLabel.setOpaque(true);
-        localLabel.setFont(new Font(nameLabel.getFont().getName(), Font.BOLD, (int)(fontSize*.6)));
-        localLabel.setForeground(Color.WHITE);
-        localLabel.setBackground(product.isLocal() ? new Color(52, 152, 219) : new Color(189, 195, 199));
-        localLabel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(product.isLocal() ? new Color(41, 128, 185) : new Color(127, 140, 141),
-                        1, true), BorderFactory.createEmptyBorder(2, 8, 2, 8)));
+        JLabel localLabel = new JLabel();
+        localLabel.setIcon(product.isLocal()? LABEL_LOCAL : LABEL_NON_LOCAL);
+        localLabel.setMaximumSize(new Dimension(cardSize.width / 3, cardSize.height / 3));
+//        JLabel localLabel = new JLabel(product.isLocal()
+//                ? localizationService.get(KEY_LABEL_LOCAL)
+//                : localizationService.get(KEY_LABEL_NON_LOCAL));
+//        localLabel.setOpaque(true);
+//        localLabel.setFont(new Font(nameLabel.getFont().getName(), Font.BOLD, (int)(fontSize*.6)));
+//        localLabel.setForeground(Color.WHITE);
+//        localLabel.setBackground(product.isLocal() ? new Color(52, 152, 219) : new Color(189, 195, 199));
+//        localLabel.setBorder(BorderFactory.createCompoundBorder(
+//                BorderFactory.createLineBorder(product.isLocal() ? new Color(41, 128, 185) : new Color(127, 140, 141),
+//                        1, true), BorderFactory.createEmptyBorder(2, 8, 2, 8)));
         tagsPanel.add(localLabel);
-        card.add(tagsPanel, BorderLayout.SOUTH);
+        text.add(tagsPanel, BorderLayout.CENTER);
+        text.setMaximumSize(new Dimension(cardSize.width , (int)(cardSize.height * .2)));
+        card.add(text, BorderLayout.PAGE_START);
         return card;
     }
 
@@ -240,7 +263,7 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
                         BorderFactory.createEmptyBorder(6, 6, 6, 6)));
         // Title at the top
         JLabel nameLabel = new JLabel(product.getName(localizationService.getLanguage()));
-        nameLabel.setFont(new Font(nameLabel.getFont().getName(), Font.PLAIN, 11));
+        nameLabel.setFont(new Font(nameLabel.getFont().getName(), Font.PLAIN, fontSize));
         nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
         card.add(nameLabel, BorderLayout.NORTH);
         // Product image in the center
