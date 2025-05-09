@@ -22,7 +22,7 @@ public class PenguinReactionOverlay extends JWindow {
     public PenguinReactionOverlay(Window parent, PenguinFacialExpression expression, ImageLoader imageLoader) {
         super(parent);
         this.penguinImage = imageLoader.loadBufferedImage(expression.getSprite());
-        setBackground(new Color(0, 0, 0, 0));
+        setBackground(new Color(238, 238, 238));
         setAlwaysOnTop(true);
         setSize(OVERLAY_SIZE, OVERLAY_SIZE);
         setLocationRelativeTo(parent);
@@ -40,6 +40,7 @@ public class PenguinReactionOverlay extends JWindow {
                 }
             }
         };
+        //panel.setBackground(new Color(248, 248, 255));
         panel.setOpaque(false);
         setContentPane(panel);
     }
