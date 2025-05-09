@@ -80,7 +80,6 @@ public class MultiplayerPlayer2View extends JPanel implements PropertyChangeList
         // initialize with empty text; will be set in onLocaleChanged()
         finishTurnButton = new JButton();
         statusLabel = new JLabel();
-        statusLabel.setFont(new Font(statusLabel.getFont().getName(), Font.BOLD, 16));
     }
 
     /**
