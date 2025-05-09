@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Exec=java -jar /opt/fridgely/fridgely-latest.jar
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name=Fridgely
+Comment=Starts Fridgely App at login
