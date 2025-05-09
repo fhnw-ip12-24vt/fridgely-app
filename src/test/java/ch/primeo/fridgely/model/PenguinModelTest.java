@@ -1,13 +1,16 @@
 package ch.primeo.fridgely.model;
 
 import ch.primeo.fridgely.config.GameConfig;
+import lombok.Getter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class PenguinModelTest {
 
@@ -204,7 +207,8 @@ class PenguinModelTest {
     }
 
     // Mock class for PropertyChangeListener
-    private static class PropertyChangeListenerMock implements PropertyChangeListener {
+    @Getter
+    private static final class PropertyChangeListenerMock implements PropertyChangeListener {
         private PropertyChangeEvent lastEvent;
 
         @Override
@@ -212,12 +216,5 @@ class PenguinModelTest {
             this.lastEvent = evt;
         }
 
-        public PropertyChangeEvent getLastEvent() {
-            return lastEvent;
-        }
-
-        public void reset() {
-            this.lastEvent = null;
-        }
     }
 }

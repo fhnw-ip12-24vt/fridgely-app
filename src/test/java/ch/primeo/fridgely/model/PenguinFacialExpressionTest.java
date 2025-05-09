@@ -1,7 +1,10 @@
 package ch.primeo.fridgely.model;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests for the PenguinFacialExpression enum.
@@ -46,9 +49,9 @@ public class PenguinFacialExpressionTest {
         for (PenguinFacialExpression expression : PenguinFacialExpression.values()) {
             String spritePath = expression.getSprite();
             assertNotNull(spritePath, "Sprite path for " + expression + " should not be null");
-            assertTrue(spritePath.startsWith(BASE_PATH), 
+            assertTrue(spritePath.startsWith(BASE_PATH),
                     "Sprite path for " + expression + " should start with the base path");
-            assertTrue(spritePath.endsWith(".png"), 
+            assertTrue(spritePath.endsWith(".png"),
                     "Sprite path for " + expression + " should end with .png extension");
         }
     }

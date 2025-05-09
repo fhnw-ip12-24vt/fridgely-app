@@ -6,13 +6,21 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import java.lang.reflect.Field;
 import java.util.Locale;
-
 import java.util.MissingResourceException;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AppLocalizationServiceTest {
@@ -57,9 +65,7 @@ class AppLocalizationServiceTest {
 
     @Test
     void testGetLocalizedString_keyNotFound() {
-        assertThrows(MissingResourceException.class, () -> {
-            appLocalizationService.get("non.existent.key");
-        });
+        assertThrows(MissingResourceException.class, () -> appLocalizationService.get("non.existent.key"));
     }
 
     @Test
@@ -77,7 +83,8 @@ class AppLocalizationServiceTest {
     }
 
     @Test
-    void testToggleLocale_whenCurrentLocaleNotInList_resetsToFirstLocale() throws NoSuchFieldException, IllegalAccessException {
+    void testToggleLocale_whenCurrentLocaleNotInList_resetsToFirstLocale()
+            throws NoSuchFieldException, IllegalAccessException {
         // Arrange: Current default language is "en" due to setUp. Locales are [en, de, fr].
         // Use reflection to set currentLocale to a value not in the AppLocalizationService's locales list.
         Locale rogueLocale = Locale.forLanguageTag("xx"); // A locale not in the list [en, de, fr]

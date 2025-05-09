@@ -3,18 +3,15 @@ package ch.primeo.fridgely.util;
 import ch.primeo.fridgely.model.PenguinFacialExpression;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-
-import java.awt.Graphics;
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -22,11 +19,26 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.argThat;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class ImageLoaderTest {
 
@@ -40,7 +52,7 @@ class ImageLoaderTest {
 
         resourceLoader = mock(ResourceLoader.class);
         imageLoader = new ImageLoader(resourceLoader);
-        
+
         // Create sample image bytes
         BufferedImage testImage = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
         Graphics g = testImage.getGraphics();
@@ -57,7 +69,7 @@ class ImageLoaderTest {
     @Test
     void testLoadImage_success() throws Exception {
         String imagePath = "test.png";
-        byte[] imageData = new byte[]{(byte) 0x89, 0x50, 0x4E, 0x47}; // PNG header bytes
+        byte[] imageData = new byte[] {(byte) 0x89, 0x50, 0x4E, 0x47}; // PNG header bytes
 
         Resource resource = mock(Resource.class);
         when(resourceLoader.getResource("classpath:" + imagePath)).thenReturn(resource);
@@ -85,7 +97,7 @@ class ImageLoaderTest {
     @Test
     void testLoadImage_caching() throws Exception {
         String imagePath = "cached.png";
-        byte[] data = new byte[]{(byte) 0x89, 0x50};
+        byte[] data = new byte[] {(byte) 0x89, 0x50};
 
         Resource resource = mock(Resource.class);
         when(resourceLoader.getResource("classpath:" + imagePath)).thenReturn(resource);
@@ -123,7 +135,7 @@ class ImageLoaderTest {
     @Test
     void testLoadScaledImage_returnsScaledIcon() throws Exception {
         String path = "scaled.png";
-        byte[] imageBytes = new byte[]{(byte) 0x89, 0x50};
+        byte[] imageBytes = new byte[] {(byte) 0x89, 0x50};
 
         Resource resource = mock(Resource.class);
         when(resourceLoader.getResource("classpath:" + path)).thenReturn(resource);
@@ -136,7 +148,7 @@ class ImageLoaderTest {
     @Test
     void testClearCache_emptiesAll() throws Exception {
         String path = "toClear.png";
-        byte[] data = new byte[]{(byte) 0x89, 0x50};
+        byte[] data = new byte[] {(byte) 0x89, 0x50};
 
         Resource resource = mock(Resource.class);
         when(resourceLoader.getResource("classpath:" + path)).thenReturn(resource);
@@ -159,18 +171,17 @@ class ImageLoaderTest {
         ImageLoader imageLoader = spy(new ImageLoader(resourceLoader));
 
         // Use real enum values
-        String[] expectedPenguinSprites = {
-                PenguinFacialExpression.HAPPY.getSprite(),
-                PenguinFacialExpression.NEUTRAL.getSprite(),
-                PenguinFacialExpression.ALERT.getSprite(),
-                PenguinFacialExpression.ANGRY.getSprite(),
-                PenguinFacialExpression.CRITICAL.getSprite()
+        String[] expectedPenguinSprites =
+        {
+            PenguinFacialExpression.HAPPY.getSprite(),
+            PenguinFacialExpression.NEUTRAL.getSprite(), PenguinFacialExpression.ALERT.getSprite(),
+            PenguinFacialExpression.ANGRY.getSprite(), PenguinFacialExpression.CRITICAL.getSprite()
         };
 
         // Mock resource listing
         Resource mockResource = mock(Resource.class);
         when(mockResource.getFilename()).thenReturn("milk.png");
-        doReturn(new Resource[]{mockResource}).when(imageLoader).resolveProductImageResources();
+        doReturn(new Resource[] {mockResource}).when(imageLoader).resolveProductImageResources();
 
         // Spy preload methods
         doNothing().when(imageLoader).preloadScaledImages(any(), anyInt(), anyInt());
@@ -180,19 +191,17 @@ class ImageLoaderTest {
         imageLoader.preloadAllImages();
 
         // Verify penguin preload
-        verify(imageLoader).preloadScaledImages(argThat(arr ->
-                new HashSet<>(List.of(arr)).containsAll(List.of(expectedPenguinSprites))
-        ), eq(300), eq(300));
+        verify(imageLoader).preloadScaledImages(
+                argThat(arr -> new HashSet<>(List.of(arr)).containsAll(List.of(expectedPenguinSprites))), eq(300),
+                eq(300));
 
         // Verify product image preload
-        verify(imageLoader).preloadScaledImages(argThat(arr ->
-                List.of(arr).contains("/ch/primeo/fridgely/productimages/milk.png")
-        ), eq(48), eq(48));
+        verify(imageLoader).preloadScaledImages(
+                argThat(arr -> List.of(arr).contains("/ch/primeo/fridgely/productimages/milk.png")), eq(48), eq(48));
 
         // Verify UI elements preload
-        verify(imageLoader).preloadImages(argThat(arr ->
-                List.of(arr).contains("/ch/primeo/fridgely/vectors/dialog_arrow_up.png")
-        ));
+        verify(imageLoader).preloadImages(
+                argThat(arr -> List.of(arr).contains("/ch/primeo/fridgely/vectors/dialog_arrow_up.png")));
     }
 
     /**
@@ -216,7 +225,7 @@ class ImageLoaderTest {
      * Test method for preloadImages that verifies all image paths are loaded
      */
     @Test
-    void preloadImages_ShouldLoadAllImages() throws IOException {
+    void preloadImages_ShouldLoadAllImages() {
         // Arrange - create a spy to verify loadImage calls
         ImageLoader spyLoader = spy(imageLoader);
         String[] paths = {"path1.png", "path2.png", "path3.png"};
@@ -240,7 +249,7 @@ class ImageLoaderTest {
      * Test method for preloadScaledImages that verifies all image paths are loaded with scaling
      */
     @Test
-    void preloadScaledImages_ShouldLoadAllImagesWithScaling() throws IOException {
+    void preloadScaledImages_ShouldLoadAllImagesWithScaling() {
         // Arrange - create a spy to verify loadScaledImage calls
         ImageLoader spyLoader = spy(imageLoader);
         String[] paths = {"path1.png", "path2.png", "path3.png"};
@@ -270,21 +279,21 @@ class ImageLoaderTest {
         // Create a subclass that overrides the method for testing
         ImageLoader testLoader = new ImageLoader(resourceLoader) {
             @Override
-            protected Resource[] resolveProductImageResources() throws IOException {
+            protected Resource[] resolveProductImageResources() {
                 // Return test data instead of making actual resolver call
                 Resource mockResource1 = mock(Resource.class);
                 Resource mockResource2 = mock(Resource.class);
                 when(mockResource1.getFilename()).thenReturn("apple.png");
                 when(mockResource2.getFilename()).thenReturn("milk.png");
-                
-                return new Resource[] { mockResource1, mockResource2 };
+
+                return new Resource[] {mockResource1, mockResource2};
             }
         };
-        
+
         try {
             // Act
             Resource[] result = testLoader.resolveProductImageResources();
-            
+
             // Assert
             assertNotNull(result);
             assertEquals(2, result.length);
@@ -294,12 +303,12 @@ class ImageLoaderTest {
             fail("Should not throw exception: " + e.getMessage());
         }
     }
-    
+
     /**
      * Test for exception handling in the integration with resolveProductImageResources
      */
     @Test
-    void preloadAllImages_WithResolverException() throws IOException {
+    void preloadAllImages_WithResolverException() {
         // Create a custom ImageLoader that throws exception in resolveProductImageResources
         ImageLoader errorLoader = new ImageLoader(resourceLoader) {
             @Override
@@ -307,36 +316,36 @@ class ImageLoaderTest {
                 throw new IOException("Simulated resolver error");
             }
         };
-        
+
         // Mock resources for the penguin expressions to avoid NPE
         for (PenguinFacialExpression expression : PenguinFacialExpression.values()) {
             String path = expression.getSprite();
             Resource mockResource = new ByteArrayResource(sampleImageBytes);
             when(resourceLoader.getResource("classpath:" + path)).thenReturn(mockResource);
         }
-        
+
         // Also mock UI element resources
         String[] uiElements = {
             "/ch/primeo/fridgely/vectors/dialog_arrow_up.png",
             "/ch/primeo/fridgely/vectors/dialog_arrow_down.png",
             "/ch/primeo/fridgely/sprites/fridge_interior.png"
         };
-        
+
         for (String path : uiElements) {
             Resource mockResource = new ByteArrayResource(sampleImageBytes);
             when(resourceLoader.getResource("classpath:" + path)).thenReturn(mockResource);
         }
-        
+
         // Create spy to track method calls
         ImageLoader spyLoader = spy(errorLoader);
-        
+
         // Act - this should not throw an exception despite the error in resolveProductImageResources
         spyLoader.preloadAllImages();
-        
+
         // Assert - verify the other methods were still called despite the error
         verify(spyLoader).preloadScaledImages(any(String[].class), eq(300), eq(300));
         verify(spyLoader).preloadImages(any(String[].class));
-        
+
         // Verify the product sprites array was empty
         verify(spyLoader).preloadScaledImages(argThat(arr -> arr.length == 0), eq(48), eq(48));
     }
@@ -351,10 +360,10 @@ class ImageLoaderTest {
         Resource mockResource = mock(Resource.class);
         when(resourceLoader.getResource("classpath:" + imagePath)).thenReturn(mockResource);
         when(mockResource.getInputStream()).thenThrow(new IOException("Simulated IO error"));
-        
+
         // Act
         ImageIcon result = imageLoader.loadImage(imagePath);
-        
+
         // Assert
         assertNull(result, "Should return null when an IOException occurs");
     }
@@ -369,10 +378,10 @@ class ImageLoaderTest {
         Resource mockResource = mock(Resource.class);
         when(resourceLoader.getResource("classpath:" + imagePath)).thenReturn(mockResource);
         when(mockResource.getInputStream()).thenThrow(new IOException("Simulated IO error"));
-        
+
         // Act
         BufferedImage result = imageLoader.loadBufferedImage(imagePath);
-        
+
         // Assert
         assertNull(result, "Should return null when an IOException occurs");
     }
@@ -385,10 +394,10 @@ class ImageLoaderTest {
         assertTrue(resources.length > 0, "Should load at least one PNG file");
 
         for (Resource resource : resources) {
-            assertTrue(resource.getFilename().endsWith(".png"),
+            assertTrue(Objects.requireNonNull(resource.getFilename()).endsWith(".png"),
                     "Each resource should be a .png file");
-            assertTrue(resource.exists(),
-                    "Resource file should exist in the classpath");
+
+            assertTrue(resource.exists(), "Resource file should exist in the classpath");
         }
     }
 }

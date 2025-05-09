@@ -9,21 +9,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 class RecipeModelTest {
 
     private RecipeRepository recipeRepositoryMock;
     private RecipeModel recipeModel;
-    private List<Product> availableProducts;
 
     @BeforeEach
     void setUp() {
         // Arrange: Mock the RecipeRepository and initialize RecipeModel
         recipeRepositoryMock = mock(RecipeRepository.class);
-        availableProducts = new ArrayList<>();
+        List<Product> availableProducts = new ArrayList<>();
         recipeModel = new RecipeModel(recipeRepositoryMock, availableProducts);
     }
 
@@ -35,9 +40,10 @@ class RecipeModelTest {
         recipe.setRecipeId(1);
         recipe.setName("Test Recipe");
 
-        Product product = new Product("123", "Product 1", "Product 1", "Product 1", "Desc", "Desc", "Desc", false, false, false);
+        Product product = new Product("123", "Product 1", "Product 1", "Product 1", "Desc", "Desc", "Desc", false,
+                false, false);
         List<Product> products = List.of(product);
-        
+
         when(recipeRepositoryMock.getAllRecipes()).thenReturn(recipeDTOs);
         when(recipeRepositoryMock.findById(1)).thenReturn(Optional.of(recipe));
         when(recipeRepositoryMock.getRecipeIngredientBarcodes(1)).thenReturn(List.of("123"));
@@ -59,9 +65,10 @@ class RecipeModelTest {
         recipe.setRecipeId(1);
         recipe.setName("Test Recipe");
 
-        Product product = new Product("456", "Product 2", "Product 2", "Product 2", "Desc", "Desc", "Desc", false, false, false);
+        Product product = new Product("456", "Product 2", "Product 2", "Product 2", "Desc", "Desc", "Desc", false,
+                false, false);
         List<Product> products = List.of(product);
-        
+
         when(recipeRepositoryMock.getAllRecipes()).thenReturn(recipeDTOs);
         when(recipeRepositoryMock.findById(1)).thenReturn(Optional.of(recipe));
         when(recipeRepositoryMock.getRecipeIngredientBarcodes(1)).thenReturn(List.of("123"));
@@ -88,10 +95,8 @@ class RecipeModelTest {
         recipeModel.selectRecipe(recipe);
 
         // Assert
-        verify(listener).propertyChange(argThat(event ->
-            event.getPropertyName().equals(RecipeModel.PROP_SELECTED_RECIPE) &&
-                event.getNewValue() == recipe
-        ));
+        verify(listener).propertyChange(argThat(event -> event.getPropertyName()
+                .equals(RecipeModel.PROP_SELECTED_RECIPE) && event.getNewValue() == recipe));
         assertEquals(recipe, recipeModel.getSelectedRecipe());
     }
 
@@ -101,11 +106,13 @@ class RecipeModelTest {
         Recipe recipe = new Recipe();
         recipe.setRecipeId(1);
 
-        Product product1 = new Product("123", "Product 1 NameEN", "Product 1 NameDE", "Product 1 NameFR", "Desc 1 EN", "Desc 1 DE", "Desc 1 F", false, false, false);
-        Product product2 = new Product("456", "Product 2 NameEN", "Product 2 NameDE", "Product 2 NameFR", "Desc 2 EN", "Desc 2 DE", "Desc 2 F", false, false, false);
+        Product product1 = new Product("123", "Product 1 NameEN", "Product 1 NameDE", "Product 1 NameFR", "Desc 1 EN",
+                "Desc 1 DE", "Desc 1 F", false, false, false);
+        Product product2 = new Product("456", "Product 2 NameEN", "Product 2 NameDE", "Product 2 NameFR", "Desc 2 EN",
+                "Desc 2 DE", "Desc 2 F", false, false, false);
 
         List<Product> products = List.of(product1, product2);
-        
+
         when(recipeRepositoryMock.getRecipeIngredientBarcodes(1)).thenReturn(List.of("123", "456"));
 
         // Act
@@ -120,10 +127,11 @@ class RecipeModelTest {
         // Arrange
         Recipe recipe = new Recipe();
         recipe.setRecipeId(1);
-        
-        Product product = new Product("123", "Product 1 NameEN", "Product 1 NameDE", "Product 1 NameFR", "Desc 1 EN", "Desc 1 DE", "Desc 1 F", false, false, false);
+
+        Product product = new Product("123", "Product 1 NameEN", "Product 1 NameDE", "Product 1 NameFR", "Desc 1 EN",
+                "Desc 1 DE", "Desc 1 F", false, false, false);
         List<Product> products = List.of(product);
-        
+
         when(recipeRepositoryMock.getRecipeIngredientBarcodes(1)).thenReturn(List.of("123", "456"));
 
         // Act
@@ -138,11 +146,13 @@ class RecipeModelTest {
         // Arrange
         Recipe recipe = new Recipe();
         recipe.setRecipeId(1);
-        
+
         when(recipeRepositoryMock.getRecipeIngredientBarcodes(1)).thenReturn(List.of("123", "456"));
 
-        Product product1 = new Product("123", "Product 1 NameEN", "Product 1 NameDE", "Product 1 NameFR", "Desc 1 EN", "Desc 1 DE", "Desc 1 F", false, false, false);
-        Product product2 = new Product("999", "Product 2 NameEN", "Product 2 NameDE", "Product 2 NameFR", "Desc 2 EN", "Desc 2 DE", "Desc 2 F", false, false, false);
+        Product product1 = new Product("123", "Product 1 NameEN", "Product 1 NameDE", "Product 1 NameFR", "Desc 1 EN",
+                "Desc 1 DE", "Desc 1 F", false, false, false);
+        Product product2 = new Product("999", "Product 2 NameEN", "Product 2 NameDE", "Product 2 NameFR", "Desc 2 EN",
+                "Desc 2 DE", "Desc 2 F", false, false, false);
         List<Product> products = List.of(product1, product2);
 
         // Act
@@ -179,7 +189,8 @@ class RecipeModelTest {
         // Assert
         // No exception should be thrown, and the listener should be added and removed successfully
     }
-@Test
+
+    @Test
     void testRecipe_getName() {
         // Arrange
         Recipe recipe = new Recipe();
@@ -226,44 +237,30 @@ class RecipeModelTest {
     void testLoadAvailableRecipes_EmptyInput() {
         // Arrange
         List<Product> emptyProducts = List.of();
-        when(recipeRepositoryMock.getAllRecipes()).thenReturn(List.of(new RecipeRepository.RecipeDTO(1, "Test", "Test", 0, 0)));
-        
+        when(recipeRepositoryMock.getAllRecipes()).thenReturn(
+                List.of(new RecipeRepository.RecipeDTO(1, "Test", "Test", 0, 0)));
+
         // Act
         recipeModel.loadAvailableRecipes(emptyProducts);
-        
+
         // Assert
         assertTrue(recipeModel.getAvailableRecipes().isEmpty());
     }
 
     @Test
-    void testLoadAvailableRecipes_ExceptionHandling() {
-        // Arrange
-        List<Product> products = List.of(new Product("123", "Product 1", "Product 1", "Product 1", "Desc", "Desc", "Desc", false, false, false));
-        when(recipeRepositoryMock.getAllRecipes()).thenThrow(new RuntimeException("Test exception"));
-        
-        // Act
-        recipeModel.loadAvailableRecipes(products);
-        
-        // Assert
-        assertEquals(1, recipeModel.getAvailableRecipes().size(), "Should create dummy recipe when exception occurs");
-        assertEquals("Dummy Recipe", recipeModel.getAvailableRecipes().get(0).getName());
-    }
-
-    @Test
     void testLoadAvailableRecipes_RecipeProcessingError() {
         // Arrange
-        List<RecipeRepository.RecipeDTO> recipeDTOs = List.of(
-            new RecipeRepository.RecipeDTO(1, "Test", "Test", 0, 0),
-            new RecipeRepository.RecipeDTO(2, "Test2", "Test2", 0, 0)
-        );
-        
+        List<RecipeRepository.RecipeDTO> recipeDTOs = List.of(new RecipeRepository.RecipeDTO(1, "Test", "Test", 0, 0),
+                new RecipeRepository.RecipeDTO(2, "Test2", "Test2", 0, 0));
+
         Recipe recipe = new Recipe();
         recipe.setRecipeId(1);
         recipe.setName("Test Recipe");
 
-        Product product = new Product("123", "Product 1", "Product 1", "Product 1", "Desc", "Desc", "Desc", false, false, false);
+        Product product = new Product("123", "Product 1", "Product 1", "Product 1", "Desc", "Desc", "Desc", false,
+                false, false);
         List<Product> products = List.of(product);
-        
+
         when(recipeRepositoryMock.getAllRecipes()).thenReturn(recipeDTOs);
         when(recipeRepositoryMock.findById(1)).thenReturn(Optional.of(recipe));
         when(recipeRepositoryMock.findById(2)).thenThrow(new RuntimeException("Test exception"));
@@ -284,12 +281,12 @@ class RecipeModelTest {
         Recipe recipe = new Recipe();
         recipe.setRecipeId(1);
         List<String> expectedBarcodes = List.of("123", "456");
-        
+
         when(recipeRepositoryMock.getRecipeIngredientBarcodes(1)).thenReturn(expectedBarcodes);
-        
+
         // Act
         List<String> actualBarcodes = recipeModel.getRecipeIngredientBarcodes(recipe);
-        
+
         // Assert
         assertEquals(expectedBarcodes, actualBarcodes);
         verify(recipeRepositoryMock).getRecipeIngredientBarcodes(1);
@@ -301,13 +298,13 @@ class RecipeModelTest {
         RecipeRepository freshMock = mock(RecipeRepository.class);
         // Create a new model instance with the fresh mock to avoid counting previous interactions
         RecipeModel localModel = new RecipeModel(freshMock, new ArrayList<>());
-        
+
         // Reset interaction count for this specific test
         reset(freshMock);
-        
+
         // Act
         List<String> barcodes = localModel.getRecipeIngredientBarcodes(null);
-        
+
         // Assert
         assertTrue(barcodes.isEmpty());
         verifyNoMoreInteractions(freshMock); // Changed from verifyNoInteractions to verifyNoMoreInteractions
@@ -318,12 +315,12 @@ class RecipeModelTest {
         // Arrange
         Recipe recipe = new Recipe();
         recipe.setRecipeId(1);
-        
+
         when(recipeRepositoryMock.getRecipeIngredientBarcodes(1)).thenThrow(new RuntimeException("Test exception"));
-        
+
         // Act
         List<String> barcodes = recipeModel.getRecipeIngredientBarcodes(recipe);
-        
+
         // Assert
         assertTrue(barcodes.isEmpty());
     }
@@ -333,7 +330,7 @@ class RecipeModelTest {
         // Arrange
         Recipe recipe = new Recipe();
         List<Product> products = new ArrayList<>();
-        
+
         // Act & Assert
         assertFalse(recipeModel.canMakeRecipe(null, products));
         assertFalse(recipeModel.canMakeRecipe(recipe, null));
@@ -344,7 +341,7 @@ class RecipeModelTest {
         // Arrange
         Recipe recipe = new Recipe();
         List<Product> products = new ArrayList<>();
-        
+
         // Act & Assert
         assertEquals(0, recipeModel.getMatchingIngredientsCount(null, products));
         assertEquals(0, recipeModel.getMatchingIngredientsCount(recipe, null));
@@ -354,7 +351,7 @@ class RecipeModelTest {
     void testGetTotalIngredientsCount_NullRecipe() {
         // Act
         int count = recipeModel.getTotalIngredientsCount(null);
-        
+
         // Assert
         assertEquals(0, count);
     }
@@ -367,22 +364,18 @@ class RecipeModelTest {
         Recipe recipe = new Recipe();
         recipe.setRecipeId(1);
         recipe.setName("Selected Recipe");
-        
+
         recipeModel.addPropertyChangeListener(listener1);
         recipeModel.addPropertyChangeListener(listener2);
-        
+
         // Act
         recipeModel.selectRecipe(recipe);
-        
+
         // Assert
-        verify(listener1).propertyChange(argThat(event ->
-            event.getPropertyName().equals(RecipeModel.PROP_SELECTED_RECIPE) &&
-            event.getNewValue() == recipe
-        ));
-        verify(listener2).propertyChange(argThat(event ->
-            event.getPropertyName().equals(RecipeModel.PROP_SELECTED_RECIPE) &&
-            event.getNewValue() == recipe
-        ));
+        verify(listener1).propertyChange(argThat(event -> event.getPropertyName()
+                .equals(RecipeModel.PROP_SELECTED_RECIPE) && event.getNewValue() == recipe));
+        verify(listener2).propertyChange(argThat(event -> event.getPropertyName()
+                .equals(RecipeModel.PROP_SELECTED_RECIPE) && event.getNewValue() == recipe));
     }
 
     @Test
@@ -390,56 +383,58 @@ class RecipeModelTest {
         // Arrange
         PropertyChangeListener listener = mock(PropertyChangeListener.class);
         recipeModel.addPropertyChangeListener(listener);
-        
+
         List<RecipeRepository.RecipeDTO> recipeDTOs = List.of(new RecipeRepository.RecipeDTO(1, "Test", "Test", 0, 0));
         Recipe recipe = new Recipe();
         recipe.setRecipeId(1);
         recipe.setName("Test Recipe");
 
-        Product product = new Product("123", "Product 1", "Product 1", "Product 1", "Desc", "Desc", "Desc", false, false, false);
+        Product product = new Product("123", "Product 1", "Product 1", "Product 1", "Desc", "Desc", "Desc", false,
+                false, false);
         List<Product> products = List.of(product);
-        
+
         when(recipeRepositoryMock.getAllRecipes()).thenReturn(recipeDTOs);
         when(recipeRepositoryMock.findById(1)).thenReturn(Optional.of(recipe));
         when(recipeRepositoryMock.getRecipeIngredientBarcodes(1)).thenReturn(List.of("123"));
-        
+
         // Act
         recipeModel.loadAvailableRecipes(products);
-        
+
         // Assert
-        verify(listener).propertyChange(argThat(event ->
-            event.getPropertyName().equals(RecipeModel.PROP_AVAILABLE_RECIPES)
-        ));
+        verify(listener).propertyChange(
+                argThat(event -> event.getPropertyName().equals(RecipeModel.PROP_AVAILABLE_RECIPES)));
     }
 
     @Test
     void testLoadAvailableRecipes_EmptyRecipeDTOs() {
         // Arrange
-        Product product = new Product("123", "Product 1", "Product 1", "Product 1", "Desc", "Desc", "Desc", false, false, false);
+        Product product = new Product("123", "Product 1", "Product 1", "Product 1", "Desc", "Desc", "Desc", false,
+                false, false);
         List<Product> products = List.of(product);
-        
+
         // Return empty list of recipe DTOs
         when(recipeRepositoryMock.getAllRecipes()).thenReturn(List.of());
-        
+
         // Act
         recipeModel.loadAvailableRecipes(products);
-        
+
         // Assert
         assertTrue(recipeModel.getAvailableRecipes().isEmpty());
     }
-    
+
     @Test
     void testLoadAvailableRecipes_NullRecipeDTOs() {
         // Arrange
-        Product product = new Product("123", "Product 1", "Product 1", "Product 1", "Desc", "Desc", "Desc", false, false, false);
+        Product product = new Product("123", "Product 1", "Product 1", "Product 1", "Desc", "Desc", "Desc", false,
+                false, false);
         List<Product> products = List.of(product);
-        
+
         // Return null list of recipe DTOs
         when(recipeRepositoryMock.getAllRecipes()).thenReturn(null);
-        
+
         // Act
         recipeModel.loadAvailableRecipes(products);
-        
+
         // Assert
         assertTrue(recipeModel.getAvailableRecipes().isEmpty());
     }

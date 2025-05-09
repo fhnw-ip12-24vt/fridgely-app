@@ -5,7 +5,13 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RecipeTest {
 
@@ -237,9 +243,9 @@ class RecipeTest {
         // Fix: The toString() comparison indicates that name is included in equals comparison
         assertNotEquals(recipe1, recipe2);
         assertNotEquals(recipe1, recipe3);
-        assertNotEquals(recipe1, null);
-        assertNotEquals(recipe1, new Object());
-        
+        assertNotEquals(null, recipe1);
+        assertNotEquals(new Object(), recipe1);
+
         // Fix: hash code behavior should match equals behavior
         assertNotEquals(recipe1.hashCode(), recipe2.hashCode());
         assertNotEquals(recipe1.hashCode(), recipe3.hashCode());
@@ -273,7 +279,7 @@ class RecipeTest {
         ingredients.add(ingredient1);
         ingredients.add(ingredient2);
         recipe.setIngredients(ingredients);
-        
+
         assertEquals(2, recipe.getIngredients().size());
 
         // Clear ingredients

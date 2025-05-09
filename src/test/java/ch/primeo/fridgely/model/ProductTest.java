@@ -2,7 +2,10 @@ package ch.primeo.fridgely.model;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ProductTest {
 
@@ -120,8 +123,8 @@ class ProductTest {
         boolean bio = true;
         boolean local = true;
 
-        Product product = new Product(barcode, name, nameDE, nameFR, description, descriptionDE, 
-                                     descriptionFR, isDefaultProduct, bio, local);
+        Product product = new Product(barcode, name, nameDE, nameFR, description, descriptionDE, descriptionFR,
+                isDefaultProduct, bio, local);
 
         // Assert
         assertEquals(barcode, product.getBarcode());
@@ -286,7 +289,7 @@ class ProductTest {
         product.setBarcode("123456789");
 
         // Act & Assert
-        assertNotEquals(product, null);
+        assertNotEquals(null, product);
     }
 
     @Test
@@ -297,7 +300,7 @@ class ProductTest {
         String notAProduct = "123456789";
 
         // Act & Assert
-        assertNotEquals(product, notAProduct);
+        assertNotEquals(notAProduct, product);
     }
 
     @Test
@@ -345,7 +348,7 @@ class ProductTest {
         product2.setBarcode(null);
 
         // Act & Assert
-        assertFalse(product1.equals(product2)); // Both barcodes are null
+        assertNotEquals(product1, product2); // Both barcodes are null
     }
 
     @Test
@@ -358,7 +361,7 @@ class ProductTest {
         product2.setBarcode(null);
 
         // Act & Assert
-        assertFalse(product1.equals(product2)); // This barcode not null, other barcode null
+        assertNotEquals(product1, product2); // This barcode not null, other barcode null
     }
 
     @Test
@@ -371,7 +374,7 @@ class ProductTest {
         product2.setBarcode("123456789");
 
         // Act & Assert
-        assertFalse(product1.equals(product2)); // This barcode null, other barcode not null
+        assertNotEquals(product1, product2); // This barcode null, other barcode not null
     }
 
     @Test
@@ -385,5 +388,22 @@ class ProductTest {
 
         // Assert
         assertEquals(0, hashCode); // Barcode is null, hashCode should be 0
+    }
+
+    // Nested subclass to trigger getClass() mismatch in equals()
+    static class ExtendedProduct extends Product {
+        ExtendedProduct(String code) {
+            super(code, null, null, null, null, null, null, false, false, false);
+        }
+    }
+
+    @Test
+    void testEqualsWithDifferentSubclass() {
+        Product product = new Product();
+        product.setBarcode("123456789");
+
+        Product extendedProduct = new ExtendedProduct("123456789");
+        assertNotEquals(product, extendedProduct);
+        assertNotEquals(extendedProduct, product);
     }
 }

@@ -92,8 +92,11 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
         scorePanel = new JPanel();
         controlPanel = new JPanel();
 
-        MultiplayerPlayer1View player1View = new MultiplayerPlayer1View(gameController, localizationService, imageLoader);
-        MultiplayerPlayer2View player2View = new MultiplayerPlayer2View(gameController, localizationService, imageLoader);
+        MultiplayerPlayer1View player1View =
+                new MultiplayerPlayer1View(gameController, localizationService, imageLoader);
+
+        MultiplayerPlayer2View player2View =
+                new MultiplayerPlayer2View(gameController, localizationService, imageLoader);
 
         playerCardLayout = new CardLayout();
         playerPanel = new JPanel(playerCardLayout);

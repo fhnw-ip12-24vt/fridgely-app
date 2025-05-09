@@ -29,8 +29,8 @@ public class MultiplayerPlayer2View extends JPanel implements PropertyChangeList
     // localization keys
     private static final String KEY_FINISH_TURN_BUTTON = "multiplayer.player2.finish_turn_button";
     private static final String KEY_STATUS_GAME_OVER = "multiplayer.player2.status_game_over";
-    private static final String KEY_STATUS_PLAYER2_RECIPE_SELECTED
-            = "multiplayer.player2.status_player2_recipe_selected";
+    private static final String KEY_STATUS_PLAYER2_RECIPE_SELECTED =
+            "multiplayer.player2.status_player2_recipe_selected";
 
     private static final String KEY_STATUS_PLAYER2_SELECT_RECIPE = "multiplayer.player2.status_player2_select_recipe";
     private static final String KEY_STATUS_PLAYER1_SCAN_PRODUCTS = "multiplayer.player2.status_player1_scan_products";
@@ -47,11 +47,12 @@ public class MultiplayerPlayer2View extends JPanel implements PropertyChangeList
     /**
      * Constructs a new Player 2 view.
      *
-     * @param controller      the main game controller
+     * @param controller   the main game controller
      * @param localization the service for text localization
+     * @param imageLoader  the service for loading images
      */
-    public MultiplayerPlayer2View(MultiplayerGameController controller,
-            AppLocalizationService localization, ImageLoader imageLoader) {
+    public MultiplayerPlayer2View(MultiplayerGameController controller, AppLocalizationService localization,
+            ImageLoader imageLoader) {
         this.gameController = controller;
         this.player2Controller = gameController.getPlayer2Controller();
         this.localizationService = localization;

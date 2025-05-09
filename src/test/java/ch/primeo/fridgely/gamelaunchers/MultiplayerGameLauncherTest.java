@@ -1,7 +1,6 @@
 package ch.primeo.fridgely.gamelaunchers;
 
 import ch.primeo.fridgely.Fridgely;
-import ch.primeo.fridgely.controller.multiplayer.MultiplayerGameController;
 import ch.primeo.fridgely.factory.DefaultFrameFactory;
 import ch.primeo.fridgely.factory.FrameFactory;
 import ch.primeo.fridgely.service.ProductRepository;
@@ -14,28 +13,43 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import javax.swing.JFrame;
+import javax.swing.JRootPane;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-// KeyEvent import removed as it's unused in the context of these tests
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull; // Added for standard assertion
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString; // Re-added as it's used for createFrame
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
-import org.mockito.ArgumentCaptor; // Added for capturing arguments
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class MultiplayerGameLauncherTest {
@@ -53,19 +67,7 @@ class MultiplayerGameLauncherTest {
     private ImageLoader imageLoader;
 
     @Mock
-    private FrameFactory frameFactory;
- 
-    // These mocks for gameView and scannedItemsView might not be directly used
-    // if we are testing the launcher's frame creation and view instantiation logic
-    // via MockedConstruction, but keeping them doesn't harm.
-    @Mock
-    private MultiplayerGameView gameView;
-
-    @Mock
-    private ScannedItemsView scannedItemsView;
-
-    @Mock
-    private MultiplayerGameController gameController;
+    private FrameFactory ignored; // needed for two tests to pass, don't remove.
 
     @Mock
     private JFrame gameFrame; // Mock for the game frame created by the launcher
@@ -89,14 +91,6 @@ class MultiplayerGameLauncherTest {
     @BeforeAll
     static void setupLookAndFeel() {
         System.setProperty("java.awt.headless", "true");
-        try {
-            // Set a cross-platform Look and Feel to avoid issues in headless environments
-            UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
-        } catch (Exception e) {
-            // Log or handle the exception if setting the L&F fails,
-            // though getCrossPlatformLookAndFeelClassName() should be safe.
-            e.printStackTrace();
-        }
     }
 
     @BeforeEach
@@ -231,13 +225,11 @@ class MultiplayerGameLauncherTest {
         Rectangle screenBounds = new Rectangle(0, 0, 1920, 1080);
 
         // Mock static Fridgely
-        try (MockedStatic<Fridgely> fridgelyMock = mockStatic(Fridgely.class);
-            MockedConstruction<MultiplayerGameView> gameViewConstruction = mockConstruction(MultiplayerGameView.class);
-            MockedConstruction<ScannedItemsView> scannedItemsViewConstruction = mockConstruction(ScannedItemsView.class);
-            MockedConstruction<MultiplayerGameController> gameControllerConstruction = mockConstruction(MultiplayerGameController.class)) {
+        try (var ignored = mockStatic(Fridgely.class); var ignored2 = mockConstruction(MultiplayerGameView.class);
+            var ignored3 = mockConstruction(ScannedItemsView.class)) {
 
-            Fridgely.isSingleDisplay = true;
-            Fridgely.mainAppScreen = mainAppScreenDevice;
+            when(Fridgely.isSingleDisplay()).thenReturn(true);
+            when(Fridgely.getMainAppScreen()).thenReturn(mainAppScreenDevice);
 
             when(mainAppScreenDevice.getDefaultConfiguration()).thenReturn(graphicsConfiguration);
             when(graphicsConfiguration.getBounds()).thenReturn(screenBounds);
@@ -293,14 +285,12 @@ class MultiplayerGameLauncherTest {
         InputMap mockInputMap = mockRootPane.getInputMap();
         ActionMap mockActionMap = mockRootPane.getActionMap();
 
-        try (MockedStatic<Fridgely> fridgelyMock = mockStatic(Fridgely.class);
-            MockedConstruction<MultiplayerGameView> gameViewConstruction = mockConstruction(MultiplayerGameView.class);
-            MockedConstruction<ScannedItemsView> scannedItemsViewConstruction = mockConstruction(ScannedItemsView.class);
-            MockedConstruction<MultiplayerGameController> gameControllerConstruction = mockConstruction(MultiplayerGameController.class)) {
+        try (var ignored = mockStatic(Fridgely.class); var ignored2 = mockConstruction(MultiplayerGameView.class);
+            var ignored3 = mockConstruction(ScannedItemsView.class)) {
 
-            Fridgely.isSingleDisplay = false;
-            Fridgely.mainAppScreen = mainAppScreenDevice;
-            Fridgely.scannedItemsScreen = scannedItemsScreenDevice;
+            when(Fridgely.isSingleDisplay()).thenReturn(false);
+            when(Fridgely.getMainAppScreen()).thenReturn(mainAppScreenDevice);
+            when(Fridgely.getScannedItemsScreen()).thenReturn(scannedItemsScreenDevice);
 
             // Act
             multiplayerGameLauncher.initGame();

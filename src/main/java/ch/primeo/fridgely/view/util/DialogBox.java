@@ -28,8 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A reusable dialog box with animated arrow that displays a sequence of messages
- * using the dialog box background images.
+ * A reusable dialog box with animated arrow that displays a sequence of messages using the dialog box background
+ * images.
  */
 public class DialogBox extends JPanel {
 
@@ -61,20 +61,22 @@ public class DialogBox extends JPanel {
 
     /**
      * Creates a dialog box with a sequence of messages, penguin expression, HP state, and a callback.
-     * @param msgs the list of messages to display
-     * @param expression the penguin facial expression to show
-     * @param state the penguin HP state to show
-     * @param callback the callback to run when dialog is complete
+     *
+     * @param msgs        the list of messages to display
+     * @param expression  the penguin facial expression to show
+     * @param state       the penguin HP state to show
+     * @param callback    the callback to run when dialog is complete
+     * @param imageLoader the image loader for loading images
      */
     public DialogBox(List<String> msgs, PenguinFacialExpression expression, PenguinHPState state, Runnable callback,
             ImageLoader imageLoader) {
 
         this.imageLoader = imageLoader;
 
-        this.frame = new JFrame();
+        this.frame = new JFrame("Fridgely Dialog");
         this.frame.setUndecorated(true);
 
-        Fridgely.mainAppScreen.setFullScreenWindow(frame);
+        Fridgely.getMainAppScreen().setFullScreenWindow(frame);
 
         this.frame.setVisible(true);
 
@@ -172,6 +174,7 @@ public class DialogBox extends JPanel {
 
     /**
      * Paints the dialog box, penguin, HP image, and arrow.
+     *
      * @param g the Graphics context
      */
     @Override
@@ -208,8 +211,7 @@ public class DialogBox extends JPanel {
 
             // Draw the image with more right padding (increased from DIALOG_PADDING)
             int penguinXPosition = DIALOG_PADDING * 3; // Increased horizontal position
-            g2d.drawImage(penguinImage, penguinXPosition, (height - scaledHeight) / 2,
-                    scaledWidth, scaledHeight, null);
+            g2d.drawImage(penguinImage, penguinXPosition, (height - scaledHeight) / 2, scaledWidth, scaledHeight, null);
         }
 
         // Draw HP image if available
@@ -228,6 +230,7 @@ public class DialogBox extends JPanel {
 
     /**
      * Returns the preferred size of the dialog box.
+     *
      * @return the preferred Dimension
      */
     @Override
@@ -250,12 +253,10 @@ public class DialogBox extends JPanel {
         int horizontalPadding = DIALOG_PADDING * 2; // Increased horizontal padding
         int verticalPadding = DIALOG_PADDING * 2;   // Increased vertical padding
 
-        messageLabel.setBounds(
-                penguinAreaWidth + horizontalPadding,
-                verticalPadding,
-                Math.max((int)(width - penguinAreaWidth - (horizontalPadding * 2) - Math.max(20, width * 0.025)), 100), // Slightly wider, still responsive
-                height - (verticalPadding * 2)
-        );
+        messageLabel.setBounds(penguinAreaWidth + horizontalPadding, verticalPadding,
+                Math.max((int) (width - penguinAreaWidth - (horizontalPadding * 2) - Math.max(20, width * 0.025)), 100),
+                // Slightly wider, still responsive
+                height - (verticalPadding * 2));
     }
 
     /**

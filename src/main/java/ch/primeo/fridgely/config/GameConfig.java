@@ -1,16 +1,14 @@
 package ch.primeo.fridgely.config;
 
+import lombok.experimental.UtilityClass;
+
 /**
  * Configuration constants for the multiplayer game mode.
  * Contains default values for game settings such as rounds, minimum products, and HP values.
  */
-public class GameConfig {
-
-    protected GameConfig() {
-        // Prevent instantiation
-        throw new UnsupportedOperationException("GameConfig is a utility class and cannot be instantiated");
-    }
-
+@SuppressWarnings("checkstyle:HideUtilityClassConstructor") // @UtilityClass generates a private constructor
+@UtilityClass
+public final class GameConfig {
     /**
      * Default number of rounds in a game.
      */

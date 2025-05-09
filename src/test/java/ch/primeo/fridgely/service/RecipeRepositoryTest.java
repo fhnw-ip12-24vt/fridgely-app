@@ -13,33 +13,33 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class RecipeRepositoryTest {
 
+    private final QRecipe qRecipe = QRecipe.recipe;
     @Mock
     private AppLocalizationService localizationService;
-
     @Mock
     private FridgeStockRepository fridgeStockRepository;
-
     @Mock
     private RecipeJpaRepository recipeJpaRepository;
-
-    @Mock
-    private JPAQueryFactory queryFactory; // Mock JPAQueryFactory directly
-
     @InjectMocks
     private RecipeRepository recipeRepository;
-
-    private final QRecipe qRecipe = QRecipe.recipe;
     private QRecipeIngredient qRecipeIngredient;
 
     @BeforeEach
@@ -54,24 +54,11 @@ class RecipeRepositoryTest {
         FridgeStockRepository fridgeStockRepository = mock(FridgeStockRepository.class);
         RecipeJpaRepository recipeJpaRepository = mock(RecipeJpaRepository.class);
         JPAQueryFactory mockQueryFactory = mock(JPAQueryFactory.class);
-        recipeRepository = new RecipeRepository(localizationService, fridgeStockRepository, recipeJpaRepository, mockQueryFactory);
+        recipeRepository = new RecipeRepository(localizationService, fridgeStockRepository, recipeJpaRepository,
+                mockQueryFactory);
 
         // Create recipes
-        Recipe recipe1 = new Recipe();
-        recipe1.setRecipeId(1);
-        recipe1.setName("Recipe1_en");
-        recipe1.setDescription("Desc1_en");
-        recipe1.setNameDE("Recipe1_de");
-        recipe1.setDescriptionDE("Desc1_de");
-        recipe1.setNameFR("Recipe1_fr");
-        recipe1.setDescriptionFR("Desc1_fr");
-
-        Recipe recipe2 = new Recipe();
-        recipe2.setRecipeId(2);
-        recipe2.setName("Recipe2_en");
-        recipe2.setDescription("Desc2_en");
-
-        List<Recipe> recipes = Arrays.asList(recipe1, recipe2);
+        List<Recipe> recipes = getRecipes();
 
         // Mock recipes query
         JPAQuery<Recipe> recipeQueryMock = mock(JPAQuery.class);
@@ -80,8 +67,8 @@ class RecipeRepositoryTest {
 
         // Mock ingredients query
         JPAQuery<Tuple> ingredientsQueryMock = mock(JPAQuery.class);
-        when(mockQueryFactory.select(qRecipeIngredient.recipe.recipeId, qRecipeIngredient.product.barcode))
-                .thenReturn(ingredientsQueryMock);
+        when(mockQueryFactory.select(qRecipeIngredient.recipe.recipeId, qRecipeIngredient.product.barcode)).thenReturn(
+                ingredientsQueryMock);
         when(ingredientsQueryMock.from(qRecipeIngredient)).thenReturn(ingredientsQueryMock);
 
         Tuple tuple1 = mock(Tuple.class);
@@ -108,18 +95,16 @@ class RecipeRepositoryTest {
         // Assertions
         assertEquals(2, result.size());
 
-        RecipeRepository.RecipeDTO dto1 = result.stream()
-                .filter(dto -> dto.getRecipeId() == 1)
-                .findFirst().orElse(null);
+        RecipeRepository.RecipeDTO dto1 = result.stream().filter(dto -> dto.getRecipeId() == 1).findFirst()
+                .orElse(null);
 
         assertNotNull(dto1);
         assertEquals("Recipe1_en", dto1.getName());
         assertEquals("Desc1_en", dto1.getDescription());
         assertEquals("Recipe1_en (1/2 available)", dto1.toString());
 
-        RecipeRepository.RecipeDTO dto2 = result.stream()
-                .filter(dto -> dto.getRecipeId() == 2)
-                .findFirst().orElse(null);
+        RecipeRepository.RecipeDTO dto2 = result.stream().filter(dto -> dto.getRecipeId() == 2).findFirst()
+                .orElse(null);
 
         assertNotNull(dto2);
         assertEquals("Recipe2_en", dto2.getName());
@@ -130,11 +115,29 @@ class RecipeRepositoryTest {
         verify(fridgeStockRepository).getAllBarcodesInStockAsSet();
     }
 
+    private static List<Recipe> getRecipes() {
+        Recipe recipe1 = new Recipe();
+        recipe1.setRecipeId(1);
+        recipe1.setName("Recipe1_en");
+        recipe1.setDescription("Desc1_en");
+        recipe1.setNameDE("Recipe1_de");
+        recipe1.setDescriptionDE("Desc1_de");
+        recipe1.setNameFR("Recipe1_fr");
+        recipe1.setDescriptionFR("Desc1_fr");
+
+        Recipe recipe2 = new Recipe();
+        recipe2.setRecipeId(2);
+        recipe2.setName("Recipe2_en");
+        recipe2.setDescription("Desc2_en");
+
+        List<Recipe> recipes = Arrays.asList(recipe1, recipe2);
+        return recipes;
+    }
 
     @Test
     void getAllRecipes_shouldReturnEmptyListWhenNoRecipes() {
         when(localizationService.getLanguage()).thenReturn("en");
-        
+
         List<RecipeRepository.RecipeDTO> result = recipeRepository.getAllRecipes();
 
         assertTrue(result.isEmpty());
@@ -152,15 +155,16 @@ class RecipeRepositoryTest {
     @Test
     void getRecipeIngredientBarcodes_shouldReturnBarcodesForRecipeId() {
         JPAQueryFactory queryFactory = mock(JPAQueryFactory.class);
-        recipeRepository = new RecipeRepository(localizationService, fridgeStockRepository, recipeJpaRepository, queryFactory);
+        recipeRepository = new RecipeRepository(localizationService, fridgeStockRepository, recipeJpaRepository,
+                queryFactory);
 
         int recipeId = 1;
         List<String> expectedBarcodes = Arrays.asList("barcode1", "barcode2");
 
         // Setup complete query chain
-        JPAQuery queryMock = mock(JPAQuery.class);
-        JPAQuery fromQueryMock = mock(JPAQuery.class);
-        JPAQuery whereQueryMock = mock(JPAQuery.class);
+        JPAQuery<String> queryMock = mock(JPAQuery.class);
+        JPAQuery<String> fromQueryMock = mock(JPAQuery.class);
+        JPAQuery<String> whereQueryMock = mock(JPAQuery.class);
 
         when(queryFactory.select(qRecipeIngredient.product.barcode)).thenReturn(queryMock);
         when(queryMock.from(qRecipeIngredient)).thenReturn(fromQueryMock);
@@ -245,7 +249,8 @@ class RecipeRepositoryTest {
 
     @Test
     void testRecipeDTO_toString_formatsCorrectly_allIngredientsAvailable() {
-        RecipeRepository.RecipeDTO dto = new RecipeRepository.RecipeDTO(1, "Pasta Carbonara", "Classic Italian pasta", 5, 5);
+        RecipeRepository.RecipeDTO dto = new RecipeRepository.RecipeDTO(1, "Pasta Carbonara", "Classic Italian pasta",
+                5, 5);
         assertEquals("Pasta Carbonara (5/5 available)", dto.toString());
     }
 
@@ -257,7 +262,8 @@ class RecipeRepositoryTest {
 
     @Test
     void testRecipeDTO_toString_formatsCorrectly_noIngredientsAvailable() {
-        RecipeRepository.RecipeDTO dto = new RecipeRepository.RecipeDTO(3, "Fruit Smoothie", "Refreshing smoothie", 0, 3);
+        RecipeRepository.RecipeDTO dto = new RecipeRepository.RecipeDTO(3, "Fruit Smoothie", "Refreshing smoothie", 0,
+                3);
         assertEquals("Fruit Smoothie (0/3 available)", dto.toString());
     }
 
@@ -289,25 +295,21 @@ class RecipeRepositoryTest {
         FridgeStockRepository mockStockRepo = mock(FridgeStockRepository.class);
         RecipeJpaRepository mockRecipeJpaRepo = mock(RecipeJpaRepository.class);
         EntityManager mockEntityManager = mock(EntityManager.class);
-        
+
         // Create repository instance using primary constructor
-        RecipeRepository repository = new RecipeRepository(
-                mockLocalization,
-                mockStockRepo,
-                mockRecipeJpaRepo,
-                mockEntityManager
-        );
-        
+        RecipeRepository repository = new RecipeRepository(mockLocalization, mockStockRepo, mockRecipeJpaRepo,
+                mockEntityManager);
+
         // Verify repository is initialized by calling a method
         when(mockLocalization.getLanguage()).thenReturn("en");
-        
+
         // We expect an empty list because we haven't set up the query factory
         // that would be created internally from the EntityManager
         List<RecipeRepository.RecipeDTO> recipes = repository.getAllRecipes();
-        
+
         // Verify the repository attempted to get language from service
         verify(mockLocalization).getLanguage();
-        
+
         // Since EntityManager is mocked and doesn't create a real JPAQueryFactory,
         // we expect an empty list (the error handling path)
         assertTrue(recipes.isEmpty());

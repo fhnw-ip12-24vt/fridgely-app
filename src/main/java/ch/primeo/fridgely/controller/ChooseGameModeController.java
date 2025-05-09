@@ -36,16 +36,15 @@ public class ChooseGameModeController implements BaseController {
 
     /**
      * Constructs the controller and sets up UI event handlers.
-     * @param localization the localization service for text updates
+     *
+     * @param localization         the localization service for text updates
      * @param languageSwitchButton the button for switching languages
-     * @param launcher the launcher for multiplayer game mode
+     * @param launcher             the launcher for multiplayer game mode
+     * @param imageLoader          the image loader for loading images
      */
     @Autowired
-    public ChooseGameModeController(
-            AppLocalizationService localization,
-            LanguageSwitchButton languageSwitchButton,
-            MultiplayerGameLauncher launcher,
-            ImageLoader imageLoader) {
+    public ChooseGameModeController(AppLocalizationService localization, LanguageSwitchButton languageSwitchButton,
+            MultiplayerGameLauncher launcher, ImageLoader imageLoader) {
 
         this.localizationService = localization;
         this.multiplayerGameLauncher = launcher;
@@ -66,9 +65,11 @@ public class ChooseGameModeController implements BaseController {
             }
         });
 
-        setupClickableBehavior(view.getSinglePlayerImageLabel(), "gamemode.singleplayer.tooltip", () -> selectGameMode(GameMode.SinglePlayer));
+        setupClickableBehavior(view.getSinglePlayerImageLabel(), "gamemode.singleplayer.tooltip",
+                () -> selectGameMode(GameMode.SinglePlayer));
 
-        setupClickableBehavior(view.getMultiplayerImageLabel(), "gamemode.multiplayer.tooltip", () -> selectGameMode(GameMode.Multiplayer));
+        setupClickableBehavior(view.getMultiplayerImageLabel(), "gamemode.multiplayer.tooltip",
+                () -> selectGameMode(GameMode.Multiplayer));
 
         localizationService.subscribe(view);
 
@@ -77,12 +78,9 @@ public class ChooseGameModeController implements BaseController {
         this.view.setVisible(true);
     }
 
-    protected ChooseGameModeController(
-            AppLocalizationService localization,
-            MultiplayerGameLauncher launcher,
-            ImageLoader imageLoader,
-            ChooseGameModeView view // test-only
-    ) {
+    protected ChooseGameModeController(AppLocalizationService localization, MultiplayerGameLauncher launcher,
+            ImageLoader imageLoader, ChooseGameModeView view) {
+
         this.localizationService = localization;
         this.multiplayerGameLauncher = launcher;
         this.imageLoader = imageLoader;
@@ -102,6 +100,7 @@ public class ChooseGameModeController implements BaseController {
 
     /**
      * Creates the view. Extracted for testing.
+     *
      * @return the created view
      */
     protected ChooseGameModeView createView() {
@@ -110,38 +109,33 @@ public class ChooseGameModeController implements BaseController {
 
     /**
      * Creates the view with a language switch button. Extracted for testing.
+     *
      * @param languageSwitchButton the button for switching languages
      * @return the created view
      */
     protected ChooseGameModeView createView(LanguageSwitchButton languageSwitchButton) {
         return new ChooseGameModeView(languageSwitchButton, this.localizationService, imageLoader);
     }
-    
+
     /**
      * Creates a dialog box. Extracted for testing.
      */
-    protected DialogBox createDialogBox(List<String> messages,
-                                      PenguinFacialExpression expression,
-                                      PenguinHPState state,
-                                      Runnable onComplete,
-                                      ImageLoader imageLoader) {
-        System.out.println("createDialogBox invoked with arguments: " +
-            "messages=" + messages + ", expression=" + expression +
-            ", state=" + state + ", onComplete=" + onComplete +
-            ", imageLoader=" + imageLoader);
-        System.out.println("Validating arguments for createDialogBox...");
+    protected DialogBox createDialogBox(List<String> messages, PenguinFacialExpression expression, PenguinHPState state,
+            Runnable onComplete, ImageLoader imageLoader) {
+
         if (messages == null || expression == null || state == null || onComplete == null || imageLoader == null) {
-            System.out.println("Validation failed: One or more arguments are null.");
             throw new IllegalArgumentException("Arguments cannot be null");
         }
+
         return new DialogBox(messages, expression, state, onComplete, imageLoader);
     }
 
     /**
      * Sets up click and tooltip behavior for a label.
-     * @param label the JLabel to make clickable
+     *
+     * @param label      the JLabel to make clickable
      * @param tooltipKey the localization key for the tooltip
-     * @param onClick the action to perform on click
+     * @param onClick    the action to perform on click
      */
     void setupClickableBehavior(JLabel label, String tooltipKey, Runnable onClick) {
         if (label == null || tooltipKey == null || onClick == null) {
@@ -159,6 +153,7 @@ public class ChooseGameModeController implements BaseController {
 
     /**
      * Handles game mode selection and launches the appropriate tutorial or game.
+     *
      * @param mode the selected GameMode
      */
     void selectGameMode(GameMode mode) {
@@ -178,23 +173,18 @@ public class ChooseGameModeController implements BaseController {
      */
     void showMultiplayerTutorial() {
         // Tutorial messages explaining multiplayer game rules using localization
-        List<String> tutorialMessages = Arrays.asList(
-                localizationService.get("tutorial.welcome"),
+        List<String> tutorialMessages = Arrays.asList(localizationService.get("tutorial.welcome"),
                 localizationService.get("tutorial.game.rounds"),
                 localizationService.get("tutorial.multiplayer.player1"),
                 localizationService.get("tutorial.multiplayer.player2"),
                 localizationService.get("tutorial.points.explanation"),
-                localizationService.get("tutorial.game.winner")
-        );
+                localizationService.get("tutorial.game.winner"));
 
         // Show the tutorial dialog
-        createDialogBox(tutorialMessages,
-                PenguinFacialExpression.HAPPY,
-                PenguinHPState.OKAY,
-                this::startMultiplayerGame,
-                imageLoader).showDialog();
+        createDialogBox(tutorialMessages, PenguinFacialExpression.HAPPY, PenguinHPState.OKAY,
+                this::startMultiplayerGame, imageLoader).showDialog();
     }
-    
+
     /**
      * Starts the multiplayer game after the tutorial.
      */
@@ -207,21 +197,16 @@ public class ChooseGameModeController implements BaseController {
      */
     void showSinglePlayerTutorial() {
         // Tutorial messages explaining single player game rules using localization
-        List<String> tutorialMessages = Arrays.asList(
-                localizationService.get("tutorial.welcome"),
+        List<String> tutorialMessages = Arrays.asList(localizationService.get("tutorial.welcome"),
                 localizationService.get("tutorial.singleplayer.explanation"),
                 localizationService.get("tutorial.singleplayer.recipe"),
-                localizationService.get("tutorial.singleplayer.score")
-        );
+                localizationService.get("tutorial.singleplayer.score"));
 
         // Important: Create the dialog before any game initialization
         // and block until it's explicitly completed by the user
         // Start game after dialog completion
-        createDialogBox(tutorialMessages,
-                PenguinFacialExpression.HAPPY,
-                PenguinHPState.OKAY,
-                this::startSinglePlayerGame,
-                imageLoader).showDialog();
+        createDialogBox(tutorialMessages, PenguinFacialExpression.HAPPY, PenguinHPState.OKAY,
+                this::startSinglePlayerGame, imageLoader).showDialog();
     }
 
     /**

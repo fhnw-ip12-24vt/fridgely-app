@@ -2,10 +2,14 @@ package ch.primeo.fridgely.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Represents a product with localized names, descriptions, and attributes. JPA entity for database persistence.
  */
+@Setter
+@Getter
 @Entity
 public class Product {
 
@@ -21,6 +25,9 @@ public class Product {
     private boolean isBio;
     private boolean isLocal;
 
+    /**
+     * Path to the default image for products that are not found.
+     */
     public static final String PRODUCT_IMAGE_NOT_FOUND_PATH = "/ch/primeo/fridgely/productimages/notfound.png";
 
     /**
@@ -44,6 +51,7 @@ public class Product {
      * @param bio            whether the product is organic
      * @param local          whether the product is local
      */
+    @SuppressWarnings("checkstyle:ParameterNumber")
     public Product(String code, String nameE, String nameD, String nameF, String descriptionE, String descriptionD,
             String descriptionF, boolean defaultProduct, boolean bio, boolean local) {
         this.barcode = code;
@@ -73,86 +81,6 @@ public class Product {
     }
 
     // Getters and setters
-
-    public String getBarcode() {
-        return barcode;
-    }
-
-    public void setBarcode(String code) {
-        this.barcode = code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String nameE) {
-        this.name = nameE;
-    }
-
-    public String getNameDE() {
-        return nameDE;
-    }
-
-    public void setNameDE(String nameD) {
-        this.nameDE = nameD;
-    }
-
-    public String getNameFR() {
-        return nameFR;
-    }
-
-    public void setNameFR(String nameF) {
-        this.nameFR = nameF;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String descriptionE) {
-        this.description = descriptionE;
-    }
-
-    public String getDescriptionDE() {
-        return descriptionDE;
-    }
-
-    public void setDescriptionDE(String descriptionD) {
-        this.descriptionDE = descriptionD;
-    }
-
-    public String getDescriptionFR() {
-        return descriptionFR;
-    }
-
-    public void setDescriptionFR(String descriptionF) {
-        this.descriptionFR = descriptionF;
-    }
-
-    public boolean isDefaultProduct() {
-        return isDefaultProduct;
-    }
-
-    public void setDefaultProduct(boolean defaultProduct) {
-        this.isDefaultProduct = defaultProduct;
-    }
-
-    public boolean isBio() {
-        return isBio;
-    }
-
-    public void setBio(boolean bio) {
-        this.isBio = bio;
-    }
-
-    public boolean isLocal() {
-        return isLocal;
-    }
-
-    public void setLocal(boolean local) {
-        this.isLocal = local;
-    }
 
     public String getProductImagePath() {
         if (barcode == null) {

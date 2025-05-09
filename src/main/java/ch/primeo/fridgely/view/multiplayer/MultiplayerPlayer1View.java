@@ -66,8 +66,10 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
      *
      * @param controller   the main game controller
      * @param localization the service for text localization
+     * @param imageLoader  the service for loading images
      */
-    public MultiplayerPlayer1View(MultiplayerGameController controller, AppLocalizationService localization, ImageLoader imageLoader) {
+    public MultiplayerPlayer1View(MultiplayerGameController controller, AppLocalizationService localization,
+            ImageLoader imageLoader) {
         this.gameController = controller;
         this.player1Controller = gameController.getPlayer1Controller();
         this.localizationService = localization;

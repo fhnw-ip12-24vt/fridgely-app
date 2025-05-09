@@ -17,8 +17,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class FridgeStockRepositoryTest {
@@ -34,17 +40,19 @@ class FridgeStockRepositoryTest {
 
     @Test
     void constructor_initializesJpaQueryFactory() {
-        try (MockedConstruction<JPAQueryFactory> mockedFactoryConstruction = Mockito.mockConstruction(JPAQueryFactory.class,
-                (mock, context) -> {
+        try (MockedConstruction<JPAQueryFactory> mockedFactoryConstruction = Mockito.mockConstruction(
+                JPAQueryFactory.class, (mock, context) -> {
                     // Assert that the constructor of JPAQueryFactory was called with the mocked EntityManager
                     assertEquals(1, context.arguments().size(), "JPAQueryFactory constructor should have 1 argument");
-                    assertSame(entityManager, context.arguments().get(0), "JPAQueryFactory should be constructed with the provided EntityManager");
+                    assertSame(entityManager, context.arguments().getFirst(),
+                            "JPAQueryFactory should be constructed with the provided EntityManager");
                 })) {
 
             FridgeStockRepository repository = new FridgeStockRepository(entityManager);
             assertNotNull(repository, "Repository instance should not be null");
             // Verify that one JPAQueryFactory was indeed constructed
-            assertEquals(1, mockedFactoryConstruction.constructed().size(), "One JPAQueryFactory instance should have been constructed");
+            assertEquals(1, mockedFactoryConstruction.constructed().size(),
+                    "One JPAQueryFactory instance should have been constructed");
         }
     }
 
@@ -55,8 +63,8 @@ class FridgeStockRepositoryTest {
         when(jpaQuery.distinct()).thenReturn(jpaQuery);
         when(jpaQuery.fetch()).thenReturn(Collections.emptyList());
 
-        try (MockedConstruction<JPAQueryFactory> mockedFactoryConstruction = Mockito.mockConstruction(JPAQueryFactory.class,
-                (constructedMockFactory, context) -> {
+        try (MockedConstruction<JPAQueryFactory> mockedFactoryConstruction = Mockito.mockConstruction(
+                JPAQueryFactory.class, (constructedMockFactory, context) -> {
                     // When FridgeStockRepository's constructor creates a JPAQueryFactory,
                     // this constructedMockFactory will be used.
                     // Configure its 'select' method to return our @Mock jpaQuery.
@@ -70,7 +78,7 @@ class FridgeStockRepositoryTest {
             assertTrue(barcodes.isEmpty(), "Returned list should be empty");
 
             // Verify 'select' was called on the constructed JPAQueryFactory instance
-            JPAQueryFactory factoryInstance = mockedFactoryConstruction.constructed().get(0);
+            JPAQueryFactory factoryInstance = mockedFactoryConstruction.constructed().getFirst();
             verify(factoryInstance).select(QFridgeStock.fridgeStock.barcode);
 
             // Verify the rest of the chain on our @Mock jpaQuery
@@ -89,10 +97,9 @@ class FridgeStockRepositoryTest {
         when(jpaQuery.distinct()).thenReturn(jpaQuery);
         when(jpaQuery.fetch()).thenReturn(expectedBarcodes);
 
-        try (MockedConstruction<JPAQueryFactory> mockedFactoryConstruction = Mockito.mockConstruction(JPAQueryFactory.class,
-                (constructedMockFactory, context) -> {
-                    when(constructedMockFactory.select(QFridgeStock.fridgeStock.barcode)).thenReturn(jpaQuery);
-                })) {
+        try (MockedConstruction<JPAQueryFactory> mockedFactoryConstruction = Mockito.mockConstruction(
+                JPAQueryFactory.class, (constructedMockFactory, context) ->
+                        when(constructedMockFactory.select(QFridgeStock.fridgeStock.barcode)).thenReturn(jpaQuery))) {
 
             FridgeStockRepository repository = new FridgeStockRepository(entityManager);
             List<String> actualBarcodes = repository.getAllBarcodesInStock();
@@ -101,7 +108,7 @@ class FridgeStockRepositoryTest {
             assertEquals(expectedBarcodes.size(), actualBarcodes.size(), "List size should match expected");
             assertEquals(expectedBarcodes, actualBarcodes, "List content should match expected");
 
-            JPAQueryFactory factoryInstance = mockedFactoryConstruction.constructed().get(0);
+            JPAQueryFactory factoryInstance = mockedFactoryConstruction.constructed().getFirst();
             verify(factoryInstance).select(QFridgeStock.fridgeStock.barcode);
             verify(jpaQuery).from(QFridgeStock.fridgeStock);
             verify(jpaQuery).distinct();

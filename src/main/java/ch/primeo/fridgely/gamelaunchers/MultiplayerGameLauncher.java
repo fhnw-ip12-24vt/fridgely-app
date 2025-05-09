@@ -34,6 +34,8 @@ public class MultiplayerGameLauncher {
      * @param productRepo  the repository for accessing products
      * @param recipeRepo   the repository for accessing recipes
      * @param localization the service for text localization
+     * @param imageLoader  the service for loading images
+     * @param frameFactory the factory for creating frames
      */
     public MultiplayerGameLauncher(ProductRepository productRepo, RecipeRepository recipeRepo,
             AppLocalizationService localization, ImageLoader imageLoader, FrameFactory frameFactory) {
@@ -45,8 +47,8 @@ public class MultiplayerGameLauncher {
     }
 
     /**
-     * Creates a new JFrame for the game.
-     * This method can be overridden for testing purposes.
+     * Creates a new JFrame for the game. This method can be overridden for testing purposes.
+     *
      * @param title the title of the frame
      * @return a new JFrame instance
      */
@@ -62,21 +64,19 @@ public class MultiplayerGameLauncher {
     }
 
     /**
-     * Executes the given task on the Swing Event Dispatch Thread.
-     * Override in tests to run synchronously.
+     * Executes the given task on the Swing Event Dispatch Thread. Override in tests to run synchronously.
      */
     protected void runOnEDT(Runnable task) {
         SwingUtilities.invokeLater(task);
     }
 
     /**
-     * Contains the original body of launchGame() (everything inside the invokeLater lambda).
-     * Extracted so it can be called directly in tests (e.g. headless JUnit).
+     * Contains the original body of launchGame() (everything inside the invokeLater lambda). Extracted so it can be
+     * called directly in tests (e.g. headless JUnit).
      */
     protected void initGame() {
         // Create the game controller
-        MultiplayerGameController gameController = new MultiplayerGameController(productRepository,
-                recipeRepository);
+        MultiplayerGameController gameController = new MultiplayerGameController(productRepository, recipeRepository);
 
         // Create the main game frame
         JFrame gameFrame = createFrame("Fridgely - Multiplayer Game");
@@ -84,7 +84,8 @@ public class MultiplayerGameLauncher {
         gameFrame.setUndecorated(true); // Remove window decorations
 
         // Create the game view
-        MultiplayerGameView gameView = new MultiplayerGameView(gameController, localizationService, gameFrame, imageLoader);
+        MultiplayerGameView gameView = new MultiplayerGameView(gameController, localizationService, gameFrame,
+                imageLoader);
         gameFrame.setContentPane(gameView);
 
         // Create a second frame for displaying scanned items
@@ -110,20 +111,21 @@ public class MultiplayerGameLauncher {
             }
         });
 
-        if(!Fridgely.isSingleDisplay){
+        if (!Fridgely.isSingleDisplay()) {
             // Position and display frames on their respective screens
-            Fridgely.mainAppScreen.setFullScreenWindow(gameFrame);
-            Fridgely.scannedItemsScreen.setFullScreenWindow(scannedItemsFrame);
+            Fridgely.getMainAppScreen().setFullScreenWindow(gameFrame);
+            Fridgely.getScannedItemsScreen().setFullScreenWindow(scannedItemsFrame);
         } else {
-            var screenBounds = Fridgely.mainAppScreen.getDefaultConfiguration().getBounds();
+            var screenBounds = Fridgely.getMainAppScreen().getDefaultConfiguration().getBounds();
 
-            for (JFrame frame : new JFrame[]{gameFrame, scannedItemsFrame}) {
+            for (JFrame frame : new JFrame[] {gameFrame, scannedItemsFrame}) {
                 frame.setBounds(screenBounds);
             }
         }
 
         // Create the scanned items view
-        ScannedItemsView scannedItemsView = new ScannedItemsView(gameController, localizationService, scannedItemsFrame, imageLoader);
+        ScannedItemsView scannedItemsView = new ScannedItemsView(gameController, localizationService, scannedItemsFrame,
+                imageLoader);
         scannedItemsFrame.setContentPane(scannedItemsView);
     }
 }

@@ -3,11 +3,17 @@ package ch.primeo.fridgely.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.Objects;
 
 /**
  * Represents an item in the fridge stock, mapping to the 'FridgeStock' table. Uses the product barcode as the primary
  * key.
  */
+@Setter
+@Getter
 @Entity
 @Table(name = "FridgeStock")
 public class FridgeStock {
@@ -33,18 +39,6 @@ public class FridgeStock {
         this.barcode = code;
     }
 
-    // --- Getter ---
-
-    public String getBarcode() {
-        return barcode;
-    }
-
-    // --- Setter ---
-
-    public void setBarcode(String code) {
-        this.barcode = code;
-    }
-
     // toString, equals, hashCode methods can be added if needed
     @Override
     public String toString() {
@@ -53,16 +47,19 @@ public class FridgeStock {
 
     @Override
     public boolean equals(Object o) {
+
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
+
+        if (o instanceof FridgeStock fridgeStock) {
+            return Objects.equals(barcode, fridgeStock.barcode);
         }
 
-        FridgeStock that = (FridgeStock) o;
-        return java.util.Objects.equals(barcode, that.barcode);
+        return false;
     }
+
+
 
     @Override
     public int hashCode() {

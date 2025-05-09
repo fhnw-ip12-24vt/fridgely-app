@@ -1,5 +1,6 @@
 package ch.primeo.fridgely.model;
 
+import lombok.Getter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -7,7 +8,11 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FridgeStockModelTest {
 
@@ -18,14 +23,17 @@ class FridgeStockModelTest {
     @BeforeEach
     void setUp() {
         fridgeStockModel = new FridgeStockModel();
-        product1 = new Product("123456789", "Apple", "Apfel", "Pomme", "Fresh apple", "Frischer Apfel", "Pomme fraîche", true, true, false);
-        product2 = new Product("987654321", "Banana", "Banane", "Banane", "Fresh banana", "Frische Banane", "Banane fraîche", false, false, true);
+        product1 = new Product("123456789", "Apple", "Apfel", "Pomme", "Fresh apple", "Frischer Apfel", "Pomme fraîche",
+                true, true, false);
+        product2 = new Product("987654321", "Banana", "Banane", "Banane", "Fresh banana", "Frische Banane",
+                "Banane fraîche", false, false, true);
     }
 
     @Test
     void testAddProduct() {
         // Arrange
-        Product product = new Product("123456789", "Apple", "Apfel", "Pomme", "Fresh apple", "Frischer Apfel", "Pomme fraîche", true, true, false);
+        Product product = new Product("123456789", "Apple", "Apfel", "Pomme", "Fresh apple", "Frischer Apfel",
+                "Pomme fraîche", true, true, false);
 
         // Act
         boolean firstAddResult = fridgeStockModel.addProduct(product);
@@ -40,11 +48,8 @@ class FridgeStockModelTest {
 
     @Test
     void testAddNullProduct() {
-        // Arrange
-        Product nullProduct = null;
-
         // Act
-        boolean result = fridgeStockModel.addProduct(nullProduct);
+        boolean result = fridgeStockModel.addProduct(null);
         int productCount = fridgeStockModel.getProductCount();
 
         // Assert
@@ -71,11 +76,10 @@ class FridgeStockModelTest {
     @Test
     void testRemoveNullProduct() {
         // Arrange
-        Product nullProduct = null;
         fridgeStockModel.addProduct(product1);
 
         // Act
-        boolean result = fridgeStockModel.removeProduct(nullProduct);
+        boolean result = fridgeStockModel.removeProduct(null);
         int productCount = fridgeStockModel.getProductCount();
 
         // Assert
@@ -146,16 +150,13 @@ class FridgeStockModelTest {
     }
 
     // Mock class for PropertyChangeListener
-    private static class PropertyChangeListenerMock implements PropertyChangeListener {
+    @Getter
+    private static final class PropertyChangeListenerMock implements PropertyChangeListener {
         private PropertyChangeEvent lastEvent;
 
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
             this.lastEvent = evt;
-        }
-
-        public PropertyChangeEvent getLastEvent() {
-            return lastEvent;
         }
 
         public void reset() {

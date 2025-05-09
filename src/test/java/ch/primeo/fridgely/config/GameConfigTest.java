@@ -1,11 +1,8 @@
 package ch.primeo.fridgely.config;
 
 import org.junit.jupiter.api.Test;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class GameConfigTest {
 
@@ -67,20 +64,5 @@ class GameConfigTest {
     @Test
     void testScoreFullMatch() {
         assertEquals(10, GameConfig.SCORE_FULL_MATCH);
-    }
-
-    @Test
-    void testConstructorThrowsException() {
-        Constructor<GameConfig> constructor;
-        try {
-            constructor = GameConfig.class.getDeclaredConstructor();
-            constructor.setAccessible(true);
-            InvocationTargetException thrown = assertThrows(InvocationTargetException.class, constructor::newInstance);
-            assertTrue(thrown.getCause() instanceof UnsupportedOperationException);
-            assertEquals("GameConfig is a utility class and cannot be instantiated", thrown.getCause().getMessage());
-        } catch (NoSuchMethodException e) {
-            // This should not happen as the constructor exists
-            throw new AssertionError("Constructor not found", e);
-        }
     }
 }

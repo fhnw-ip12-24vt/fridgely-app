@@ -27,6 +27,7 @@ public class MultiplayerPlayer1Controller {
      * @param stateModel  the model for the game state
      * @param penguModel  the model for the penguin HP
      * @param productRepo the repository for accessing products
+     * @param recipeModel the model for recipes
      */
     public MultiplayerPlayer1Controller(FridgeStockModel stockModel, MultiplayerGameStateModel stateModel,
             PenguinModel penguModel, ProductRepository productRepo, RecipeModel recipeModel) {

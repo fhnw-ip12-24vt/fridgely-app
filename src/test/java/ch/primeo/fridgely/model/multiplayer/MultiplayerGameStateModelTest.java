@@ -3,10 +3,14 @@ package ch.primeo.fridgely.model.multiplayer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MultiplayerGameStateModelTest {
 
@@ -102,7 +106,7 @@ class MultiplayerGameStateModelTest {
         gameState.addPlayer2Score(10);
 
         // Act
-        while(!gameState.isGameOver()){
+        while (!gameState.isGameOver()) {
             gameState.nextPlayer();
         }
         MultiplayerGameStateModel.Player winner = gameState.getWinner();
@@ -118,7 +122,7 @@ class MultiplayerGameStateModelTest {
         gameState.addPlayer2Score(20);
 
         // Act
-        while(!gameState.isGameOver()){
+        while (!gameState.isGameOver()) {
             gameState.nextPlayer();
         }
         MultiplayerGameStateModel.Player winner = gameState.getWinner();
@@ -144,7 +148,8 @@ class MultiplayerGameStateModelTest {
         // Assert
         assertNull(winner);
     }
-@Test
+
+    @Test
     void testGetWinner_Player2Wins_ExplicitBranchCoverage() {
         // Arrange
         // Scores ensure player 2 has more points
@@ -160,7 +165,8 @@ class MultiplayerGameStateModelTest {
 
         // Assert
         // Verify that Player 2 is the winner
-        assertEquals(MultiplayerGameStateModel.Player.PLAYER2, winner, "Player 2 should win when their score is higher.");
+        assertEquals(MultiplayerGameStateModel.Player.PLAYER2, winner,
+                "Player 2 should win when their score is higher.");
     }
 
     @Test
@@ -205,13 +211,10 @@ class MultiplayerGameStateModelTest {
     @Test
     void testPropertyChangeListener() {
         // Arrange
-        PropertyChangeListener mockListener = new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                assertEquals(MultiplayerGameStateModel.PROP_CURRENT_PLAYER, evt.getPropertyName());
-                assertEquals(MultiplayerGameStateModel.Player.PLAYER1, evt.getOldValue());
-                assertEquals(MultiplayerGameStateModel.Player.PLAYER2, evt.getNewValue());
-            }
+        PropertyChangeListener mockListener = evt -> {
+            assertEquals(MultiplayerGameStateModel.PROP_CURRENT_PLAYER, evt.getPropertyName());
+            assertEquals(MultiplayerGameStateModel.Player.PLAYER1, evt.getOldValue());
+            assertEquals(MultiplayerGameStateModel.Player.PLAYER2, evt.getNewValue());
         };
         gameState.addPropertyChangeListener(mockListener);
 

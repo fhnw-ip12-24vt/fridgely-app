@@ -6,6 +6,7 @@ import ch.primeo.fridgely.model.Product;
 import ch.primeo.fridgely.model.Recipe;
 import ch.primeo.fridgely.service.ProductRepository;
 import ch.primeo.fridgely.util.ImageLoader;
+import lombok.Setter;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -63,7 +64,8 @@ public class UnifiedRecipePanel extends JPanel {
      * @param productRepo the repository for product data
      * @param imageLoader the image loader for loading images
      */
-    public UnifiedRecipePanel(MultiplayerGameController controller, ProductRepository productRepo, ImageLoader imageLoader) {
+    public UnifiedRecipePanel(MultiplayerGameController controller, ProductRepository productRepo,
+            ImageLoader imageLoader) {
         this.gameController = controller;
         this.recipeModel = gameController.getRecipeModel();
         this.productRepository = productRepo;
@@ -96,16 +98,8 @@ public class UnifiedRecipePanel extends JPanel {
         void recipeSelected(Recipe recipe);
     }
 
+    @Setter
     private RecipeSelectionListener recipeSelectionListener;
-
-    /**
-     * Sets the listener for recipe selection.
-     *
-     * @param listener the listener to set
-     */
-    public void setRecipeSelectionListener(RecipeSelectionListener listener) {
-        this.recipeSelectionListener = listener;
-    }
 
     /**
      * Updates the recipe list with the current recipes from the model. This clears and reloads the entire list.
@@ -396,14 +390,5 @@ public class UnifiedRecipePanel extends JPanel {
                 BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(100, 149, 237), 2, true),
                         // Cornflower blue
                         BorderFactory.createEmptyBorder(10, 10, 10, 10)));
-    }
-
-    /**
-     * Gets the currently selected recipe.
-     *
-     * @return the selected recipe or null if none is selected
-     */
-    public Recipe getSelectedRecipe() {
-        return selectedRecipe;
     }
 }

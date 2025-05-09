@@ -8,7 +8,14 @@ import ch.primeo.fridgely.model.multiplayer.MultiplayerGameStateModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.anyList;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class MultiplayerPlayer2ControllerTest {
 
@@ -25,9 +32,7 @@ class MultiplayerPlayer2ControllerTest {
         penguinModel = mock(PenguinModel.class);
         recipeModel = mock(RecipeModel.class);
 
-        controller = new MultiplayerPlayer2Controller(
-            fridgeStockModel, gameStateModel, penguinModel, recipeModel
-        );
+        controller = new MultiplayerPlayer2Controller(fridgeStockModel, gameStateModel, penguinModel, recipeModel);
     }
 
     @Test

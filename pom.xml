@@ -68,6 +68,13 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+    	<groupId>org.jetbrains</groupId>
+    	<artifactId>annotations</artifactId>
+    	<version>24.1.0</version> <!-- Or latest available -->
+		</dependency>
+
+
 		<!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
 		<dependency>
 			<groupId>org.mockito</groupId>
@@ -106,7 +113,12 @@
 			<version>3.1.0</version>
 			<scope>compile</scope>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
 	<reporting>
 		<outputDirectory>${project.build.directory}/site</outputDirectory>
@@ -173,7 +185,7 @@
 
 	<build>
 		<plugins>
-			<!-- Add maven-compiler-plugin for QueryDSL annotation processing -->
+			<!-- Add maven-compiler-plugin for QueryDSL and Lombok annotation processing -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -188,11 +200,16 @@
 							<version>${querydsl.version}</version>
 							<classifier>jakarta</classifier>
 						</path>
-						<!-- Add Jakarta Persistence API to annotation processor path -->
 						<path>
 							<groupId>jakarta.persistence</groupId>
 							<artifactId>jakarta.persistence-api</artifactId>
 							<version>3.2.0</version>
+						</path>
+						<!-- Add Lombok annotation processor -->
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>1.18.30</version> <!-- Ensure this matches your Lombok version -->
 						</path>
 					</annotationProcessorPaths>
 				</configuration>
