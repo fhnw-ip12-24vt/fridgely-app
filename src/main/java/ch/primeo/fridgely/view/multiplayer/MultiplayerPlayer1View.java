@@ -244,8 +244,8 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
         finishTurnButton.setEnabled(isPlayer1Turn && !isGameOver && hasEnoughProducts);
 
         // Animated scan prompt label logic
-        scanPromptLabel.setVisible(isPlayer1Turn && !isGameOver && !hasEnoughProducts);
-        if (scanPromptLabel.isVisible()) {
+        //scanPromptLabel.setVisible(isPlayer1Turn && !isGameOver && !hasEnoughProducts);
+        if (isPlayer1Turn && !isGameOver && !hasEnoughProducts) {
             if (scanPromptTimer == null) {
                 scanPromptTimer = new javax.swing.Timer(500, e -> {
                     scanPromptDotCount = (scanPromptDotCount + 1) % 4;
@@ -254,10 +254,12 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
                 scanPromptTimer.start();
             } else if (!scanPromptTimer.isRunning()) {
                 scanPromptTimer.start();
+
             }
         } else {
             if (scanPromptTimer != null && scanPromptTimer.isRunning()) {
                 scanPromptTimer.stop();
+                scanPromptLabel.setText(" ");
             }
         }
 
