@@ -16,16 +16,19 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.awt.Window;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import java.awt.KeyboardFocusManager;
+import javax.swing.Timer;
+import java.awt.BorderLayout;
+import java.awt.Cursor;
+import java.awt.FlowLayout;
 import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
+import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 /**
  * View for Player 1 (Scanner) in the multiplayer game mode. Shows the barcode scanning interface. The scanned items are
@@ -184,7 +187,7 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
      */
     private void scanBarcode(String barcode) {
         System.out.println("[DEBUG] scanBarcode called with: '" + barcode + "'");
-        setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.WAIT_CURSOR));
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         statusLabel.setText(localizationService.get(KEY_SCANNING_PRODUCT));
         boolean wasInStock = false;
         for (Product p : gameController.getFridgeStockModel().getProducts()) {
@@ -208,7 +211,7 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
                 statusLabel.setText(String.format(localizationService.get(KEY_ADDED_TO_STOCK_FMT), productName));
                 reaction = isGood ? PenguinFacialExpression.HAPPY : PenguinFacialExpression.DISAPPOINTED;
             }
-            java.awt.Toolkit.getDefaultToolkit().beep();
+            Toolkit.getDefaultToolkit().beep();
             // Show penguin reaction overlay (1 second)
             Window topLevel = SwingUtilities.getWindowAncestor(this);
             PenguinReactionOverlay overlay = new PenguinReactionOverlay(topLevel, reaction, imageLoader);
@@ -246,7 +249,7 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
         scanPromptLabel.setVisible(isPlayer1Turn && !isGameOver && !hasEnoughProducts);
         if (scanPromptLabel.isVisible()) {
             if (scanPromptTimer == null) {
-                scanPromptTimer = new javax.swing.Timer(500, e -> {
+                scanPromptTimer = new Timer(500, e -> {
                     scanPromptDotCount = (scanPromptDotCount + 1) % 4;
                     scanPromptLabel.setText(scanPromptBase + ".".repeat(Math.max(0, scanPromptDotCount)));
                 });
