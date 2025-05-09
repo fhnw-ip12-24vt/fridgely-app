@@ -12,7 +12,12 @@
 	</module>
 	<module name="SuppressionSingleFilter">
 		<property name="checks" value=".*"/>
-		<property name="files" value="ch.fhnw.swc.mrs.view"/>
+		<property name="files" value="ch.primeo.fridgely.view.*"/>
+	</module>
+
+	<module name="SuppressionSingleFilter">
+		<property name="checks" value="MethodName"/>
+		<property name="files" value=".*Test\.java$"/>
 	</module>
 
 	<module name="TreeWalker">
@@ -83,8 +88,7 @@
 		<module name="TodoComment" />
 		<module name="UpperEll" />
         <module name="SingleSpaceSeparator"/>
-        <module name="HiddenField"/>
-		<!-- disable metrics 
+		<!-- disable metrics
 		<module name="CyclomaticComplexity"/> 
 		-->
 	</module>
