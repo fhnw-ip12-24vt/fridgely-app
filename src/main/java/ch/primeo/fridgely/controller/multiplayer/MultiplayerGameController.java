@@ -8,6 +8,7 @@ import ch.primeo.fridgely.model.RecipeModel;
 import ch.primeo.fridgely.model.multiplayer.MultiplayerGameStateModel;
 import ch.primeo.fridgely.service.ProductRepository;
 import ch.primeo.fridgely.service.RecipeRepository;
+import ch.primeo.fridgely.view.multiplayer.MultiplayerEndGameView;
 
 /**
  * Main controller for the multiplayer game mode.
@@ -121,4 +122,5 @@ public class MultiplayerGameController {
         ChooseGameModeController controller = FridgelyContext.getBean(ChooseGameModeController.class);
         controller.showChooseGameModeView();
     }
+
 }

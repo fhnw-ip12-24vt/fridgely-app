@@ -10,10 +10,7 @@ import ch.primeo.fridgely.service.localization.LocalizationObserver;
 import ch.primeo.fridgely.util.ImageLoader;
 import ch.primeo.fridgely.view.component.UnifiedRecipePanel;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -162,7 +159,7 @@ public class MultiplayerPlayer2View extends JPanel implements PropertyChangeList
 
         // Update status label
         if (isGameOver) {
-            statusLabel.setText(localizationService.get(KEY_STATUS_GAME_OVER));
+            //statusLabel.setText(localizationService.get(KEY_STATUS_GAME_OVER));
         } else if (isPlayer2Turn) {
             if (hasSelectedRecipe) {
                 statusLabel.setText(String.format(localizationService.get(KEY_STATUS_PLAYER2_RECIPE_SELECTED),

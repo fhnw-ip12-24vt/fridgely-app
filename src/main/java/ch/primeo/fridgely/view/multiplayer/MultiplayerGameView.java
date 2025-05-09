@@ -49,6 +49,7 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
 
     private MultiplayerPlayer1View player1View;
     private MultiplayerPlayer2View player2View;
+    private MultiplayerEndGameView endGameView;
 
     private PenguinScorePanel penguinScorePanel;
 
@@ -90,6 +91,7 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
     private void initializeComponents() {
         player1View = new MultiplayerPlayer1View(gameController, localizationService, imageLoader);
         player2View = new MultiplayerPlayer2View(gameController, localizationService, imageLoader);
+
         penguinScorePanel = new PenguinScorePanel(imageLoader);
 
         gameInfoPanel = new JPanel();
@@ -167,9 +169,17 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
 
     private void showCurrentPlayerView() {
         MultiplayerGameStateModel.Player currentPlayer = gameController.getGameStateModel().getCurrentPlayer();
-        if (currentPlayer == MultiplayerGameStateModel.Player.PLAYER1) {
+        if(gameController.getGameStateModel().isGameOver()){
+            Window window = SwingUtilities.getWindowAncestor(this);
+            if (window instanceof JFrame frame) {
+                frame.setContentPane(new MultiplayerEndGameView(gameController, localizationService, imageLoader));
+                frame.revalidate();
+                frame.repaint();
+            }
+        }
+        else if (currentPlayer == MultiplayerGameStateModel.Player.PLAYER1) {
             playerCardLayout.show(playerPanel, "player1");
-        } else {
+        }else {
             playerCardLayout.show(playerPanel, "player2");
             player2View.updateRecipeList();
         }
@@ -189,16 +199,6 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
 
         penguinScorePanel.updatePenguinImage(gameState.getScore());
 
-        if (gameState.isGameOver()) {
-            MultiplayerGameStateModel.Player winner = gameState.getWinner();
-            if (winner == MultiplayerGameStateModel.Player.PLAYER1) {
-                JOptionPane.showMessageDialog(this, localizationService.get(KEY_GAME_OVER_PLAYER1));
-            } else if (winner == MultiplayerGameStateModel.Player.PLAYER2) {
-                JOptionPane.showMessageDialog(this, localizationService.get(KEY_GAME_OVER_PLAYER2));
-            } else {
-                JOptionPane.showMessageDialog(this, localizationService.get(KEY_GAME_OVER_TIE));
-            }
-        }
     }
 
     private void startNewGame() {
