@@ -98,7 +98,7 @@ public class MultiplayerPlayer2View extends JPanel implements PropertyChangeList
         // Add the unified recipe panel to the center
         add(unifiedRecipePanel, BorderLayout.CENTER);
 
-        // Button panel at the bottom
+        // FButton panel at the bottom
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.add(finishTurnButton);
         add(buttonPanel, BorderLayout.SOUTH);

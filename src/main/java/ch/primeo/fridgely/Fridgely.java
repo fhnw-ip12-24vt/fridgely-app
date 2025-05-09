@@ -1,5 +1,6 @@
 package ch.primeo.fridgely;
 
+import ch.primeo.fridgely.config.UIConfig;
 import ch.primeo.fridgely.controller.ChooseGameModeController;
 import ch.primeo.fridgely.util.ImageLoader;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -19,6 +20,7 @@ public class Fridgely {
 
     public static void main(String[] args) throws InterruptedException {    
         detectScreens();
+        UIConfig.setUIFont();
 
         // Now start the Spring application context after screen detection is complete
         var context = new SpringApplicationBuilder(Fridgely.class).headless(false).run(args);

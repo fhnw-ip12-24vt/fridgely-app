@@ -28,10 +28,12 @@ import java.util.List;
 @Scope("singleton")
 public class ChooseGameModeController implements BaseController {
 
+
     private final AppLocalizationService localizationService;
-    private final ChooseGameModeView view;
-    private final MultiplayerGameLauncher multiplayerGameLauncher;
+    private ChooseGameModeView view;
+    private MultiplayerGameLauncher multiplayerGameLauncher;
     private final ImageLoader imageLoader;
+    private final LanguageSwitchButton languageSwitchButton;
 
     /**
      * Constructs the controller and sets up UI event handlers.
@@ -48,7 +50,12 @@ public class ChooseGameModeController implements BaseController {
         this.localizationService = localization;
         this.multiplayerGameLauncher = launcher;
         this.imageLoader = imageLoader;
+        this.languageSwitchButton = languageSwitchButton;
 
+        showChooseGameModeView();
+    }
+
+    public void showChooseGameModeView() {
         this.view = new ChooseGameModeView(languageSwitchButton, this.localizationService, imageLoader);
 
         view.getFrame().addWindowListener(new WindowAdapter() {

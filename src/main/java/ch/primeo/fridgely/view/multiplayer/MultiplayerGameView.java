@@ -6,6 +6,7 @@ import ch.primeo.fridgely.model.multiplayer.MultiplayerGameStateModel;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import ch.primeo.fridgely.service.localization.LocalizationObserver;
 import ch.primeo.fridgely.util.ImageLoader;
+import ch.primeo.fridgely.view.component.FButton;
 import ch.primeo.fridgely.view.component.PenguinScorePanel;
 
 import javax.swing.BorderFactory;
@@ -36,8 +37,7 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
     private static final String KEY_EXIT = "button.exit";
     private static final String KEY_HP_LABEL = "label.hp";
     private static final String KEY_ROUND_LABEL = "label.round";
-    private static final String KEY_PLAYER1_SCORE = "label.player1_score";
-    private static final String KEY_PLAYER2_SCORE = "label.player2_score";
+    private static final String KEY_PLAYER_SCORE = "label.player_score";
     private static final String KEY_GAME_OVER_PLAYER1 = "game.over.player1";
     private static final String KEY_GAME_OVER_PLAYER2 = "game.over.player2";
     private static final String KEY_GAME_OVER_TIE = "game.over.tie";
@@ -59,8 +59,12 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
 
     private JLabel roundLabel;
     private JLabel scoreLabel;
-    private JButton newGameButton;
-    private JButton exitButton;
+    private FButton newGameButton;
+    private FButton exitButton;
+
+    //TEST Components TODO DELTETE AFTER TESTING
+    private JButton testPlus5Score;
+    private JButton testMinus5Score;
 
     private CardLayout playerCardLayout;
 
@@ -98,11 +102,21 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
         playerPanel.add(player2View, "player2");
 
         roundLabel = new JLabel();
-        roundLabel.setFont(new Font(roundLabel.getFont().getName(), Font.BOLD, 24));
         scoreLabel = new JLabel();
-        scoreLabel.setFont(new Font(scoreLabel.getFont().getName(), Font.BOLD, 24));
-        newGameButton = new JButton();
-        exitButton = new JButton();
+
+        //Get Icons for buttons
+        ImageIcon newGameIcon = imageLoader.loadScaledImage("/ch/primeo/fridgely/icons/restart.png", 50, 50);
+        ImageIcon homeIcon  = imageLoader.loadScaledImage("/ch/primeo/fridgely/icons/home.png", 50, 50);
+
+
+        newGameButton = new FButton(newGameIcon, true);
+        exitButton = new FButton(homeIcon, true);
+
+
+        //TODO: DELETE
+        testPlus5Score = new JButton("+5 P");
+        testMinus5Score = new JButton("-5 P");
+
     }
 
     private void setupLayout() {
@@ -124,6 +138,10 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
         controlPanel.setLayout(new GridLayout(2, 1, 5, 5));
         controlPanel.add(newGameButton);
         controlPanel.add(exitButton);
+
+        //TODO: DELETE
+        controlPanel.add(testPlus5Score);
+        controlPanel.add(testMinus5Score);
     }
 
     private void registerListeners() {
@@ -132,7 +150,20 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
 
         newGameButton.addActionListener(e -> startNewGame());
         exitButton.addActionListener(e -> exitGame());
+
+        //TODO: Delete
+        testPlus5Score.addActionListener(e -> {
+            gameController.getGameStateModel().addScore(5);
+            updateGameInfo();
+        });
+
+        testMinus5Score.addActionListener(e -> {
+            gameController.getGameStateModel().addScore(-5);
+            updateGameInfo();
+        });
     }
+
+
 
     private void showCurrentPlayerView() {
         MultiplayerGameStateModel.Player currentPlayer = gameController.getGameStateModel().getCurrentPlayer();
@@ -152,7 +183,7 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
                 gameState.getTotalRounds()));
 
         scoreLabel.setText(
-                String.format(localizationService.get(KEY_PLAYER1_SCORE), gameState.getScore())
+                String.format(localizationService.get(KEY_PLAYER_SCORE), gameState.getScore())
         );
 
 
@@ -189,6 +220,8 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
             if (window instanceof JFrame) {
                 window.dispose();
             }
+            localizationService.unsubscribe(this);
+            gameController.exitGame();
         }
     }
 
@@ -208,8 +241,6 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
 //        scorePanel.setBorder(BorderFactory.createTitledBorder(localizationService.get(KEY_GAME_STATUS_TITLE)));
 //        controlPanel.setBorder(BorderFactory.createTitledBorder(localizationService.get(KEY_CONTROLS_TITLE)));
 
-        newGameButton.setText(localizationService.get(KEY_NEW_GAME));
-        exitButton.setText(localizationService.get(KEY_EXIT));
 
         updateGameInfo(); // Re-apply localized labels and scores
     }

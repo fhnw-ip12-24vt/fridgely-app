@@ -53,7 +53,6 @@ public class LanguageSwitchButton extends JButton {
         // Set visual properties
         setBackground(BUTTON_COLOR);
         setForeground(Color.WHITE);
-        setFont(new Font("SansSerif", Font.BOLD, 16));
 
         // Fix sizing issues
         Dimension buttonSize = new Dimension(getPreferredSize().width, BUTTON_HEIGHT);

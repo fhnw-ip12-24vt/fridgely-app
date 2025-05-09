@@ -85,12 +85,9 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
      */
     private void initializeComponents() {
         scanPromptLabel = new JLabel("", SwingConstants.CENTER);
-        scanPromptLabel.setFont(new Font(scanPromptLabel.getFont().getName(), Font.BOLD, 24));
         finishTurnButton = new FinishTurnButton(localizationService);
         statusLabel = new JLabel("");
-        statusLabel.setFont(new Font(statusLabel.getFont().getName(), Font.BOLD, 24));
         minProductsLabel = new JLabel("");
-        minProductsLabel.setFont(new Font(minProductsLabel.getFont().getName(), Font.BOLD, 24));
 
     }
 
@@ -126,7 +123,7 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
         gameController.getGameStateModel().addPropertyChangeListener(this);
         gameController.getFridgeStockModel().addPropertyChangeListener(this);
 
-        // Button action listeners
+        // FButton action listeners
         finishTurnButton.addActionListener(e -> {
             finishTurn();
             requestFocusInWindow();

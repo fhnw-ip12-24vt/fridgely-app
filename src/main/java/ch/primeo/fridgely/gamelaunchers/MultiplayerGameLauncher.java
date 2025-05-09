@@ -34,7 +34,7 @@ public class MultiplayerGameLauncher {
      * @param localization the service for text localization
      */
     public MultiplayerGameLauncher(ProductRepository productRepo, RecipeRepository recipeRepo,
-            AppLocalizationService localization, ImageLoader imageLoader) {
+                                   AppLocalizationService localization, ImageLoader imageLoader) {
         this.productRepository = productRepo;
         this.recipeRepository = recipeRepo;
         this.localizationService = localization;

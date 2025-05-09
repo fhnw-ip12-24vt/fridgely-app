@@ -7,22 +7,9 @@ import ch.primeo.fridgely.model.Recipe;
 import ch.primeo.fridgely.service.ProductRepository;
 import ch.primeo.fridgely.util.ImageLoader;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.*;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -57,6 +44,10 @@ public class UnifiedRecipePanel extends JPanel {
 
     private final ImageLoader imageLoader;
 
+    //Y-coordinate for mouse dragging/touchscrolling
+    private int lastY;
+
+
     /**
      * Constructs a new unified recipe panel.
      *
@@ -85,6 +76,29 @@ public class UnifiedRecipePanel extends JPanel {
 
         // Implement lazy loading when scrolling
         scrollPane.getViewport().addChangeListener(e -> SwingUtilities.invokeLater(this::checkVisibleRecipes));
+
+        // Füge dies im Konstruktor von UnifiedRecipePanel hinzu, nachdem der scrollPane erstellt wurde
+        scrollPane.getViewport().addMouseListener(new java.awt.event.MouseAdapter() {
+
+            @Override
+            public void mousePressed(java.awt.event.MouseEvent e) {
+                lastY = e.getYOnScreen();
+            }
+        });
+
+        scrollPane.getViewport().addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(java.awt.event.MouseEvent e) {
+                int currentY = e.getYOnScreen();
+                int deltaY = lastY - currentY;
+                JViewport viewport = scrollPane.getViewport();
+                Point viewPosition = viewport.getViewPosition();
+                viewPosition.translate(0, deltaY);
+                viewport.setViewPosition(viewPosition);
+                lastY = currentY;
+            }
+        });
+
 
         add(scrollPane, BorderLayout.CENTER);
     }
@@ -219,9 +233,11 @@ public class UnifiedRecipePanel extends JPanel {
         headerPanel.add(titleLabel, BorderLayout.CENTER);
 
         // Description
+        /*
         JLabel descriptionLabel = new JLabel(recipe.getDescription());
         descriptionLabel.setForeground(Color.DARK_GRAY);
         descriptionLabel.setBorder(BorderFactory.createEmptyBorder(5, 0, 10, 0));
+        */
 
         // Create ingredients panel
         JPanel ingredientsPanel = createIngredientsPanel(recipe);
@@ -230,7 +246,7 @@ public class UnifiedRecipePanel extends JPanel {
         // Assemble the card
         JPanel contentPanel = new JPanel(new BorderLayout(0, 10));
         contentPanel.setOpaque(false);
-        contentPanel.add(descriptionLabel, BorderLayout.NORTH);
+        //contentPanel.add(descriptionLabel, BorderLayout.NORTH);
         contentPanel.add(ingredientsPanel, BorderLayout.CENTER);
 
         card.add(headerPanel, BorderLayout.NORTH);

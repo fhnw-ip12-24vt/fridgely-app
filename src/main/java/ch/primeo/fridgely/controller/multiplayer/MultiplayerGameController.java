@@ -1,5 +1,7 @@
 package ch.primeo.fridgely.controller.multiplayer;
 
+import ch.primeo.fridgely.FridgelyContext;
+import ch.primeo.fridgely.controller.ChooseGameModeController;
 import ch.primeo.fridgely.model.FridgeStockModel;
 import ch.primeo.fridgely.model.PenguinModel;
 import ch.primeo.fridgely.model.RecipeModel;
@@ -112,5 +114,11 @@ public class MultiplayerGameController {
         penguinModel.resetHP();
         fridgeStockModel.clear();
         recipeModel.selectRecipe(null);
+    }
+
+    public void exitGame() {
+        // Dispose of any resources or listeners if necessary
+        ChooseGameModeController controller = FridgelyContext.getBean(ChooseGameModeController.class);
+        controller.showChooseGameModeView();
     }
 }
