@@ -20,8 +20,8 @@ VALUES('001', 'Tomato', 'Tomate', 'Tomate', 'Local organic tomato', 'Lokale Bio-
        ('018', 'Local Organic Lettuce', 'Lokaler Bio-Salat', 'Laitue Bio Locale', 'Fresh organic locally grown lettuce', 'Frischer Bio-Salat aus lokalem Anbau', 'Laitue bio fraîche cultivée localement', 0, 1, 1, 1),
        ('019', 'Bananas - Ecuador', 'Bananen - Ecuador', 'Bananes - Équateur', 'water_intensive', 'Importierte Bananen aus Ecuador', 'Bananes importées d''Équateur', 0, 0, 0, 1),
        ('020', 'Organic Tofu', 'Bio-Tofu', 'Tofu Bio', 'Organic firm tofu', 'Bio-Tofu fest', 'Tofu bio ferme', 0, 1, 0, 1),
-       ('AAA', 'Bread', 'Brot', 'Pain', 'Bread', 'Brot', 'Pain', 1, 0, 0, 1);
-('021', 'Orange', 'Orange', 'Orange', 'Sweet juicy oranges', 'Süße saftige Orangen', 'Oranges juteuses et sucrées', 0, 0, 0,0),
+       ('AAA', 'Bread', 'Brot', 'Pain', 'Bread', 'Brot', 'Pain', 1, 0, 0, 1),
+       ('021', 'Orange', 'Orange', 'Orange', 'Sweet juicy oranges', 'Süße saftige Orangen', 'Oranges juteuses et sucrées', 0, 0, 0,0),
        ('022', 'Lemon', 'Zitrone', 'Citron', 'Fresh tangy lemons', 'Frische würzige Zitronen', 'Citrons frais et acidulés', 0, 0, 0,0),
        ('023', 'Onion', 'Zwiebel', 'Oignon', 'Fresh cooking onions', 'Frische Kochzwiebeln', 'Oignons frais de cuisine', 0, 0, 0,0),
        ('024', 'Avocado', 'Avocado', 'Avocat', 'Ripe creamy avocados', 'Reife cremige Avocados', 'Avocats mûrs et crémeux', 0, 0, 0,0),
