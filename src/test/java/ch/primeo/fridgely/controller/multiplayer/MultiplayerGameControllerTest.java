@@ -37,8 +37,7 @@ class MultiplayerGameControllerTest {
         MultiplayerGameStateModel gameState = controller.getGameStateModel();
         assertEquals(1, gameState.getCurrentRound());
         assertEquals(MultiplayerGameStateModel.Player.PLAYER1, gameState.getCurrentPlayer());
-        assertEquals(0, gameState.getPlayer1Score());
-        assertEquals(0, gameState.getPlayer2Score());
+        assertEquals(0, gameState.getScore());
         assertFalse(gameState.isGameOver());
     }
 

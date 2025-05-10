@@ -1,11 +1,11 @@
 package ch.primeo.fridgely.view;
 
 import ch.primeo.fridgely.Fridgely;
-import ch.primeo.fridgely.service.localization.AppLocalizationService;
-import ch.primeo.fridgely.service.localization.LocalizationObserver;
+import ch.primeo.fridgely.config.UIConfig;
 import ch.primeo.fridgely.util.ImageLoader;
 import ch.primeo.fridgely.view.component.LanguageSwitchButton;
-import lombok.Getter;
+import ch.primeo.fridgely.service.localization.AppLocalizationService;
+import ch.primeo.fridgely.service.localization.LocalizationObserver;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -17,10 +17,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagLayout;
 
 /**
@@ -37,7 +35,6 @@ public class ChooseGameModeView implements LocalizationObserver {
     private static final String KEY_SINGLE_PLAYER_TOOLTIP = "gamemode.singleplayer.tooltip";
     private static final String KEY_MULTIPLAYER_TOOLTIP = "gamemode.multiplayer.tooltip";
 
-    @Getter
     private final JFrame frame = new JFrame();
 
     private final AppLocalizationService localizationService;
@@ -47,41 +44,34 @@ public class ChooseGameModeView implements LocalizationObserver {
     private JPanel gameModePanel;
     private JPanel singlePlayerPanel;
     private JPanel multiplayerPanel;
-
-    @Getter
     private JLabel singlePlayerImageLabel;
-
-    @Getter
     private JLabel multiplayerImageLabel;
     private JLabel singlePlayerTextLabel;
     private JLabel multiplayerTextLabel;
 
     private static final String SINGLE_PLAYER_IMAGE = "/ch/primeo/fridgely/sprites/single_player.png";
     private static final String MULTIPLAYER_IMAGE = "/ch/primeo/fridgely/sprites/multi_player.png";
-    private static final Color BACKGROUND_COLOR = new Color(248, 248, 255);
 
     private final ImageLoader imageLoader;
 
     /**
      * Constructor for the ChooseGameModeView. Initializes the components and sets up the layout.
-     *
-     * @param button       the language switch button
+     * @param button the language switch button
      * @param localization the localization service for text updates
-     * @param imageLoader  the image loader for loading images
      */
-    public ChooseGameModeView(LanguageSwitchButton button, AppLocalizationService localization,
-            ImageLoader imageLoader) {
+    public ChooseGameModeView(LanguageSwitchButton button, AppLocalizationService localization, ImageLoader imageLoader) {
         this.langButton = button;
         this.localizationService = localization;
         this.imageLoader = imageLoader;
 
-        if (!Fridgely.isSingleDisplay()) {
-            Fridgely.getMainAppScreen().setFullScreenWindow(frame);
+        if(!Fridgely.isSingleDisplay) {
+            Fridgely.mainAppScreen.setFullScreenWindow(frame);
         } else {
-            var screenBounds = Fridgely.getScannedItemsScreen().getDefaultConfiguration().getBounds();
+            var screenBounds = Fridgely.mainAppScreen.getDefaultConfiguration().getBounds();
             frame.setBounds(screenBounds);
             frame.setUndecorated(true);
         }
+
 
         initializeComponents();
         setupLayout();
@@ -110,20 +100,20 @@ public class ChooseGameModeView implements LocalizationObserver {
      */
     private void setupLayout() {
         mainPanel.setLayout(new BorderLayout(0, 0));
-        mainPanel.setBackground(BACKGROUND_COLOR);
+        mainPanel.setBackground(UIConfig.BACKGROUND_COLOR);
 
         // Simply add the language button to the north position
         mainPanel.add(langButton, BorderLayout.NORTH);
 
         JPanel centerPanel = new JPanel(new BorderLayout(0, 20));
-        centerPanel.setBackground(BACKGROUND_COLOR);
+        centerPanel.setBackground(UIConfig.BACKGROUND_COLOR);
         centerPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         centerPanel.add(titleLabel, BorderLayout.NORTH);
 
         gameModePanel.setLayout(new BoxLayout(gameModePanel, BoxLayout.X_AXIS));
-        gameModePanel.setBackground(BACKGROUND_COLOR);
+        gameModePanel.setBackground(UIConfig.BACKGROUND_COLOR);
         gameModePanel.add(Box.createHorizontalGlue());
 
         setupGameModePanel(singlePlayerPanel, singlePlayerImageLabel, singlePlayerTextLabel);
@@ -135,7 +125,7 @@ public class ChooseGameModeView implements LocalizationObserver {
         gameModePanel.add(Box.createHorizontalGlue());
 
         JPanel gameModeWrapperPanel = new JPanel(new GridBagLayout());
-        gameModeWrapperPanel.setBackground(BACKGROUND_COLOR);
+        gameModeWrapperPanel.setBackground(UIConfig.BACKGROUND_COLOR);
         gameModeWrapperPanel.add(gameModePanel);
 
         centerPanel.add(gameModeWrapperPanel, BorderLayout.CENTER);
@@ -150,7 +140,7 @@ public class ChooseGameModeView implements LocalizationObserver {
      * @param textLabel  the text label for the panel
      */
     private void setupGameModePanel(JPanel panel, JLabel imageLabel, JLabel textLabel) {
-        panel.setBackground(BACKGROUND_COLOR);
+        panel.setBackground(UIConfig.BACKGROUND_COLOR);
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         imageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -181,6 +171,60 @@ public class ChooseGameModeView implements LocalizationObserver {
         return label;
     }
 
+    /**
+     * Returns the title label.
+     *
+     * @return the JLabel for the title
+     */
+    public JLabel getTitleLabel() {
+        return titleLabel;
+    }
+
+    /**
+     * Returns the label for the single player text.
+     *
+     * @return the JLabel for single player text
+     */
+    public JLabel getSinglePlayerTextLabel() {
+        return singlePlayerTextLabel;
+    }
+
+    /**
+     * Returns the label for the multiplayer text.
+     *
+     * @return the JLabel for multiplayer text
+     */
+    public JLabel getMultiplayerTextLabel() {
+        return multiplayerTextLabel;
+    }
+
+    /**
+     * Returns the label for single player image.
+     *
+     * @return the JLabel for single player image
+     */
+    public JLabel getSinglePlayerImageLabel() {
+        return singlePlayerImageLabel;
+    }
+
+    /**
+     * Returns the label for multiplayer image.
+     *
+     * @return the JLabel for multiplayer image
+     */
+    public JLabel getMultiplayerImageLabel() {
+        return multiplayerImageLabel;
+    }
+
+    /**
+     * Returns the language switch button.
+     *
+     * @return the LanguageSwitchButton
+     */
+    public JButton getLangButton() {
+        return langButton;
+    }
+
     @Override
     public void onLocaleChanged() {
         titleLabel.setText(localizationService.get(KEY_TITLE));
@@ -189,6 +233,10 @@ public class ChooseGameModeView implements LocalizationObserver {
         singlePlayerImageLabel.setToolTipText(localizationService.get(KEY_SINGLE_PLAYER_TOOLTIP));
         multiplayerImageLabel.setToolTipText(localizationService.get(KEY_MULTIPLAYER_TOOLTIP));
         langButton.setText(localizationService.get(KEY_LANG_BUTTON));
+    }
+
+    public JFrame getFrame() {
+        return frame;
     }
 
     public void setVisible(boolean visible) {

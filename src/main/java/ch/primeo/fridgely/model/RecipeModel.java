@@ -206,7 +206,7 @@ public class RecipeModel {
         
         return count;
     }
-
+    
     /**
      * Adds a property change listener.
      * 

@@ -53,7 +53,6 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
      * @param controller   the main game controller
      * @param localization the service for text localization
      * @param frame        the parent JFrame for this view
-     * @param imageLoader  the service for loading images
      */
     public ScannedItemsView(MultiplayerGameController controller, AppLocalizationService localization, JFrame frame,
             ImageLoader imageLoader) {
@@ -69,6 +68,7 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         // subscribe and apply localization
         localizationService.subscribe(this);
         onLocaleChanged();
+        frame.setContentPane(this);
 
         // Handle multi-monitor setup for the second display
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -204,7 +204,6 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         JLabel localLabel = new JLabel(product.isLocal()
                 ? localizationService.get(KEY_LABEL_LOCAL)
                 : localizationService.get(KEY_LABEL_NON_LOCAL));
-
         localLabel.setOpaque(true);
         localLabel.setFont(new Font(nameLabel.getFont().getName(), Font.BOLD, 10));
         localLabel.setForeground(Color.WHITE);

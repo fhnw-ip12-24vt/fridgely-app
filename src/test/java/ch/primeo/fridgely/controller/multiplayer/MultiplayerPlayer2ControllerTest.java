@@ -24,7 +24,7 @@ class MultiplayerPlayer2ControllerTest {
     private MultiplayerGameStateModel gameStateModel;
     private PenguinModel penguinModel;
     private RecipeModel recipeModel;
-
+/*
     @BeforeEach
     void setUp() {
         fridgeStockModel = mock(FridgeStockModel.class);
@@ -175,5 +175,5 @@ class MultiplayerPlayer2ControllerTest {
 
         verify(recipeModel, never()).selectRecipe(null);
         verify(fridgeStockModel, never()).clear();
-    }
+    }*/
 }

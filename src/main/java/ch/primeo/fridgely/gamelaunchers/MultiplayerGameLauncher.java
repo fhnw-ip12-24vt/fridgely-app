@@ -32,7 +32,6 @@ public class MultiplayerGameLauncher {
      * @param productRepo  the repository for accessing products
      * @param recipeRepo   the repository for accessing recipes
      * @param localization the service for text localization
-     * @param imageLoader  the service for loading images
      */
     public MultiplayerGameLauncher(ProductRepository productRepo, RecipeRepository recipeRepo,
                                    AppLocalizationService localization, ImageLoader imageLoader) {

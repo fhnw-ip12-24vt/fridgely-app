@@ -122,9 +122,10 @@ class ProductTest {
         boolean isDefaultProduct = true;
         boolean bio = true;
         boolean local = true;
+        boolean isLowCO2 = false;
 
         Product product = new Product(barcode, name, nameDE, nameFR, description, descriptionDE, descriptionFR,
-                isDefaultProduct, bio, local);
+                isDefaultProduct, bio, local, isLowCO2);
 
         // Assert
         assertEquals(barcode, product.getBarcode());
@@ -393,7 +394,7 @@ class ProductTest {
     // Nested subclass to trigger getClass() mismatch in equals()
     static class ExtendedProduct extends Product {
         ExtendedProduct(String code) {
-            super(code, null, null, null, null, null, null, false, false, false);
+            super(code, null, null, null, null, null, null, false, false, false, false);
         }
     }
 

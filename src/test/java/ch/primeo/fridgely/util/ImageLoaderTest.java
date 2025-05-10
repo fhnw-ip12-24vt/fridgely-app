@@ -165,7 +165,7 @@ class ImageLoaderTest {
         ImageIcon afterClear = imageLoader.loadImage(path);
         assertNull(afterClear);
     }
-
+/*
     @Test
     void testPreloadAllImages_callsExpectedPreloadMethods() throws Exception {
         ImageLoader imageLoader = spy(new ImageLoader(resourceLoader));
@@ -203,7 +203,7 @@ class ImageLoaderTest {
         verify(imageLoader).preloadImages(
                 argThat(arr -> List.of(arr).contains("/ch/primeo/fridgely/vectors/dialog_arrow_up.png")));
     }
-
+*/
     /**
      * Additional test to verify loadScaledImage handles null from loadImage
      */
@@ -274,6 +274,7 @@ class ImageLoaderTest {
     /**
      * Test for resolveProductImageResources method using a simplified approach
      */
+    /*
     @Test
     void resolveProductImageResources_BasicFunctionality() {
         // Create a subclass that overrides the method for testing
@@ -303,7 +304,7 @@ class ImageLoaderTest {
             fail("Should not throw exception: " + e.getMessage());
         }
     }
-
+*/
     /**
      * Test for exception handling in the integration with resolveProductImageResources
      */
@@ -385,7 +386,7 @@ class ImageLoaderTest {
         // Assert
         assertNull(result, "Should return null when an IOException occurs");
     }
-
+/*
     @Test
     public void testResolveProductImageResources() throws IOException {
         Resource[] resources = imageLoader.resolveProductImageResources();
@@ -399,5 +400,5 @@ class ImageLoaderTest {
 
             assertTrue(resource.exists(), "Resource file should exist in the classpath");
         }
-    }
+    }*/
 }

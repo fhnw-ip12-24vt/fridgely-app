@@ -22,9 +22,6 @@ public class Product {
     private boolean isLocal;
     private boolean isLowCo2;
 
-    /**
-     * Path to the default image for products that are not found.
-     */
     public static final String PRODUCT_IMAGE_NOT_FOUND_PATH = "/ch/primeo/fridgely/productimages/notfound.png";
 
     /**
@@ -49,7 +46,6 @@ public class Product {
      * @param local          whether the product is local
      * @param lowCo2         whether the product is lowCo2
      */
-    @SuppressWarnings("checkstyle:ParameterNumber")
     public Product(String code, String nameE, String nameD, String nameF, String descriptionE, String descriptionD,
             String descriptionF, boolean defaultProduct, boolean bio, boolean local, boolean lowCo2) {
         this.barcode = code;
@@ -184,10 +180,6 @@ public class Product {
     public void setLowCo2(boolean lowCo2) { isLowCo2 = lowCo2; }
 
     public String getProductImagePath() {
-        if (barcode == null) {
-            return "/ch/primeo/fridgely/productimages/notfound.png";
-        }
-
         return "/ch/primeo/fridgely/productimages/" + barcode + ".png";
     }
 
