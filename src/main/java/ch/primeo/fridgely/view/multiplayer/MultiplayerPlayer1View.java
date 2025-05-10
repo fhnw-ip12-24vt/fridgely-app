@@ -5,17 +5,22 @@ import ch.primeo.fridgely.controller.multiplayer.MultiplayerGameController;
 import ch.primeo.fridgely.controller.multiplayer.MultiplayerPlayer1Controller;
 import ch.primeo.fridgely.model.FridgeStockModel;
 import ch.primeo.fridgely.model.PenguinFacialExpression;
+import ch.primeo.fridgely.model.PenguinHPState;
 import ch.primeo.fridgely.model.Product;
 import ch.primeo.fridgely.model.multiplayer.MultiplayerGameStateModel;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import ch.primeo.fridgely.service.localization.LocalizationObserver;
 import ch.primeo.fridgely.util.ImageLoader;
 import ch.primeo.fridgely.view.PenguinReactionOverlay;
+import ch.primeo.fridgely.view.component.FinishTurnButton;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -27,8 +32,6 @@ import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 /**
  * View for Player 1 (Scanner) in the multiplayer game mode. Shows the barcode scanning interface. The scanned items are
@@ -38,7 +41,6 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
 
     // localization keys
     private static final String KEY_SCAN_PROMPT_BASE = "scan_prompt_base";
-    private static final String KEY_FINISH_TURN_BUTTON = "finish_turn_button";
     private static final String KEY_STATUS_PLAYER1_TURN_SCAN = "status_player1_turn_scan";
     private static final String KEY_MIN_PRODUCTS_INITIAL_FMT = "min_products_initial_fmt";
     private static final String KEY_SCANNING_PRODUCT = "scanning_product";
@@ -57,6 +59,7 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
     private final ImageLoader imageLoader;
 
     private JLabel scanPromptLabel;
+    private JLabel scanningPenguinLabel;
     private String scanPromptBase;
     private int scanPromptDotCount = 0;
     private javax.swing.Timer scanPromptTimer;
@@ -71,8 +74,7 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
      * @param localization the service for text localization
      * @param imageLoader  the service for loading images
      */
-    public MultiplayerPlayer1View(MultiplayerGameController controller, AppLocalizationService localization,
-            ImageLoader imageLoader) {
+    public MultiplayerPlayer1View(MultiplayerGameController controller, AppLocalizationService localization, ImageLoader imageLoader) {
         this.gameController = controller;
         this.player1Controller = gameController.getPlayer1Controller();
         this.localizationService = localization;
@@ -94,9 +96,11 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
      */
     private void initializeComponents() {
         scanPromptLabel = new JLabel("", SwingConstants.CENTER);
-        finishTurnButton = new JButton("");
+        finishTurnButton = new FinishTurnButton(localizationService);
         statusLabel = new JLabel("");
+        scanningPenguinLabel = new JLabel();
         minProductsLabel = new JLabel("");
+        scanningPenguinLabel.setIcon(imageLoader.loadScaledImage("/ch/primeo/fridgely/sprites/penguin_scanning.png", 250, 250));
     }
 
     /**
@@ -111,10 +115,13 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
         statusPanel.add(statusLabel);
         add(statusPanel, BorderLayout.NORTH);
 
+        scanningPenguinLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
         // Centered scan prompt label
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.setOpaque(false);
-        centerPanel.add(scanPromptLabel, BorderLayout.CENTER);
+        centerPanel.add(scanPromptLabel, BorderLayout.SOUTH);
+        centerPanel.add(scanningPenguinLabel, BorderLayout.CENTER);
         add(centerPanel, BorderLayout.CENTER);
 
         // Finish turn button at the bottom
@@ -131,7 +138,7 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
         gameController.getGameStateModel().addPropertyChangeListener(this);
         gameController.getFridgeStockModel().addPropertyChangeListener(this);
 
-        // Button action listeners
+        // FButton action listeners
         finishTurnButton.addActionListener(e -> {
             finishTurn();
             requestFocusInWindow();
@@ -241,13 +248,13 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
 
         boolean isPlayer1Turn = gameStateModel.getCurrentPlayer() == MultiplayerGameStateModel.Player.PLAYER1;
         boolean isGameOver = gameStateModel.isGameOver();
-        boolean hasEnoughProducts = fridgeStockModel.getProductCount() >= GameConfig.MIN_PRODUCTS_PER_ROUND;
+        boolean hasEnoughProducts = fridgeStockModel.getFridgeProducts().size() >= GameConfig.MIN_PRODUCTS_PER_ROUND;
 
         finishTurnButton.setEnabled(isPlayer1Turn && !isGameOver && hasEnoughProducts);
 
         // Animated scan prompt label logic
-        scanPromptLabel.setVisible(isPlayer1Turn && !isGameOver && !hasEnoughProducts);
-        if (scanPromptLabel.isVisible()) {
+        //scanPromptLabel.setVisible(isPlayer1Turn && !isGameOver && !hasEnoughProducts);
+        if (isPlayer1Turn && !isGameOver && !hasEnoughProducts) {
             if (scanPromptTimer == null) {
                 scanPromptTimer = new Timer(500, e -> {
                     scanPromptDotCount = (scanPromptDotCount + 1) % 4;
@@ -256,15 +263,17 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
                 scanPromptTimer.start();
             } else if (!scanPromptTimer.isRunning()) {
                 scanPromptTimer.start();
+
             }
         } else {
             if (scanPromptTimer != null && scanPromptTimer.isRunning()) {
                 scanPromptTimer.stop();
+                scanPromptLabel.setText(" ");
             }
         }
 
         // Update the min products label
-        int currentCount = fridgeStockModel.getProductCount();
+        int currentCount = fridgeStockModel.getProducts().size();
         if (currentCount < GameConfig.MIN_PRODUCTS_PER_ROUND) {
             minProductsLabel.setText(String.format(localizationService.get(KEY_MIN_PRODUCTS_REMAINING_FMT),
                     GameConfig.MIN_PRODUCTS_PER_ROUND - currentCount, currentCount, GameConfig.MIN_PRODUCTS_PER_ROUND));
@@ -300,7 +309,6 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
     public void onLocaleChanged() {
         scanPromptBase = localizationService.get(KEY_SCAN_PROMPT_BASE);
         scanPromptLabel.setText(scanPromptBase);
-        finishTurnButton.setText(localizationService.get(KEY_FINISH_TURN_BUTTON));
         statusLabel.setText(localizationService.get(KEY_STATUS_PLAYER1_TURN_SCAN));
         minProductsLabel.setText(String.format(localizationService.get(KEY_MIN_PRODUCTS_INITIAL_FMT),
                 GameConfig.MIN_PRODUCTS_PER_ROUND));

@@ -1,7 +1,7 @@
 package ch.primeo.fridgely.model;
 
+//import ch.primeo.fridgely.model.RecipeIngredient; // Not needed anymore
 import ch.primeo.fridgely.service.RecipeRepository;
-import lombok.Getter;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -9,100 +9,120 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
- * Model for recipes in the multiplayer game mode. Contains recipes and functionality to match ingredients to products
- * in the fridge.
+ * Model for recipes in the multiplayer game mode.
+ * Contains recipes and functionality to match ingredients to products in the fridge.
  */
 public class RecipeModel {
-
-    private static final Logger LOGGER = Logger.getLogger(RecipeModel.class.getName());
-
+    
     /**
      * Property name for changes in the available recipes.
      */
     public static final String PROP_AVAILABLE_RECIPES = "availableRecipes";
-
+    
     /**
      * Property name for changes in the selected recipe.
      */
     public static final String PROP_SELECTED_RECIPE = "selectedRecipe";
-
+    
     private final List<Recipe> availableRecipes;
-
-    @Getter
     private Recipe selectedRecipe;
     private final RecipeRepository recipeRepository;
     private final PropertyChangeSupport propertyChangeSupport;
-
+    
     /**
      * Constructs a new recipe model.
-     *
-     * @param recipeRepo        the repository for accessing recipes
-     * @param availableProducts the list of available products
+     * 
+     * @param recipeRepo the repository for accessing recipes
      */
-    public RecipeModel(RecipeRepository recipeRepo, List<Product> availableProducts) {
+    public RecipeModel(RecipeRepository recipeRepo) {
         this.recipeRepository = recipeRepo;
         this.availableRecipes = new ArrayList<>();
         this.propertyChangeSupport = new PropertyChangeSupport(this);
-        loadAvailableRecipes(availableProducts);
+        loadAvailableRecipes();
     }
-
-    /**
-     * Loads available recipes from the repository. Only includes recipes for which the user has at least one
-     * ingredient.
-     *
-     * @param availableProducts the list of available products
+      /**
+     * Loads available recipes from the repository.
      */
-    public void loadAvailableRecipes(List<Product> availableProducts) {
+      void loadAvailableRecipes() {
         List<Recipe> oldRecipes = new ArrayList<>(availableRecipes);
         availableRecipes.clear();
-
+        
         try {
-            // Get all recipes from repository
-            List<Recipe> allRecipes = new ArrayList<>();
+            // Directly get recipes using the repository's methods
             List<RecipeRepository.RecipeDTO> recipeDTOs = recipeRepository.getAllRecipes();
-
+            
             // Convert DTOs to Recipe objects
             if (recipeDTOs != null && !recipeDTOs.isEmpty()) {
                 for (RecipeRepository.RecipeDTO dto : recipeDTOs) {
                     try {
-                        recipeRepository.findById(dto.getRecipeId()).ifPresent(allRecipes::add);
+                        recipeRepository.findById(dto.getRecipeId()).ifPresent(availableRecipes::add);
                     } catch (Exception e) {
                         System.err.println("Error processing recipe ID " + dto.getRecipeId() + ": " + e.getMessage());
                     }
                 }
             }
-
-            // Filter recipes to only include those with at least one matching ingredient
-            for (Recipe recipe : allRecipes) {
-                if (getMatchingIngredientsCount(recipe, availableProducts) > 0) {
-                    availableRecipes.add(recipe);
-                }
+            
+            // If no recipes were loaded, try direct entity query as fallback
+            if (availableRecipes.isEmpty()) {
+                System.out.println("Attempting to load recipes directly from JPA repository...");
+                availableRecipes.addAll(recipeRepository.getAllRecipesEntities());
             }
-
+            
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Could not load available recipes", e);
+            System.err.println("Error loading recipes: " + e.getMessage());
+            e.printStackTrace();
+            
+            // Fallback: Create some dummy recipes for testing
+            Recipe dummyRecipe = new Recipe();
+            dummyRecipe.setRecipeId(1);
+            dummyRecipe.setName("Dummy Recipe");
+            dummyRecipe.setDescription("A test recipe");
+            availableRecipes.add(dummyRecipe);
         }
-
-        System.out.println("Loaded " + availableRecipes.size() + " recipes with at least one matching ingredient");
-        propertyChangeSupport.firePropertyChange(PROP_AVAILABLE_RECIPES, oldRecipes, new ArrayList<>(availableRecipes));
+        
+        System.out.println("Loaded " + availableRecipes.size() + " recipes");
+        //propertyChangeSupport.firePropertyChange(PROP_AVAILABLE_RECIPES, oldRecipes, new ArrayList<>(availableRecipes));
     }
-
+    
     /**
      * Gets an unmodifiable view of the available recipes.
-     *
+     * 
      * @return the available recipes
      */
     public List<Recipe> getAvailableRecipes() {
         return List.copyOf(availableRecipes);
     }
 
+
+
+    /**
+     * Gets a list of recipes that can be made with the given products.
+     *
+     * @param productsInStorage the products available in the storage (fridge + default)
+     * @return a list of possible recipes
+     */
+    public List<Recipe> getPossibleRecipes(List<Product> productsInStorage){
+       List<Recipe> recipesTest = availableRecipes;
+        return availableRecipes.stream()
+                .filter(recipe -> canMakeRecipe(recipe, productsInStorage))
+                .toList();
+    }
+
+    /**
+
+     * Gets the currently selected recipe.
+     * 
+     * @return the selected recipe, or null if none is selected
+     */
+    public Recipe getSelectedRecipe() {
+        return selectedRecipe;
+    }
+    
     /**
      * Selects a recipe.
-     *
+     * 
      * @param recipe the recipe to select
      */
     public void selectRecipe(Recipe recipe) {
@@ -110,10 +130,9 @@ public class RecipeModel {
         selectedRecipe = recipe;
         propertyChangeSupport.firePropertyChange(PROP_SELECTED_RECIPE, oldRecipe, selectedRecipe);
     }
-
-    /**
+      /**
      * Gets ingredients for a recipe from the repository.
-     *
+     * 
      * @param recipe the recipe to get ingredients for
      * @return the list of ingredients, or an empty list if none are found
      */
@@ -121,7 +140,7 @@ public class RecipeModel {
         if (recipe == null) {
             return List.of();
         }
-
+        
         try {
             // Use the repository's method to get ingredient barcodes
             return recipeRepository.getRecipeIngredientBarcodes(recipe.getRecipeId());
@@ -133,39 +152,33 @@ public class RecipeModel {
 
     /**
      * Checks if a recipe can be made with the given products.
-     *
-     * @param recipe   the recipe to check
-     * @param products the available products
+     * 
+     * @param recipe the recipe to check
+     * @param productsInStorage the available products in the storage
      * @return true if the recipe can be made, false otherwise
      */
-    public boolean canMakeRecipe(Recipe recipe, List<Product> products) {
-        if (recipe == null || products == null) {
+    public boolean canMakeRecipe(Recipe recipe, List<Product> productsInStorage) {
+        if (recipe == null || productsInStorage == null) {
             return false;
         }
 
-        // Get the ingredient barcodes for the recipe
-        List<String> ingredientBarcodes = getRecipeIngredientBarcodes(recipe);
+        List<Product> recipeProducts = recipe.getProducts();
 
-        // Create a set of product barcodes for quick lookup
-        Map<String, Product> productMap = new HashMap<>();
-        for (Product product : products) {
-            productMap.put(product.getBarcode(), product);
+        if (recipeProducts.size() > productsInStorage.size()) {
+            return false;
         }
 
-        // Check if all ingredients are available
-        for (String barcode : ingredientBarcodes) {
-            if (!productMap.containsKey(barcode)) {
-                return false;
-            }
-        }
+        // Sequential search for matching products
+        int i = 0;
+        while(i < recipeProducts.size() && productsInStorage.contains(recipeProducts.get(i))) i++;
 
-        return true;
+        return i == recipeProducts.size();
     }
-
+    
     /**
      * Gets the matching ingredients count for a recipe.
-     *
-     * @param recipe   the recipe to check
+     * 
+     * @param recipe the recipe to check
      * @param products the available products
      * @return the number of ingredients that match products in the fridge
      */
@@ -173,48 +186,39 @@ public class RecipeModel {
         if (recipe == null || products == null) {
             return 0;
         }
-
+        
         // Get the ingredient barcodes for the recipe
         List<String> ingredientBarcodes = getRecipeIngredientBarcodes(recipe);
-
+        
+        // Create a set of product barcodes for quick lookup
+        Map<String, Product> productMap = new HashMap<>();
+        for (Product product : products) {
+            productMap.put(product.getBarcode(), product);
+        }
+        
+        // Count matching ingredients
         int count = 0;
-
-        for (var product : products) {
-            if (ingredientBarcodes.contains(product.getBarcode())) {
+        for (String barcode : ingredientBarcodes) {
+            if (productMap.containsKey(barcode)) {
                 count++;
             }
         }
-
+        
         return count;
     }
 
     /**
-     * Gets the total number of ingredients for a recipe.
-     *
-     * @param recipe the recipe to check
-     * @return the total number of ingredients
-     */
-    public int getTotalIngredientsCount(Recipe recipe) {
-        if (recipe == null) {
-            return 0;
-        }
-
-        List<String> ingredientBarcodes = getRecipeIngredientBarcodes(recipe);
-        return ingredientBarcodes.size();
-    }
-
-    /**
      * Adds a property change listener.
-     *
+     * 
      * @param listener the listener to add
      */
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
     }
-
+    
     /**
      * Removes a property change listener.
-     *
+     * 
      * @param listener the listener to remove
      */
     public void removePropertyChangeListener(PropertyChangeListener listener) {

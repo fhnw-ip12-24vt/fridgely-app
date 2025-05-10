@@ -1,5 +1,6 @@
 package ch.primeo.fridgely.model;
 
+import ch.primeo.fridgely.config.GameConfig;
 /**
  * Represents the health state of the penguin, with associated sprite images.
  */
@@ -17,7 +18,7 @@ public enum PenguinHPState {
      */
     OKAY("penguin_on_small_block_of_ice.png"),
     /**
-     * Represents a struggling health state.
+     * Represents an okay health state.
      */
     STRUGGLING("penguin_swimming.png"),
     /**
@@ -53,26 +54,22 @@ public enum PenguinHPState {
      * @return the corresponding PenguinHPState
      */
     public static PenguinHPState fromHP(int hp) {
-        if (hp >= 60) {
+        if (hp >= GameConfig.SCORE_EXCELLENT) {
             return EXCELLENT;
         }
 
-        if (hp >= 50) {
+        if (hp >= GameConfig.SCORE_GOOD) {
             return GOOD;
         }
 
-        if (hp >= 30) {
-            return OKAY;
+        if (hp <= GameConfig.SCORE_DEAD) {
+            return DEAD;
         }
 
-        if (hp >= 20) {
-            return STRUGGLING;
-        }
-
-        if (hp >= 10) {
+        if (hp <= GameConfig.SCORE_CRITICAL) {
             return CRITICAL;
         }
 
-        return DEAD;
+        return OKAY;
     }
 }

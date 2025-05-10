@@ -23,14 +23,14 @@ public class MultiplayerPlayer2Controller {
      * @param stockModel the model for the fridge stock
      * @param stateModel the model for the game state
      * @param penguModel the model for the penguin HP
-     * @param recipModel the model for recipes
+     * @param recipeModel the model for recipes
      */
     public MultiplayerPlayer2Controller(FridgeStockModel stockModel, MultiplayerGameStateModel stateModel,
-            PenguinModel penguModel, RecipeModel recipModel) {
+            PenguinModel penguModel, RecipeModel recipeModel) {
         this.fridgeStockModel = stockModel;
         this.gameStateModel = stateModel;
         this.penguinModel = penguModel;
-        this.recipeModel = recipModel;
+        this.recipeModel = recipeModel;
     }
 
     /**
@@ -44,29 +44,10 @@ public class MultiplayerPlayer2Controller {
             return;
         }
 
-        // No longer checking if recipe can be made - allow any recipe selection
 
         // Select the recipe
         recipeModel.selectRecipe(recipe);
 
-    }
-
-    /**
-     * Calculates the score for a recipe based on matching ingredients.
-     *
-     * @param matchingIngredients the number of ingredients that match products in the fridge
-     * @param totalIngredients    the total number of ingredients in the recipe
-     * @return the score for the recipe
-     */
-    private int calculateRecipeScore(int matchingIngredients, int totalIngredients) {
-        int score = matchingIngredients * GameConfig.SCORE_MATCHING_INGREDIENT;
-
-        // Bonus for full match
-        if (matchingIngredients == totalIngredients) {
-            score += GameConfig.SCORE_FULL_MATCH;
-        }
-
-        return score;
     }
 
     /**
@@ -97,15 +78,15 @@ public class MultiplayerPlayer2Controller {
             return;
         }
 
-        // Calculate and add score
-        int matchingIngredients = recipeModel.getMatchingIngredientsCount(recipe, fridgeStockModel.getProducts());
-        int totalIngredients = recipeModel.getTotalIngredientsCount(recipe);
-        int score = calculateRecipeScore(matchingIngredients, totalIngredients);
-        gameStateModel.addPlayer2Score(score);
+        // Products used by the recipe
+        int totalFridgeProductsUsed = recipe.getFridgeProducts().size();
+        // Products in the fridge (stored)
+        int totalFridgeProductsStored = fridgeStockModel.getFridgeProducts().size();
+        int totalWastedProducts = totalFridgeProductsStored - totalFridgeProductsUsed;
 
-        // Update penguin HP
-        double matchRatio = (double) matchingIngredients / totalIngredients;
-        updatePenguinHPForRecipe(matchRatio);
+        //TODO Correct SCORE
+        int score = totalWastedProducts * GameConfig.SCORE_PLAYER2_DECREASE;
+        gameStateModel.addScore(score);
 
         // Switch to next player/round
         gameStateModel.nextPlayer();

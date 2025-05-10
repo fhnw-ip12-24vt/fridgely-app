@@ -2,14 +2,10 @@ package ch.primeo.fridgely.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Represents a product with localized names, descriptions, and attributes. JPA entity for database persistence.
  */
-@Setter
-@Getter
 @Entity
 public class Product {
 
@@ -24,6 +20,7 @@ public class Product {
     private boolean isDefaultProduct;
     private boolean isBio;
     private boolean isLocal;
+    private boolean isLowCo2;
 
     /**
      * Path to the default image for products that are not found.
@@ -50,10 +47,11 @@ public class Product {
      * @param defaultProduct whether the product is a default product
      * @param bio            whether the product is organic
      * @param local          whether the product is local
+     * @param lowCo2         whether the product is lowCo2
      */
     @SuppressWarnings("checkstyle:ParameterNumber")
     public Product(String code, String nameE, String nameD, String nameF, String descriptionE, String descriptionD,
-            String descriptionF, boolean defaultProduct, boolean bio, boolean local) {
+            String descriptionF, boolean defaultProduct, boolean bio, boolean local, boolean lowCo2) {
         this.barcode = code;
         this.name = nameE;
         this.nameDE = nameD;
@@ -64,6 +62,7 @@ public class Product {
         this.isDefaultProduct = defaultProduct;
         this.isBio = bio;
         this.isLocal = local;
+        this.isLowCo2 = lowCo2;
     }
 
     /**
@@ -81,6 +80,108 @@ public class Product {
     }
 
     // Getters and setters
+
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(String code) {
+        this.barcode = code;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String nameE) {
+        this.name = nameE;
+    }
+
+    public String getNameDE() {
+        return nameDE;
+    }
+
+    public void setNameDE(String nameD) {
+        this.nameDE = nameD;
+    }
+
+    public String getNameFR() {
+        return nameFR;
+    }
+
+    public void setNameFR(String nameF) {
+        this.nameFR = nameF;
+    }
+
+    public String getDescription(){
+        return description;
+    }
+
+    public String getExplanationKey() {
+        String key = "product.";
+        if(isBio) key = key + "bio.";
+        else key = key + "non_bio.";
+
+        if(isLocal) key = key + "local.";
+        else key = key + "foreign.";
+
+        switch(description){
+            case "meat" -> key = key + "meat";
+            case "water_intensive" -> key = key + "water_intensive";
+            case "coffee_belt" -> key = key + "coffee_belt";
+            default -> key = key + (isLowCo2 ? "lowCO2" : "highCO2");
+        }
+
+        return key;
+    }
+
+    public void setDescription(String descriptionE) {
+        this.description = descriptionE;
+    }
+
+    public String getDescriptionDE() {
+        return descriptionDE;
+    }
+
+    public void setDescriptionDE(String descriptionD) {
+        this.descriptionDE = descriptionD;
+    }
+
+    public String getDescriptionFR() {
+        return descriptionFR;
+    }
+
+    public void setDescriptionFR(String descriptionF) {
+        this.descriptionFR = descriptionF;
+    }
+
+    public boolean isDefaultProduct() { return isDefaultProduct; }
+
+    public boolean isNotDefaultProduct() { return !isDefaultProduct; }
+
+    public void setDefaultProduct(boolean defaultProduct) {
+        this.isDefaultProduct = defaultProduct;
+    }
+
+    public boolean isBio() {
+        return isBio;
+    }
+
+    public void setBio(boolean bio) {
+        this.isBio = bio;
+    }
+
+    public boolean isLocal() {
+        return isLocal;
+    }
+
+    public void setLocal(boolean local) {
+        this.isLocal = local;
+    }
+
+    public boolean isLowCo2() { return isLowCo2; }
+
+    public void setLowCo2(boolean lowCo2) { isLowCo2 = lowCo2; }
 
     public String getProductImagePath() {
         if (barcode == null) {

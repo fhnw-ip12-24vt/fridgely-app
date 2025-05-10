@@ -6,8 +6,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Transient;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +13,6 @@ import java.util.List;
 /**
  * Represents a recipe entity mapping to the 'Recipes' table.
  */
-@Setter
-@Getter
 @Entity
 // No explicit table name, Hibernate will use lowercase "recipe"
 public class Recipe {
@@ -59,7 +55,7 @@ public class Recipe {
     /**
      * List of ingredients associated with this recipe. Mapped by the 'recipe' field in the RecipeIngredient entity.
      */
-    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<RecipeIngredient> ingredients = new ArrayList<>();
 
     /**
@@ -83,7 +79,85 @@ public class Recipe {
         // Initialize other fields as needed, e.g., localized names/descriptions
     }
 
+    // --- Getters ---
+
+    public int getRecipeId() {
+        return recipeId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getNameDE() {
+        return nameDE;
+    }
+
+    public String getNameFR() {
+        return nameFR;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getDescriptionDE() {
+        return descriptionDE;
+    }
+
+    public String getDescriptionFR() {
+        return descriptionFR;
+    }
+
+    public List<RecipeIngredient> getIngredients() {
+        return ingredients;
+    }
+
+    public List<Product> getProducts() {
+        return ingredients.stream().map(RecipeIngredient::getProduct).toList();
+    }
+
+    public List<Product> getDefaultProducts() {
+        return ingredients.stream().map(RecipeIngredient::getProduct).filter(Product::isDefaultProduct).toList();
+    }
+
+    public List<Product> getFridgeProducts() {
+        return ingredients.stream().map(RecipeIngredient::getProduct).filter(Product::isNotDefaultProduct).toList();
+    }
+
     // --- Setters ---
+
+    public void setRecipeId(int id) {
+        this.recipeId = id;
+    }
+
+    public void setName(String nameE) {
+        this.name = nameE;
+    }
+
+    public void setNameDE(String nameD) {
+        this.nameDE = nameD;
+    }
+
+    public void setNameFR(String nameF) {
+        this.nameFR = nameF;
+    }
+
+    public void setDescription(String descriptionE) {
+        this.description = descriptionE;
+    }
+
+    public void setDescriptionDE(String descriptionD) {
+        this.descriptionDE = descriptionD;
+    }
+
+    public void setDescriptionFR(String descriptionF) {
+        this.descriptionFR = descriptionF;
+    }
+
+    public void setIngredients(List<RecipeIngredient> ingr) {
+        this.ingredients = ingr;
+    }
 
     // --- Convenience methods for localization (can be moved to service layer if preferred) ---
 

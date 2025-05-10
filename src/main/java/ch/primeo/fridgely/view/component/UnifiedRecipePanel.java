@@ -6,24 +6,10 @@ import ch.primeo.fridgely.model.Product;
 import ch.primeo.fridgely.model.Recipe;
 import ch.primeo.fridgely.service.ProductRepository;
 import ch.primeo.fridgely.util.ImageLoader;
-import lombok.Setter;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.*;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * A unified panel that displays recipes with their ingredients inline. This combines the recipe list and ingredient
@@ -38,6 +25,7 @@ import java.util.Objects;
  */
 public class UnifiedRecipePanel extends JPanel {
 
+    private final int INGREDIENT_ICON_SIZE = 75; // Size of ingredient icons
     private final MultiplayerGameController gameController;
     private final RecipeModel recipeModel;
     private final ProductRepository productRepository;
@@ -49,13 +37,17 @@ public class UnifiedRecipePanel extends JPanel {
     private final JScrollPane scrollPane;  // Main scroll container
 
     // Recipe data
-    private List<Recipe> allRecipes;
+    private List<Recipe> possibleRecipes;
     private Recipe selectedRecipe;
 
     // Lazy loading support
     private final Map<Recipe, JPanel> loadedRecipeCards;
 
     private final ImageLoader imageLoader;
+
+    //Y-coordinate for mouse dragging/touchscrolling
+    private int lastY;
+
 
     /**
      * Constructs a new unified recipe panel.
@@ -64,13 +56,11 @@ public class UnifiedRecipePanel extends JPanel {
      * @param productRepo the repository for product data
      * @param imageLoader the image loader for loading images
      */
-    public UnifiedRecipePanel(MultiplayerGameController controller, ProductRepository productRepo,
-            ImageLoader imageLoader) {
+    public UnifiedRecipePanel(MultiplayerGameController controller, ProductRepository productRepo, ImageLoader imageLoader) {
         this.gameController = controller;
         this.recipeModel = gameController.getRecipeModel();
         this.productRepository = productRepo;
         this.loadedRecipeCards = new HashMap<>();
-        this.allRecipes = new ArrayList<>();
         this.imageLoader = imageLoader;
 
         setLayout(new BorderLayout(10, 10));
@@ -83,10 +73,40 @@ public class UnifiedRecipePanel extends JPanel {
         // Add scrolling to handle many recipes
         scrollPane = new JScrollPane(recipesViewport);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        JScrollBar scrollBar = scrollPane.getVerticalScrollBar();
+        scrollBar.setPreferredSize(new Dimension(20, scrollBar.getPreferredSize().height));
+        scrollPane.setVerticalScrollBar(scrollBar);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
 
         // Implement lazy loading when scrolling
         scrollPane.getViewport().addChangeListener(e -> SwingUtilities.invokeLater(this::checkVisibleRecipes));
+
+        // Add mouse dragging support for touch devices
+        scrollPane.getViewport().addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(java.awt.event.MouseEvent e) {
+                JViewport viewport = scrollPane.getViewport();
+                Point viewPosition = viewport.getViewPosition();
+                int deltaY = lastY - e.getY(); // Unterschied zur letzten Y-Position
+                viewPosition.translate(0, deltaY);
+
+                // Begrenze die Scroll-Position
+                int maxY = recipesViewport.getHeight() - viewport.getHeight();
+                viewPosition.y = Math.max(0, Math.min(viewPosition.y, maxY));
+
+                viewport.setViewPosition(viewPosition);
+                lastY = e.getY(); // Letzte Y-Position aktualisieren
+            }
+        });
+
+        // Add mouse press to start dragging
+        scrollPane.getViewport().addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mousePressed(java.awt.event.MouseEvent e) {
+                lastY = e.getY(); // Startpunkt für Dragging setzen
+            }
+        });
+
 
         add(scrollPane, BorderLayout.CENTER);
     }
@@ -98,23 +118,36 @@ public class UnifiedRecipePanel extends JPanel {
         void recipeSelected(Recipe recipe);
     }
 
-    @Setter
     private RecipeSelectionListener recipeSelectionListener;
 
+
+
+    /**
+     * Sets the listener for recipe selection.
+     *
+     * @param listener the listener to set
+     */
+    public void setRecipeSelectionListener(RecipeSelectionListener listener) {
+        this.recipeSelectionListener = listener;
+    }
     /**
      * Updates the recipe list with the current recipes from the model. This clears and reloads the entire list.
      */
     public void updateRecipeList() {
+        // Get fresh recipe data and randomize
+        List<Product> productsInStorage = gameController.getFridgeStockModel().getProducts();
+        possibleRecipes = new ArrayList<>(recipeModel.getPossibleRecipes(productsInStorage));
+        Collections.shuffle(possibleRecipes);  // Randomize recipe order
+        updateRecipeList(possibleRecipes);
+    }
+
+    public void updateRecipeList(List<Recipe> recipes) {
         // Clear old data
         recipesViewport.removeAll();
         loadedRecipeCards.clear();
 
-        // Get fresh recipe data and randomize
-        allRecipes = new ArrayList<>(recipeModel.getAvailableRecipes());
-        Collections.shuffle(allRecipes);  // Randomize recipe order
-
         // Create placeholder panels for each recipe
-        for (Recipe recipe : allRecipes) {
+        for (Recipe recipe : recipes) {
             JPanel placeholder = createRecipePlaceholder(recipe);
             recipesViewport.add(placeholder);
             recipesViewport.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -130,6 +163,7 @@ public class UnifiedRecipePanel extends JPanel {
         // Check visible recipes after layout is complete
         SwingUtilities.invokeLater(this::checkVisibleRecipes);
     }
+
 
     /**
      * Creates a lightweight placeholder panel for a recipe. This will be replaced with the full card when it becomes
@@ -205,22 +239,16 @@ public class UnifiedRecipePanel extends JPanel {
 
         // Recipe title
         JLabel titleLabel = new JLabel(recipe.getName());
-        titleLabel.setFont(new Font(titleLabel.getFont().getName(), Font.BOLD, 16));
         headerPanel.add(titleLabel, BorderLayout.CENTER);
 
-        // Description
-        JLabel descriptionLabel = new JLabel(recipe.getDescription());
-        descriptionLabel.setForeground(Color.DARK_GRAY);
-        descriptionLabel.setBorder(BorderFactory.createEmptyBorder(5, 0, 10, 0));
 
         // Create ingredients panel
         JPanel ingredientsPanel = createIngredientsPanel(recipe);
-        ingredientsPanel.setBorder(BorderFactory.createTitledBorder("Ingredients"));
+
 
         // Assemble the card
         JPanel contentPanel = new JPanel(new BorderLayout(0, 10));
         contentPanel.setOpaque(false);
-        contentPanel.add(descriptionLabel, BorderLayout.NORTH);
         contentPanel.add(ingredientsPanel, BorderLayout.CENTER);
 
         card.add(headerPanel, BorderLayout.NORTH);
@@ -237,6 +265,22 @@ public class UnifiedRecipePanel extends JPanel {
             }
         });
 
+        // Add scroll behavior to the card
+        card.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(java.awt.event.MouseEvent e) {
+                scrollPane.getViewport().dispatchEvent(SwingUtilities.convertMouseEvent(card, e, scrollPane.getViewport()));
+            }
+        });
+        // Add mouse press to start dragging
+        card.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mousePressed(java.awt.event.MouseEvent e) {
+                scrollPane.getViewport().dispatchEvent(SwingUtilities.convertMouseEvent(card, e, scrollPane.getViewport()));
+            }
+        });
+
+
         return card;
     }
 
@@ -248,89 +292,25 @@ public class UnifiedRecipePanel extends JPanel {
      */
     private JPanel createIngredientsPanel(Recipe recipe) {
         JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
 
         // Get ingredients for the recipe
-        List<String> ingredientBarcodes = recipeModel.getRecipeIngredientBarcodes(recipe);
-        List<Product> fridgeProducts = gameController.getFridgeStockModel().getProducts();
+        List<Product> productsInRecipe = recipe.getProducts();
 
-        // Map of barcode to products for quick lookup
-        Map<String, Product> productMap = new HashMap<>();
-        for (Product product : fridgeProducts) {
-            productMap.put(product.getBarcode(), product);
-        }
+        //Load product image
+        for(Product product : productsInRecipe) {
+            // Load the image icon for the ingredient
+            ImageIcon icon = getProductImageIcon(product.getBarcode());
 
-        // Calculate matching stats
-        int matchingCount = recipeModel.getMatchingIngredientsCount(recipe, fridgeProducts);
-        int totalCount = ingredientBarcodes.size();
+            JLabel imageLabel = new JLabel(icon);
+            imageLabel.setPreferredSize(new Dimension(INGREDIENT_ICON_SIZE, INGREDIENT_ICON_SIZE));
 
-        // Add matching ingredients info at the top
-        JLabel matchingLabel = new JLabel(String.format("Matching ingredients: %d/%d", matchingCount, totalCount));
-        matchingLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        matchingLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 0));
-        panel.add(matchingLabel);
-
-        // Add each ingredient
-        for (String barcode : ingredientBarcodes) {
-            // Get product from fridge if available or look up in repository
-            Product product;
-            boolean isAvailable;
-            if (productMap.containsKey(barcode)) {
-                product = productMap.get(barcode);
-                isAvailable = true;
-            } else {
-                // Try to look up the product in the repository
-                product = productRepository.getProductByBarcode(barcode);
-                if (product == null) {
-                    product = new Product();
-                    product.setBarcode(barcode);
-                    product.setName("Unknown: " + barcode);
-                }
-                isAvailable = false;
-            }
-            JPanel ingredientPanel = createIngredientItemPanel(barcode, product, isAvailable);
-            ingredientPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-            panel.add(ingredientPanel);
-
-            // Add a small gap between ingredients
-            panel.add(Box.createRigidArea(new Dimension(0, 3)));
+            panel.add(imageLabel);
         }
 
         return panel;
     }
 
-    /**
-     * Creates a panel for a single ingredient item.
-     *
-     * @param barcode     the ingredient barcode
-     * @param product     the product object (real or placeholder)
-     * @param isAvailable whether the ingredient is available in the fridge
-     * @return a panel representing the ingredient
-     */
-    private JPanel createIngredientItemPanel(String barcode, Product product, boolean isAvailable) {
-        JPanel panel = new JPanel(new BorderLayout(5, 0));
-        panel.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 5));
-
-        // Load the image icon for the ingredient
-        ImageIcon icon = getProductImageIcon(barcode);
-
-        JLabel imageLabel = new JLabel(icon);
-        imageLabel.setPreferredSize(new Dimension(24, 24));
-
-        // Get the product name
-        JLabel nameLabel = new JLabel(product.getName());
-
-        // Show availability status
-        JLabel statusLabel = new JLabel(isAvailable ? "✓" : "✗");
-        statusLabel.setForeground(isAvailable ? availableColor : missingColor);
-        statusLabel.setFont(new Font(statusLabel.getFont().getName(), Font.BOLD, 14));
-
-        panel.add(imageLabel, BorderLayout.WEST);
-        panel.add(nameLabel, BorderLayout.CENTER);
-        panel.add(statusLabel, BorderLayout.EAST);
-
-        return panel;
-    }
 
     /**
      * Gets an image icon for a product barcode, with caching.
@@ -340,11 +320,11 @@ public class UnifiedRecipePanel extends JPanel {
      */
     private ImageIcon getProductImageIcon(String barcode) {
         // Try to load from product images folder
-        ImageIcon icon = imageLoader.loadScaledImage("/ch/primeo/fridgely/productimages/" + barcode + ".png", 24, 24);
+        ImageIcon icon = imageLoader.loadScaledImage("/ch/primeo/fridgely/productimages/" + barcode + ".png", INGREDIENT_ICON_SIZE, INGREDIENT_ICON_SIZE);
 
         if (icon == null) {
             // If not found, try the default image
-            icon = imageLoader.loadScaledImage("/ch/primeo/fridgely/productimages/notfound.png", 24, 24);
+            icon = imageLoader.loadScaledImage("/ch/primeo/fridgely/productimages/notfound.png", INGREDIENT_ICON_SIZE, INGREDIENT_ICON_SIZE);
         }
 
         return icon;
@@ -390,5 +370,14 @@ public class UnifiedRecipePanel extends JPanel {
                 BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(100, 149, 237), 2, true),
                         // Cornflower blue
                         BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+    }
+
+    /**
+     * Gets the currently selected recipe.
+     *
+     * @return the selected recipe or null if none is selected
+     */
+    public Recipe getSelectedRecipe() {
+        return selectedRecipe;
     }
 }

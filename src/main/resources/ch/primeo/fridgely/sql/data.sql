@@ -1,39 +1,38 @@
 INSERT INTO product (barcode, name, nameDE, nameFR, description, descriptionDE, descriptionFR,
-                      is_default_product, is_bio, is_local)
-VALUES('001', 'Tomato', 'Tomate', 'Tomate', 'Local organic tomato', 'Lokale Bio-Tomate', 'Tomate bio locale', 0, 1, 1),
-       ('002', 'Egg', 'Ei', 'Œuf', 'Organic free-range egg', 'Bio-Freilandei', 'Œuf bio de plein air', 0, 1, 0),
-       ('003', 'Cheese - France', 'Käse - Frankreich', 'Fromage - France', 'Imported cheese block from France', 'Importierter Käseblock aus Frankreich','Bloc de fromage importé de France', 0, 0, 0),
-       ('004', 'Local Carrots', 'Lokale Karotten', 'Carottes Locales', 'Basket full of local carrots', 'Korb voller lokaler Karotten','Panier plein de carottes locales', 0, 0, 1),
-       ('005', 'Organic Butter', 'Bio-Butter', 'Beurre Bio', 'Organic butter made from grass-fed cows', 'Bio-Butter aus grasgefütterten Kühen', 'Beurre bio issu de vaches nourries à l''herbe', 0, 1, 0),
-       ('006', 'Beef - Argentina', 'Rindfleisch - Argentinien', 'Bœuf - Argentine', 'Imported beef from Argentina', 'Importiertes Rindfleisch aus Argentinien', 'Bœuf importé d''Argentine', 0, 0, 0),
-       ('007', 'Organic Local Milk', 'Lokale Bio-Milch', 'Lait Bio Local', 'Fresh organic milk from local farms', 'Frische Bio-Milch von lokalen Bauernhöfen', 'Lait bio frais des fermes locales', 0, 1, 1),
-       ('008', 'Spinach', 'Spinat', 'Épinard', 'Local fresh spinach leaves', 'Lokale frische Spinatblätter', 'Feuilles d''épinard fraîches locales', 0, 0, 1),
-       ('009', 'Rice - Thailand', 'Reis - Thailand', 'Riz - Thaïlande', 'Jasmine rice imported from Thailand', 'Jasminreis importiert aus Thailand', 'Riz jasmin importé de Thaïlande', 0, 0, 0),
-       ('010', 'Organic Apples', 'Bio-Äpfel', 'Pommes Bio', 'Organic apples', 'Bio-Äpfel', 'Pommes biologiques', 0, 1, 0),
-       ('011', 'Local Potatoes', 'Lokale Kartoffeln', 'Pommes de Terre Locales', 'Fresh local potatoes', 'Frische lokale Kartoffeln', 'Pommes de terre locales fraîches', 0, 0, 1),
-       ('012', 'Organic Chicken', 'Bio-Huhn', 'Poulet Bio', 'Organic free-range chicken', 'Bio-Freilandhuhn', 'Poulet bio en liberté', 0, 1, 0),
-       ('013', 'Local Organic Honey', 'Lokaler Bio-Honig', 'Miel Bio Local', 'Locally produced organic honey', 'Lokal produzierter Bio-Honig', 'Miel bio produit localement', 0, 1, 1),
-       ('014', 'Pasta - Italy', 'Nudeln - Italien', 'Pâtes - Italie', 'Imported pasta from Italy', 'Importierte Nudeln aus Italien', 'Pâtes importées d''Italie', 0, 0, 0),
-       ('015', 'Organic Olive Oil', 'Bio-Olivenöl', 'Huile d''Olive Bio', 'Premium organic extra virgin olive oil', 'Premium Bio-Olivenöl Extra Vergine', 'Huile d''olive bio extra vierge de qualité supérieure', 0, 1, 0),
-       ('016', 'Local Strawberries', 'Lokale Erdbeeren', 'Fraises Locales', 'Sweet local strawberries', 'Süße lokale Erdbeeren', 'Fraises locales sucrées', 0, 0, 1),
-       ('017', 'Organic Garlic', 'Bio-Knoblauch', 'Ail Bio', 'Organic garlic bulbs', 'Bio-Knoblauchknollen', 'Bulbes d''ail biologiques', 0, 1, 0),
-       ('018', 'Local Organic Lettuce', 'Lokaler Bio-Salat', 'Laitue Bio Locale', 'Fresh organic locally grown lettuce', 'Frischer Bio-Salat aus lokalem Anbau', 'Laitue bio fraîche cultivée localement', 0, 1, 1),
-       ('019', 'Bananas - Ecuador', 'Bananen - Ecuador', 'Bananes - Équateur', 'Imported bananas from Ecuador', 'Importierte Bananen aus Ecuador', 'Bananes importées d''Équateur', 0, 0, 0),
-       ('020', 'Organic Tofu', 'Bio-Tofu', 'Tofu Bio', 'Organic firm tofu', 'Bio-Tofu fest', 'Tofu bio ferme', 0, 1, 0),
-       ('AAA', 'Bread', 'Brot', 'Pain', 'Bread', 'Brot', 'Pain', 1, 0, 0),
-       ('021', 'Orange', 'Orange', 'Orange', 'Sweet juicy oranges', 'Süße saftige Orangen', 'Oranges juteuses et sucrées', 0, 0, 0),
-       ('022', 'Lemon', 'Zitrone', 'Citron', 'Fresh tangy lemons', 'Frische würzige Zitronen', 'Citrons frais et acidulés', 0, 0, 0),
-       ('023', 'Onion', 'Zwiebel', 'Oignon', 'Fresh cooking onions', 'Frische Kochzwiebeln', 'Oignons frais de cuisine', 0, 0, 0),
-       ('024', 'Avocado', 'Avocado', 'Avocat', 'Ripe creamy avocados', 'Reife cremige Avocados', 'Avocats mûrs et crémeux', 0, 0, 0),
-       ('025', 'Bell Pepper', 'Paprika', 'Poivron', 'Colorful bell peppers', 'Bunte Paprikaschoten', 'Poivrons colorés', 0, 0, 0),
-       ('026', 'Tuna', 'Thunfisch', 'Thon', 'Canned tuna in water', 'Dosenthunfisch in Wasser', 'Thon en conserve dans l''eau', 0, 0, 0),
-       ('027', 'Ground Beef', 'Hackfleisch', 'Viande Hachée', 'Fresh ground beef', 'Frisches Hackfleisch', 'Viande hachée fraîche', 0, 0, 0),
-       ('028', 'Beans', 'Bohnen', 'Haricots', 'Canned beans', 'Dosenbohnen', 'Haricots en conserve', 0, 0, 0),
-       ('029', 'Corn', 'Mais', 'Maïs', 'Sweet corn kernels', 'Süße Maiskörner', 'Grains de maïs doux', 0, 0, 0),
-       ('BBB', 'Rice', 'Reis', 'Riz', 'White rice', 'Weißer Reis', 'Riz blanc', 1, 0, 0),
-       ('CCC', 'Pasta', 'Nudeln', 'Pâtes', 'Pasta', 'Nudeln', 'Pâtes', 1, 0, 0),
-       ('DDD', 'Honey', 'Honig', 'Miel', 'Sweet honey', 'Süßer Honig', 'Miel doux', 1, 0, 0);
-
+                      is_default_product, is_bio, is_local, is_low_co2)
+VALUES('001', 'Tomato', 'Tomate', 'Tomate', 'Local organic tomato', 'Lokale Bio-Tomate', 'Tomate bio locale', 0, 1, 1, 1),
+       ('002', 'Egg', 'Ei', 'Œuf', 'Organic free-range egg', 'Bio-Freilandei', 'Œuf bio de plein air', 0, 1, 0, 1),
+       ('003', 'Cheese - France', 'Käse - Frankreich', 'Fromage - France', 'Imported cheese block from France', 'Importierter Käseblock aus Frankreich','Bloc de fromage importé de France', 0, 0, 0, 0),
+       ('004', 'Local Carrots', 'Lokale Karotten', 'Carottes Locales', 'Basket full of local carrots', 'Korb voller lokaler Karotten','Panier plein de carottes locales', 0, 0, 1, 1),
+       ('005', 'Organic Butter', 'Bio-Butter', 'Beurre Bio', 'Organic butter made from grass-fed cows', 'Bio-Butter aus grasgefütterten Kühen', 'Beurre bio issu de vaches nourries à l''herbe', 0, 1, 0, 0),
+       ('006', 'Beef - Argentina', 'Rindfleisch - Argentinien', 'Bœuf - Argentine', 'meat', 'Importiertes Rindfleisch aus Argentinien', 'Bœuf importé d''Argentine', 0, 0, 0, 0),
+       ('007', 'Organic Local Milk', 'Lokale Bio-Milch', 'Lait Bio Local', 'Fresh organic milk from local farms', 'Frische Bio-Milch von lokalen Bauernhöfen', 'Lait bio frais des fermes locales', 0, 1, 1, 1),
+       ('008', 'Spinach', 'Spinat', 'Épinard', 'Local fresh spinach leaves', 'Lokale frische Spinatblätter', 'Feuilles d''épinard fraîches locales', 0, 0, 1, 1),
+       ('009', 'Rice - Thailand', 'Reis - Thailand', 'Riz - Thaïlande', 'Jasmine rice imported from Thailand', 'Jasminreis importiert aus Thailand', 'Riz jasmin importé de Thaïlande', 0, 0, 0, 1),
+       ('010', 'Organic Apples', 'Bio-Äpfel', 'Pommes Bio', 'Organic apples', 'Bio-Äpfel', 'Pommes biologiques', 0, 1, 0, 1),
+       ('011', 'Local Potatoes', 'Lokale Kartoffeln', 'Pommes de Terre Locales', 'Fresh local potatoes', 'Frische lokale Kartoffeln', 'Pommes de terre locales fraîches', 0, 0, 1, 1),
+       ('012', 'Organic Chicken', 'Bio-Huhn', 'Poulet Bio', 'meat', 'Bio-Freilandhuhn', 'Poulet bio en liberté', 0, 1, 0, 0),
+       ('013', 'Local Organic Honey', 'Lokaler Bio-Honig', 'Miel Bio Local', 'Locally produced organic honey', 'Lokal produzierter Bio-Honig', 'Miel bio produit localement', 0, 1, 1, 1),
+       ('014', 'Pasta - Italy', 'Nudeln - Italien', 'Pâtes - Italie', 'Imported pasta from Italy', 'Importierte Nudeln aus Italien', 'Pâtes importées d''Italie', 0, 0, 0, 1),
+       ('015', 'Organic Olive Oil', 'Bio-Olivenöl', 'Huile d''Olive Bio', 'Premium organic extra virgin olive oil', 'Premium Bio-Olivenöl Extra Vergine', 'Huile d''olive bio extra vierge de qualité supérieure', 0, 1, 0, 1),
+       ('016', 'Local Strawberries', 'Lokale Erdbeeren', 'Fraises Locales', 'water_intensive', 'Süße lokale Erdbeeren', 'Fraises locales sucrées', 0, 0, 1, 1),
+       ('017', 'Organic Garlic', 'Bio-Knoblauch', 'Ail Bio', 'Organic garlic bulbs', 'Bio-Knoblauchknollen', 'Bulbes d''ail biologiques', 0, 1, 0, 1),
+       ('018', 'Local Organic Lettuce', 'Lokaler Bio-Salat', 'Laitue Bio Locale', 'Fresh organic locally grown lettuce', 'Frischer Bio-Salat aus lokalem Anbau', 'Laitue bio fraîche cultivée localement', 0, 1, 1, 1),
+       ('019', 'Bananas - Ecuador', 'Bananen - Ecuador', 'Bananes - Équateur', 'water_intensive', 'Importierte Bananen aus Ecuador', 'Bananes importées d''Équateur', 0, 0, 0, 1),
+       ('020', 'Organic Tofu', 'Bio-Tofu', 'Tofu Bio', 'Organic firm tofu', 'Bio-Tofu fest', 'Tofu bio ferme', 0, 1, 0, 1),
+       ('AAA', 'Bread', 'Brot', 'Pain', 'Bread', 'Brot', 'Pain', 1, 0, 0, 1);
+('021', 'Orange', 'Orange', 'Orange', 'Sweet juicy oranges', 'Süße saftige Orangen', 'Oranges juteuses et sucrées', 0, 0, 0,0),
+       ('022', 'Lemon', 'Zitrone', 'Citron', 'Fresh tangy lemons', 'Frische würzige Zitronen', 'Citrons frais et acidulés', 0, 0, 0,0),
+       ('023', 'Onion', 'Zwiebel', 'Oignon', 'Fresh cooking onions', 'Frische Kochzwiebeln', 'Oignons frais de cuisine', 0, 0, 0,0),
+       ('024', 'Avocado', 'Avocado', 'Avocat', 'Ripe creamy avocados', 'Reife cremige Avocados', 'Avocats mûrs et crémeux', 0, 0, 0,0),
+       ('025', 'Bell Pepper', 'Paprika', 'Poivron', 'Colorful bell peppers', 'Bunte Paprikaschoten', 'Poivrons colorés', 0, 0, 0,0),
+       ('026', 'Tuna', 'Thunfisch', 'Thon', 'Canned tuna in water', 'Dosenthunfisch in Wasser', 'Thon en conserve dans l''eau', 0, 0, 0,0),
+       ('027', 'Ground Beef', 'Hackfleisch', 'Viande Hachée', 'Fresh ground beef', 'Frisches Hackfleisch', 'Viande hachée fraîche', 0, 0, 0,0),
+       ('028', 'Beans', 'Bohnen', 'Haricots', 'Canned beans', 'Dosenbohnen', 'Haricots en conserve', 0, 0, 0,0),
+       ('029', 'Corn', 'Mais', 'Maïs', 'Sweet corn kernels', 'Süße Maiskörner', 'Grains de maïs doux', 0, 0, 0,0),
+       ('BBB', 'Rice', 'Reis', 'Riz', 'White rice', 'Weißer Reis', 'Riz blanc', 1, 0, 0,0),
+       ('CCC', 'Pasta', 'Nudeln', 'Pâtes', 'Pasta', 'Nudeln', 'Pâtes', 1, 0, 0,0),
+       ('DDD', 'Honey', 'Honig', 'Miel', 'Sweet honey', 'Süßer Honig', 'Miel doux', 1, 0, 0,0);
 
 INSERT INTO recipe (name, nameDE, nameFR, description, descriptionDE, descriptionFR)
 VALUES('Tomato Cheese Omelette', 'Tomaten-Käse-Omelett', 'Omelette Tomate Fromage',
@@ -177,34 +176,7 @@ VALUES('Tomato Cheese Omelette', 'Tomaten-Käse-Omelett', 'Omelette Tomate Froma
         'Poulet cuit au four garni de fromage.'),
        ('Ultimate Breakfast Plate', 'Ultimative Frühstücksplatte', 'Assiette de Petit-Déjeuner Ultime',
         'A complete breakfast with eggs, spinach and potatoes.', 'Ein komplettes Frühstück mit Eiern, Spinat und Kartoffeln.',
-        'Un petit-déjeuner complet avec œufs, épinards et pommes de terre.'),
-       ('Citrus Salad', 'Zitrussalat', 'Salade d''Agrumes',
-        'Fresh salad with oranges and lemons.', 'Frischer Salat mit Orangen und Zitronen.',
-        'Salade fraîche aux oranges et citrons.'),
-       ('Guacamole', 'Guacamole', 'Guacamole',
-        'Creamy avocado dip with onions and lemon.', 'Cremiger Avocado-Dip mit Zwiebeln und Zitrone.',
-        'Dip crémeux à l''avocat avec oignons et citron.'),
-       ('Tuna Pasta Salad', 'Thunfisch-Nudelsalat', 'Salade de Pâtes au Thon',
-        'Refreshing pasta salad with tuna and corn.', 'Erfrischender Nudelsalat mit Thunfisch und Mais.',
-        'Salade de pâtes rafraîchissante au thon et maïs.'),
-       ('Mexican Rice Bowl', 'Mexikanische Reisschüssel', 'Bol de Riz Mexicain',
-        'Hearty rice bowl with beans, corn and ground beef.', 'Herzhafte Reisschüssel mit Bohnen, Mais und Hackfleisch.',
-        'Bol de riz copieux avec haricots, maïs et viande hachée.'),
-       ('Stuffed Bell Peppers', 'Gefüllte Paprikaschoten', 'Poivrons Farcis',
-        'Bell peppers stuffed with rice and ground beef.', 'Paprikaschoten gefüllt mit Reis und Hackfleisch.',
-        'Poivrons farcis au riz et à la viande hachée.'),
-       ('Honey Orange Chicken', 'Honig-Orangen-Huhn', 'Poulet à l''Orange et au Miel',
-        'Sweet and tangy chicken with honey and orange glaze.', 'Süßes und würziges Huhn mit Honig-Orangen-Glasur.',
-        'Poulet sucré et acidulé avec glaçage au miel et à l''orange.'),
-       ('Avocado Toast', 'Avocado-Toast', 'Toast à l''Avocat',
-        'Simple toast topped with mashed avocado and lemon.', 'Einfacher Toast mit zerdrückter Avocado und Zitrone.',
-        'Simple toast garni d''avocat écrasé et de citron.'),
-       ('Onion Soup', 'Zwiebelsuppe', 'Soupe à l''Oignon',
-        'Traditional onion soup with cheese toast.', 'Traditionelle Zwiebelsuppe mit Käsetoast.',
-        'Soupe à l''oignon traditionnelle avec toast au fromage.'),
-       ('Tuna Lettuce Wraps', 'Thunfisch-Salat-Wraps', 'Wraps de Laitue au Thon',
-        'Light and healthy lettuce wraps filled with tuna.', 'Leichte und gesunde Salatblatt-Wraps gefüllt mit Thunfisch.',
-        'Wraps de laitue légers et sains remplis de thon.');
+        'Un petit-déjeuner complet avec œufs, épinards et pommes de terre.');
 
 INSERT INTO recipe_ingredient (id, recipe_recipe_id, product_barcode)
 VALUES
@@ -471,58 +443,4 @@ VALUES
 (154, 53, '002'),    -- Egg
 (155, 53, '008'),    -- Spinach
 (156, 53, '011'),    -- Potatoes
-(157, 53, '017'),    -- Garlic
-
--- Ingredients for Citrus Salad
-(158, 54, '021'),    -- Orange
-(159, 54, '022'),    -- Lemon
-(160, 54, '018'),    -- Lettuce
-(161, 54, '015'),    -- Olive Oil
-
--- Ingredients for Guacamole
-(162, 55, '024'),    -- Avocado
-(163, 55, '023'),    -- Onion
-(164, 55, '022'),    -- Lemon
-(165, 55, '017'),    -- Garlic
-
--- Ingredients for Tuna Pasta Salad
-(166, 56, '026'),    -- Tuna
-(167, 56, '014'),    -- Pasta
-(168, 56, '029'),    -- Corn
-(169, 56, '015'),    -- Olive Oil
-
--- Ingredients for Mexican Rice Bowl
-(170, 57, '009'),    -- Rice
-(171, 57, '028'),    -- Beans
-(172, 57, '029'),    -- Corn
-(173, 57, '027'),    -- Ground Beef
-
--- Ingredients for Stuffed Bell Peppers
-(174, 58, '025'),    -- Bell Pepper
-(175, 58, '009'),    -- Rice
-(176, 58, '027'),    -- Ground Beef
-(177, 58, '023'),    -- Onion
-
--- Ingredients for Honey Orange Chicken
-(178, 59, '013'),    -- Honey
-(179, 59, '021'),    -- Orange
-(180, 59, '012'),    -- Chicken
-(181, 59, '015'),    -- Olive Oil
-
--- Ingredients for Avocado Toast
-(182, 60, '024'),    -- Avocado
-(183, 60, 'AAA'),    -- Bread
-(184, 60, '022'),    -- Lemon
-(185, 60, '017'),    -- Garlic
-
--- Ingredients for Onion Soup
-(186, 61, '023'),    -- Onion
-(187, 61, '003'),    -- Cheese
-(188, 61, 'AAA'),    -- Bread
-(189, 61, '005'),    -- Butter
-
--- Ingredients for Tuna Lettuce Wraps
-(190, 62, '026'),    -- Tuna
-(191, 62, '018'),    -- Lettuce
-(192, 62, '023'),    -- Onion
-(193, 62, '022');    -- Lemon
+(157, 53, '017');    -- Garlic

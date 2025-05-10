@@ -10,10 +10,7 @@ import ch.primeo.fridgely.service.localization.LocalizationObserver;
 import ch.primeo.fridgely.util.ImageLoader;
 import ch.primeo.fridgely.view.component.UnifiedRecipePanel;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -67,7 +64,7 @@ public class MultiplayerPlayer2View extends JPanel implements PropertyChangeList
         onLocaleChanged();
 
         // Update the recipe list on startup
-        updateRecipeList();
+        //updateRecipeList();
         updateComponentStates();
     }
 
@@ -81,7 +78,6 @@ public class MultiplayerPlayer2View extends JPanel implements PropertyChangeList
         // initialize with empty text; will be set in onLocaleChanged()
         finishTurnButton = new JButton();
         statusLabel = new JLabel();
-        statusLabel.setFont(new Font(statusLabel.getFont().getName(), Font.BOLD, 16));
     }
 
     /**
@@ -99,7 +95,7 @@ public class MultiplayerPlayer2View extends JPanel implements PropertyChangeList
         // Add the unified recipe panel to the center
         add(unifiedRecipePanel, BorderLayout.CENTER);
 
-        // Button panel at the bottom
+        // FButton panel at the bottom
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.add(finishTurnButton);
         add(buttonPanel, BorderLayout.SOUTH);
@@ -143,7 +139,7 @@ public class MultiplayerPlayer2View extends JPanel implements PropertyChangeList
     /**
      * Updates the recipe list with the current recipes from the model.
      */
-    private void updateRecipeList() {
+    void updateRecipeList() {
         unifiedRecipePanel.updateRecipeList();
     }
 
@@ -164,7 +160,7 @@ public class MultiplayerPlayer2View extends JPanel implements PropertyChangeList
 
         // Update status label
         if (isGameOver) {
-            statusLabel.setText(localizationService.get(KEY_STATUS_GAME_OVER));
+            //statusLabel.setText(localizationService.get(KEY_STATUS_GAME_OVER));
         } else if (isPlayer2Turn) {
             if (hasSelectedRecipe) {
                 statusLabel.setText(String.format(localizationService.get(KEY_STATUS_PLAYER2_RECIPE_SELECTED),
@@ -190,9 +186,9 @@ public class MultiplayerPlayer2View extends JPanel implements PropertyChangeList
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getSource() instanceof MultiplayerGameStateModel) {
             updateComponentStates();
-        } else if (evt.getSource() instanceof RecipeModel && RecipeModel.PROP_AVAILABLE_RECIPES.equals(
-                evt.getPropertyName())) {
-            updateRecipeList();
+//        } else if (evt.getSource() instanceof RecipeModel && RecipeModel.PROP_AVAILABLE_RECIPES.equals(
+//                evt.getPropertyName())) {
+//            updateRecipeList();
         } else if (evt.getSource() instanceof RecipeModel && RecipeModel.PROP_SELECTED_RECIPE.equals(
                 evt.getPropertyName())) {
             updateComponentStates();

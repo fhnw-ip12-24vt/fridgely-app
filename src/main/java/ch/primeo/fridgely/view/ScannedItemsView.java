@@ -131,8 +131,8 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
     private void updateProductList() {
         productCardsPanel.removeAll();
         defaultProductCardsPanel.removeAll();
-        List<Product> products = gameController.getFridgeStockModel().getProducts();
-        List<Product> defaultProducts = gameController.getProductRepository().getAllDefaultProducts();
+        List<Product> products = gameController.getFridgeStockModel().getFridgeProducts();
+        List<Product> defaultProducts = gameController.getFridgeStockModel().getDefaultProducts();
         java.util.Set<String> inStockBarcodes = new java.util.HashSet<>();
 
         for (Product p : products) {

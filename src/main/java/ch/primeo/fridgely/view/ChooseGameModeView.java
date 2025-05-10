@@ -120,7 +120,6 @@ public class ChooseGameModeView implements LocalizationObserver {
         centerPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        titleLabel.setFont(new Font(titleLabel.getFont().getName(), Font.BOLD, 24));
         centerPanel.add(titleLabel, BorderLayout.NORTH);
 
         gameModePanel.setLayout(new BoxLayout(gameModePanel, BoxLayout.X_AXIS));

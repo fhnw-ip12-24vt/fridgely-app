@@ -16,7 +16,6 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -53,10 +52,6 @@ public class DialogBox extends JPanel {
     private static final int PENGUIN_SIZE = 70;
     private static final int HP_IMAGE_SIZE = 600; // New constant for HP image size
 
-    // Font size for dialog text - easily changeable
-    private static final int DIALOG_FONT_SIZE = 24; // Increased from 18 to 24
-    private static final Font DIALOG_FONT = new Font("SansSerif", Font.PLAIN, DIALOG_FONT_SIZE);
-
     private final ImageLoader imageLoader;
 
     /**
@@ -92,7 +87,6 @@ public class DialogBox extends JPanel {
 
         // Create the message label
         messageLabel = new JLabel();
-        messageLabel.setFont(DIALOG_FONT);
         messageLabel.setHorizontalAlignment(SwingConstants.LEFT);
         messageLabel.setVerticalAlignment(SwingConstants.CENTER);
         messageLabel.setForeground(Color.BLACK);
@@ -155,6 +149,8 @@ public class DialogBox extends JPanel {
             String text = messages.get(currentMessageIndex);
             // Wrap the text to fit dialog width by using HTML
             messageLabel.setText("<html><body style='width:100%'>" + text + "</body></html>");
+            //messageLabel.setText(text);
+
         }
     }
 
