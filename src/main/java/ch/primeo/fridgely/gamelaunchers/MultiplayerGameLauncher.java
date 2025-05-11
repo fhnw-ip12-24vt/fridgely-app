@@ -82,12 +82,12 @@ public class MultiplayerGameLauncher {
                 }
             });
 
-            if(!Fridgely.isSingleDisplay){
+            if(!Fridgely.isSingleDisplay()){
                 // Position and display frames on their respective screens
-                Fridgely.mainAppScreen.setFullScreenWindow(gameFrame);
-                Fridgely.scannedItemsScreen.setFullScreenWindow(scannedItemsFrame);
+                Fridgely.getMainAppScreen().setFullScreenWindow(gameFrame);
+                Fridgely.getScannedItemsScreen().setFullScreenWindow(scannedItemsFrame);
             } else {
-                var screenBounds = Fridgely.mainAppScreen.getDefaultConfiguration().getBounds();
+                var screenBounds = Fridgely.getMainAppScreen().getDefaultConfiguration().getBounds();
 
                 for (JFrame frame : new JFrame[]{gameFrame, scannedItemsFrame}) {
                     frame.setBounds(screenBounds);

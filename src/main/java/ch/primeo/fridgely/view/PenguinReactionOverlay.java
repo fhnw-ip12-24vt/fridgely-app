@@ -7,8 +7,7 @@ import ch.primeo.fridgely.util.ImageLoader;
 import javax.swing.JPanel;
 import javax.swing.JWindow;
 import javax.swing.Timer;
-import java.awt.Graphics;
-import java.awt.Window;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
@@ -22,7 +21,7 @@ public class PenguinReactionOverlay extends JWindow {
     public PenguinReactionOverlay(Window parent, PenguinFacialExpression expression, ImageLoader imageLoader) {
         super(parent);
         this.penguinImage = imageLoader.loadBufferedImage(expression.getSprite());
-        setBackground(UIConfig.BACKGROUND_COLOR);
+        setBackground(new Color(238, 238, 238));
         setAlwaysOnTop(true);
         setSize(OVERLAY_SIZE, OVERLAY_SIZE);
         setLocationRelativeTo(parent);

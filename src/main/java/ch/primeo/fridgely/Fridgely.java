@@ -10,13 +10,28 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.util.logging.Logger;
+import lombok.Getter;
 
 @SpringBootApplication
 public class Fridgely {
     private static final Logger LOGGER = Logger.getLogger(Fridgely.class.getName());
-    public static GraphicsDevice mainAppScreen;
-    public static GraphicsDevice scannedItemsScreen;
-    public static boolean isSingleDisplay = false;
+    /**
+     * Main application screen (1024x600)
+     */
+    @Getter
+    private static GraphicsDevice mainAppScreen;
+
+    /**
+     * Scanned items screen (1920x1080)
+     */
+    @Getter
+    private static GraphicsDevice scannedItemsScreen;
+
+    /**
+     * Flag to indicate if the application is running on a single display
+     */
+    @Getter
+    private static boolean isSingleDisplay = false;
 
     public static void main(String[] args) throws InterruptedException {    
         detectScreens();

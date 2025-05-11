@@ -69,7 +69,7 @@ public class DialogBox extends JPanel {
         this.frame = new JFrame();
         this.frame.setUndecorated(true);
 
-        Fridgely.mainAppScreen.setFullScreenWindow(frame);
+        Fridgely.getMainAppScreen().setFullScreenWindow(frame);
 
         this.frame.setVisible(true);
 

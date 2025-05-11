@@ -43,28 +43,76 @@ class GameConfigTest {
 
     @Test
     void testScoreBio() {
-        assertEquals(15, GameConfig.SCORE_BIO);
+        assertEquals(1, GameConfig.SCORE_BIO);
+    }
+
+    @Test
+    void testScoreNonBio() {
+        assertEquals(0, GameConfig.SCORE_NON_BIO);
     }
 
     @Test
     void testScoreLocal() {
-        assertEquals(15, GameConfig.SCORE_LOCAL);
-    }
-/*
-    @Test
-    void testScoreImported() {
-        assertEquals(-10, GameConfig.SCORE_IMPORTED);
+        assertEquals(2, GameConfig.SCORE_LOCAL);
     }
 
     @Test
-    void testScoreMatchingIngredient() {
-        assertEquals(10, GameConfig.SCORE_MATCHING_INGREDIENT);
+    void testScoreNonLocal() {
+        assertEquals(-2, GameConfig.SCORE_NON_LOCAL);
     }
 
     @Test
-    void testScoreFullMatch() {
-        assertEquals(10, GameConfig.SCORE_FULL_MATCH);
+    void testScoreHighCo2() {
+        assertEquals(-3, GameConfig.SCORE_HIGH_CO2);
     }
-    */
 
+    @Test
+    void testScoreLowCo2() {
+        assertEquals(1, GameConfig.SCORE_LOW_CO2);
+    }
+
+    @Test
+    void testScorePlayer1Increase() {
+        assertEquals(8, GameConfig.SCORE_PLAYER1_INCREASE);
+    }
+
+    @Test
+    void testScorePlayer1Decrease() {
+        assertEquals(-12, GameConfig.SCORE_PLAYER1_DECREASE);
+    }
+
+    @Test
+    void testScorePlayer2Increase() {
+        assertEquals(8, GameConfig.SCORE_PLAYER2_INCREASE);
+    }
+
+    @Test
+    void testScorePlayer2Decrease() {
+        assertEquals(-6, GameConfig.SCORE_PLAYER2_DECREASE);
+    }
+
+    @Test
+    void testScoreExcellent() {
+        assertEquals(24, GameConfig.SCORE_EXCELLENT);
+    }
+
+    @Test
+    void testScoreGood() {
+        assertEquals(12, GameConfig.SCORE_GOOD);
+    }
+
+    @Test
+    void testScoreOkay() {
+        assertEquals(0, GameConfig.SCORE_OKAY);
+    }
+
+    @Test
+    void testScoreCritical() {
+        assertEquals(-12, GameConfig.SCORE_CRITICAL);
+    }
+
+    @Test
+    void testScoreDead() {
+        assertEquals(-24, GameConfig.SCORE_DEAD);
+    }
 }

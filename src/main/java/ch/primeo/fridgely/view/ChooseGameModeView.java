@@ -64,10 +64,10 @@ public class ChooseGameModeView implements LocalizationObserver {
         this.localizationService = localization;
         this.imageLoader = imageLoader;
 
-        if(!Fridgely.isSingleDisplay) {
-            Fridgely.mainAppScreen.setFullScreenWindow(frame);
+        if(!Fridgely.isSingleDisplay()) {
+            Fridgely.getMainAppScreen().setFullScreenWindow(frame);
         } else {
-            var screenBounds = Fridgely.mainAppScreen.getDefaultConfiguration().getBounds();
+            var screenBounds = Fridgely.getMainAppScreen().getDefaultConfiguration().getBounds();
             frame.setBounds(screenBounds);
             frame.setUndecorated(true);
         }
