@@ -18,9 +18,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * Utility class for loading and caching images to improve performance.
- * Provides methods for loading images as ImageIcons and BufferedImages,
- * with caching mechanisms to avoid redundant loading and scaling operations.
+ * Utility class for loading and caching images to improve performance. Provides methods for loading images as
+ * ImageIcons and BufferedImages, with caching mechanisms to avoid redundant loading and scaling operations.
  */
 @Component
 @Scope("singleton")
@@ -37,8 +36,7 @@ public class ImageLoader {
     }
 
     /**
-     * Loads an image as an ImageIcon from the given path.
-     * The loaded image is cached for future use.
+     * Loads an image as an ImageIcon from the given path. The loaded image is cached for future use.
      *
      * @param imagePath the path to the image resource
      * @return the loaded ImageIcon, or null if the image is not found or an error occurs
@@ -56,12 +54,11 @@ public class ImageLoader {
     }
 
     /**
-     * Loads and scales an image to the specified width and height.
-     * The scaled image is cached for future use.
+     * Loads and scales an image to the specified width and height. The scaled image is cached for future use.
      *
      * @param imagePath the path to the image resource
-     * @param width the desired width of the scaled image
-     * @param height the desired height of the scaled image
+     * @param width     the desired width of the scaled image
+     * @param height    the desired height of the scaled image
      * @return the scaled ImageIcon, or null if the image is not found or an error occurs
      */
     public ImageIcon loadScaledImage(String imagePath, int width, int height) {
@@ -77,8 +74,7 @@ public class ImageLoader {
     }
 
     /**
-     * Loads a BufferedImage from the given resource path.
-     * The loaded BufferedImage is cached for future use.
+     * Loads a BufferedImage from the given resource path. The loaded BufferedImage is cached for future use.
      *
      * @param resourcePath the path to the image resource
      * @return the loaded BufferedImage, or null if the image is not found or an error occurs
@@ -110,8 +106,8 @@ public class ImageLoader {
      * Preloads multiple scaled images into the cache.
      *
      * @param imagePaths array of image resource paths to preload
-     * @param width target width for scaling
-     * @param height target height for scaling
+     * @param width      target width for scaling
+     * @param height     target height for scaling
      */
     public void preloadScaledImages(String[] imagePaths, int width, int height) {
         for (String path : imagePaths) {
@@ -129,9 +125,7 @@ public class ImageLoader {
     }
 
     /**
-     * Preloads all application images including:
-     * - Penguin facial expressions
-     * - Common UI elements
+     * Preloads all application images including: - Penguin facial expressions - Common UI elements
      */
     public void preloadAllImages() {
         String[] penguinExpressions = {
@@ -150,8 +144,7 @@ public class ImageLoader {
         String[] productSprites;
 
         try {
-            PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-            Resource[] resources = resolver.getResources("classpath:/ch/primeo/fridgely/productimages/*.png");
+            Resource[] resources = resolveProductImageResources();
 
             productSprites = Arrays.stream(resources)
                     .map(resource -> "/ch/primeo/fridgely/productimages/" + resource.getFilename())
@@ -169,5 +162,11 @@ public class ImageLoader {
         };
 
         preloadImages(uiElements);
+    }
+
+    // This method is added for testing purposes apart from the main logic.
+    protected Resource[] resolveProductImageResources() throws IOException {
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        return resolver.getResources("classpath:/ch/primeo/fridgely/productimages/*.png");
     }
 }

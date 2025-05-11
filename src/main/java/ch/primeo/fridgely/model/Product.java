@@ -180,6 +180,10 @@ public class Product {
     public void setLowCo2(boolean lowCo2) { isLowCo2 = lowCo2; }
 
     public String getProductImagePath() {
+        if (barcode == null) {
+            return "/ch/primeo/fridgely/productimages/notfound.png";
+        }
+
         return "/ch/primeo/fridgely/productimages/" + barcode + ".png";
     }
 

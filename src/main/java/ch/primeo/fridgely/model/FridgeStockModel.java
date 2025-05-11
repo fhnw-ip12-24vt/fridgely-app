@@ -26,8 +26,8 @@ public class FridgeStockModel {
     /**
      * Constructs a new empty fridge stock model.
      */
-    public FridgeStockModel(ProductRepository productRepository) {
-        this.defaultProducts = productRepository.getAllDefaultProducts();
+    public FridgeStockModel(List<Product> defaultProducts) {
+        this.defaultProducts = defaultProducts;
         this.fridgeProducts = new ArrayList<>();
         this.propertyChangeSupport = new PropertyChangeSupport(this);
     }

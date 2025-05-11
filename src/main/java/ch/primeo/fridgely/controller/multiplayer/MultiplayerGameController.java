@@ -35,7 +35,7 @@ public class MultiplayerGameController {
         // Initialize models
         this.gameStateModel = new MultiplayerGameStateModel();
         this.penguinModel = new PenguinModel();
-        this.fridgeStockModel = new FridgeStockModel(productRepository);
+        this.fridgeStockModel = new FridgeStockModel(productRepository.getAllDefaultProducts());
         this.recipeModel = new RecipeModel(recipeRepository);
         
         // Initialize controllers

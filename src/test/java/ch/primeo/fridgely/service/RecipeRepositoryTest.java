@@ -30,7 +30,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class RecipeRepositoryTest {
-/*
+
     private final QRecipe qRecipe = QRecipe.recipe;
     @Mock
     private AppLocalizationService localizationService;
@@ -313,5 +313,5 @@ class RecipeRepositoryTest {
         // Since EntityManager is mocked and doesn't create a real JPAQueryFactory,
         // we expect an empty list (the error handling path)
         assertTrue(recipes.isEmpty());
-    }*/
+    }
 }

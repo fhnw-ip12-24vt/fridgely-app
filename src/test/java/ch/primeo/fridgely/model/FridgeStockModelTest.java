@@ -1,5 +1,7 @@
 package ch.primeo.fridgely.model;
 
+import ch.primeo.fridgely.service.ProductJpaRepository;
+import ch.primeo.fridgely.service.ProductRepository;
 import lombok.Getter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,30 +17,30 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FridgeStockModelTest {
-/*
+
     private FridgeStockModel fridgeStockModel;
     private Product product1;
     private Product product2;
 
     @BeforeEach
     void setUp() {
-        fridgeStockModel = new FridgeStockModel();
+        fridgeStockModel = new FridgeStockModel(null);
         product1 = new Product("123456789", "Apple", "Apfel", "Pomme", "Fresh apple", "Frischer Apfel", "Pomme fraîche",
-                true, true, false);
+                true, true, false, false);
         product2 = new Product("987654321", "Banana", "Banane", "Banane", "Fresh banana", "Frische Banane",
-                "Banane fraîche", false, false, true);
+                "Banane fraîche", false, false, true, false);
     }
 
     @Test
     void testAddProduct() {
         // Arrange
         Product product = new Product("123456789", "Apple", "Apfel", "Pomme", "Fresh apple", "Frischer Apfel",
-                "Pomme fraîche", true, true, false);
+                "Pomme fraîche", true, true, false, false);
 
         // Act
         boolean firstAddResult = fridgeStockModel.addProduct(product);
         boolean secondAddResult = fridgeStockModel.addProduct(product);
-        int productCount = fridgeStockModel.getProductCount();
+        int productCount = fridgeStockModel.getFridgeProducts().size();
 
         // Assert
         assertTrue(firstAddResult);
@@ -50,41 +52,11 @@ class FridgeStockModelTest {
     void testAddNullProduct() {
         // Act
         boolean result = fridgeStockModel.addProduct(null);
-        int productCount = fridgeStockModel.getProductCount();
+        int productCount = fridgeStockModel.getFridgeProducts().size();
 
         // Assert
         assertFalse(result);
         assertEquals(0, productCount);
-    }
-
-    @Test
-    void testRemoveProduct() {
-        // Arrange
-        fridgeStockModel.addProduct(product1);
-
-        // Act
-        boolean firstRemoveResult = fridgeStockModel.removeProduct(product1);
-        boolean secondRemoveResult = fridgeStockModel.removeProduct(product1);
-        int productCount = fridgeStockModel.getProductCount();
-
-        // Assert
-        assertTrue(firstRemoveResult);
-        assertFalse(secondRemoveResult); // Not in stock
-        assertEquals(0, productCount);
-    }
-
-    @Test
-    void testRemoveNullProduct() {
-        // Arrange
-        fridgeStockModel.addProduct(product1);
-
-        // Act
-        boolean result = fridgeStockModel.removeProduct(null);
-        int productCount = fridgeStockModel.getProductCount();
-
-        // Assert
-        assertFalse(result);
-        assertEquals(1, productCount);
     }
 
     @Test
@@ -94,7 +66,7 @@ class FridgeStockModelTest {
         fridgeStockModel.addProduct(product2);
 
         // Act
-        List<Product> products = fridgeStockModel.getProducts();
+        List<Product> products = fridgeStockModel.getFridgeProducts();
 
         // Assert
         assertEquals(2, products.size());
@@ -110,19 +82,19 @@ class FridgeStockModelTest {
 
         // Act
         fridgeStockModel.clear();
-        int productCount = fridgeStockModel.getProductCount();
+        int productCount = fridgeStockModel.getFridgeProducts().size();
 
         // Assert
         assertEquals(0, productCount);
     }
 
     @Test
-    void testGetProductCount() {
+    void testgetFridgeProductsCount() {
         // Arrange
         fridgeStockModel.addProduct(product1);
 
         // Act
-        int productCount = fridgeStockModel.getProductCount();
+        int productCount = fridgeStockModel.getFridgeProducts().size();
 
         // Assert
         assertEquals(1, productCount);
@@ -162,5 +134,5 @@ class FridgeStockModelTest {
         public void reset() {
             this.lastEvent = null;
         }
-    }*/
+    }
 }

@@ -1,6 +1,8 @@
 package ch.primeo.fridgely.gamelaunchers;
 
 import ch.primeo.fridgely.Fridgely;
+import ch.primeo.fridgely.factory.DefaultFrameFactory;
+import ch.primeo.fridgely.factory.FrameFactory;
 import ch.primeo.fridgely.util.ImageLoader;
 import ch.primeo.fridgely.view.ScannedItemsView;
 import ch.primeo.fridgely.view.multiplayer.MultiplayerGameView;
@@ -25,6 +27,7 @@ public class MultiplayerGameLauncher {
     private final RecipeRepository recipeRepository;
     private final AppLocalizationService localizationService;
     private final ImageLoader imageLoader;
+    private final FrameFactory frameFactory;
 
     /**
      * Constructs a new multiplayer game launcher.
@@ -39,63 +42,90 @@ public class MultiplayerGameLauncher {
         this.recipeRepository = recipeRepo;
         this.localizationService = localization;
         this.imageLoader = imageLoader;
+        this.frameFactory = new DefaultFrameFactory();
+    }
+
+
+    /**
+     * Creates a new JFrame for the game. This method can be overridden for testing purposes.
+     *
+     * @param title the title of the frame
+     * @return a new JFrame instance
+     */
+    protected JFrame createFrame(String title) {
+        return frameFactory.create(title);
     }
 
     /**
      * Launches the multiplayer game.
      */
     public void launchGame() {
-        SwingUtilities.invokeLater(() -> {
-            // Create the game controller
-            MultiplayerGameController gameController = new MultiplayerGameController(productRepository,
-                    recipeRepository);
+        runOnEDT(this::initGame);
+    }
 
-            // Create the main game frame
-            JFrame gameFrame = new JFrame("Fridgely - Multiplayer Game");
-            gameFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            gameFrame.setUndecorated(true); // Remove window decorations
+    /**
+     * Executes the given task on the Swing Event Dispatch Thread. Override in tests to run synchronously.
+     */
+    protected void runOnEDT(Runnable task) {
+        SwingUtilities.invokeLater(task);
+    }
 
-            // Create the game view
-            new MultiplayerGameView(gameController, localizationService, gameFrame, imageLoader);
+    /**
+     * Contains the original body of launchGame() (everything inside the invokeLater lambda). Extracted so it can be
+     * called directly in tests (e.g. headless JUnit).
+     */
+    protected void initGame() {
+        // Create the game controller
+        MultiplayerGameController gameController = new MultiplayerGameController(productRepository, recipeRepository);
 
-            // Create a second frame for displaying scanned items
-            JFrame scannedItemsFrame = new JFrame("Fridgely - Scanned Items");
-            scannedItemsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            scannedItemsFrame.setUndecorated(true); // Remove window decorations
+        // Create the main game frame
+        JFrame gameFrame = createFrame("Fridgely - Multiplayer Game");
+        gameFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        gameFrame.setUndecorated(true); // Remove window decorations
 
+        // Create the game view
+        MultiplayerGameView gameView = new MultiplayerGameView(gameController, localizationService, gameFrame,
+                imageLoader);
+        gameFrame.setContentPane(gameView);
 
-            // Add window listener to dispose both frames together
-            gameFrame.addWindowListener(new java.awt.event.WindowAdapter() {
-                @Override
-                public void windowClosed(java.awt.event.WindowEvent e) {
-                    scannedItemsFrame.dispose();
-                }
-            });
+        // Create a second frame for displaying scanned items
+        JFrame scannedItemsFrame = createFrame("Fridgely - Scanned Items");
+        scannedItemsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        scannedItemsFrame.setUndecorated(true); // Remove window decorations
 
-            // Add escape key to close game frame
-            gameFrame.getRootPane().getInputMap()
-                    .put(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0), "escape");
-            gameFrame.getRootPane().getActionMap().put("escape", new javax.swing.AbstractAction() {
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent e) {
-                    gameFrame.dispose();
-                }
-            });
-
-            if(!Fridgely.isSingleDisplay()){
-                // Position and display frames on their respective screens
-                Fridgely.getMainAppScreen().setFullScreenWindow(gameFrame);
-                Fridgely.getScannedItemsScreen().setFullScreenWindow(scannedItemsFrame);
-            } else {
-                var screenBounds = Fridgely.getMainAppScreen().getDefaultConfiguration().getBounds();
-
-                for (JFrame frame : new JFrame[]{gameFrame, scannedItemsFrame}) {
-                    frame.setBounds(screenBounds);
-                }
+        // Add window listener to dispose both frames together
+        gameFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosed(java.awt.event.WindowEvent e) {
+                scannedItemsFrame.dispose();
             }
-
-            // Create the scanned items view
-            new ScannedItemsView(gameController, localizationService, scannedItemsFrame, imageLoader);
         });
+
+        // Add escape key to close game frame
+        gameFrame.getRootPane().getInputMap()
+                .put(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0), "escape");
+        gameFrame.getRootPane().getActionMap().put("escape", new javax.swing.AbstractAction() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                gameFrame.dispose();
+            }
+        });
+
+        if (!Fridgely.isSingleDisplay()) {
+            // Position and display frames on their respective screens
+            Fridgely.getMainAppScreen().setFullScreenWindow(gameFrame);
+            Fridgely.getScannedItemsScreen().setFullScreenWindow(scannedItemsFrame);
+        } else {
+            var screenBounds = Fridgely.getMainAppScreen().getDefaultConfiguration().getBounds();
+
+            for (JFrame frame : new JFrame[]{gameFrame, scannedItemsFrame}) {
+                frame.setBounds(screenBounds);
+            }
+        }
+
+        // Create the scanned items view
+        ScannedItemsView scannedItemsView = new ScannedItemsView(gameController, localizationService, scannedItemsFrame,
+                imageLoader);
+        scannedItemsFrame.setContentPane(scannedItemsView);
     }
 }
