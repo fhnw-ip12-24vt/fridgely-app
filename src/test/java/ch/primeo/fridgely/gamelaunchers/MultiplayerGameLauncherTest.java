@@ -71,7 +71,7 @@ class MultiplayerGameLauncherTest {
 
     @Mock
     private JFrame gameFrame; // Mock for the game frame created by the launcher
-    
+
     @Mock
     private JFrame scannedItemsFrame; // Mock for the scanned items frame
 
@@ -112,33 +112,33 @@ class MultiplayerGameLauncherTest {
         // Arrange
         String testTitle = "Test Game Frame";
         JFrame mockFrame = mock(JFrame.class);
-        
+
         // Use our spy and make it return the mock frame
         doReturn(mockFrame).when(multiplayerGameLauncher).createFrame(testTitle);
-        
+
         // Act
         JFrame result = multiplayerGameLauncher.createFrame(testTitle);
-        
+
         // Assert
         assertNotNull(result, "Frame should not be null");
         assertEquals(mockFrame, result, "Should return the mock frame");
-        
+
         // Verify that in production code, the title would be set
         try (MockedStatic<GraphicsEnvironment> graphicsEnvMock = mockStatic(GraphicsEnvironment.class)) {
             // Mock GraphicsEnvironment to pretend we're not in headless mode
             graphicsEnvMock.when(GraphicsEnvironment::isHeadless).thenReturn(false);
-            
+
             // Create a partial mock that calls real methods except for the actual JFrame creation
             MultiplayerGameLauncher partialMock = spy(new MultiplayerGameLauncher(
-                    productRepository, recipeRepository, localizationService, imageLoader));
-            
+                    productRepository, recipeRepository, localizationService, imageLoader, new DefaultFrameFactory()));
+
             // Mock the JFrame constructor result
             JFrame realFrame = mock(JFrame.class);
             doReturn(realFrame).when(partialMock).createFrame(anyString());
-            
+
             // Call the method
             partialMock.createFrame(testTitle);
-            
+
             // Verify the title would be set in a real scenario
             verify(realFrame, never()).setTitle(testTitle); // Never called since title is set in constructor
         }
@@ -149,38 +149,38 @@ class MultiplayerGameLauncherTest {
         // Arrange
         String testTitle = "Test Scanned Items Frame";
         JFrame mockFrame = mock(JFrame.class);
-        
+
         // Use our spy and make it return the mock frame
         doReturn(mockFrame).when(multiplayerGameLauncher).createFrame(testTitle);
-        
+
         // Act
         JFrame result = multiplayerGameLauncher.createFrame(testTitle);
-        
+
         // Assert
         assertNotNull(result, "Frame should not be null");
         assertEquals(mockFrame, result, "Should return the mock frame");
-        
+
         // Verify that in production code, the title would be set
         try (MockedStatic<GraphicsEnvironment> graphicsEnvMock = mockStatic(GraphicsEnvironment.class)) {
             // Mock GraphicsEnvironment to pretend we're not in headless mode
             graphicsEnvMock.when(GraphicsEnvironment::isHeadless).thenReturn(false);
-            
+
             // Create a partial mock that calls real methods except for the actual JFrame creation
             MultiplayerGameLauncher partialMock = spy(new MultiplayerGameLauncher(
-                    productRepository, recipeRepository, localizationService, imageLoader));
-            
+                    productRepository, recipeRepository, localizationService, imageLoader, new DefaultFrameFactory()));
+
             // Mock the JFrame constructor result
             JFrame realFrame = mock(JFrame.class);
             doReturn(realFrame).when(partialMock).createFrame(anyString());
-            
+
             // Call the method
             partialMock.createFrame(testTitle);
-            
+
             // Verify the title would be set in a real scenario
             verify(realFrame, never()).setTitle(testTitle); // Never called since title is set in constructor
         }
     }
-    
+
     @Test
     void launchGame_invokesInitGameOnEDT() {
         // Mock static SwingUtilities
@@ -195,6 +195,126 @@ class MultiplayerGameLauncherTest {
             // or by making initGame public for testing, which is not ideal.
             // For now, verifying any Runnable is invoked is a good first step.
             // To test initGame's content, we'll call it directly in another test.
+        }
+    }
+
+
+    @Test
+    void initGame_initializesFramesAndComponents_singleDisplay() {
+        // Arrange
+        when(multiplayerGameLauncher.createFrame("Fridgely - Multiplayer Game")).thenReturn(gameFrame);
+        when(multiplayerGameLauncher.createFrame("Fridgely - Scanned Items")).thenReturn(scannedItemsFrame);
+
+        // Mock JFrame behaviors
+        doNothing().when(gameFrame).setDefaultCloseOperation(anyInt());
+        doNothing().when(gameFrame).setUndecorated(true);
+        doNothing().when(gameFrame).addWindowListener(any());
+        doNothing().when(gameFrame).setContentPane(any());
+        doNothing().when(gameFrame).setBounds(any());
+        when(gameFrame.getRootPane()).thenReturn(mock(JRootPane.class, RETURNS_DEEP_STUBS));
+
+        doNothing().when(scannedItemsFrame).setDefaultCloseOperation(anyInt());
+        doNothing().when(scannedItemsFrame).setUndecorated(true);
+        doNothing().when(scannedItemsFrame).setContentPane(any());
+        doNothing().when(scannedItemsFrame).setBounds(any());
+        doNothing().when(scannedItemsFrame).dispose();
+
+        JRootPane mockRootPane = gameFrame.getRootPane();
+        InputMap mockInputMap = mockRootPane.getInputMap();
+        ActionMap mockActionMap = mockRootPane.getActionMap();
+
+        Rectangle screenBounds = new Rectangle(0, 0, 1920, 1080);
+
+        // Mock static Fridgely
+        try (var ignored = mockStatic(Fridgely.class); var ignored2 = mockConstruction(MultiplayerGameView.class);
+             var ignored3 = mockConstruction(ScannedItemsView.class)) {
+
+            when(Fridgely.isSingleDisplay()).thenReturn(true);
+            when(Fridgely.getMainAppScreen()).thenReturn(mainAppScreenDevice);
+
+            when(mainAppScreenDevice.getDefaultConfiguration()).thenReturn(graphicsConfiguration);
+            when(graphicsConfiguration.getBounds()).thenReturn(screenBounds);
+
+            // Act
+            multiplayerGameLauncher.initGame();
+
+            // Assert
+            verify(gameFrame).setBounds(screenBounds);
+            verify(scannedItemsFrame).setBounds(screenBounds);
+            verify(gameFrame).setContentPane(any(MultiplayerGameView.class));
+            verify(scannedItemsFrame).setContentPane(any(ScannedItemsView.class));
+            verify(mockInputMap).put(eq(KeyStroke.getKeyStroke("ESCAPE")), eq("escape"));
+            verify(mockActionMap).put(eq("escape"), any(AbstractAction.class));
+
+            // Simulate ESC key press
+            ArgumentCaptor<AbstractAction> escapeActionCaptor = ArgumentCaptor.forClass(AbstractAction.class);
+            verify(mockActionMap).put(eq("escape"), escapeActionCaptor.capture());
+            escapeActionCaptor.getValue().actionPerformed(null);
+            verify(gameFrame).dispose();
+
+            // Simulate game window closing
+            ArgumentCaptor<WindowListener> windowListenerCaptor = ArgumentCaptor.forClass(WindowListener.class);
+            verify(gameFrame).addWindowListener(windowListenerCaptor.capture());
+            windowListenerCaptor.getValue().windowClosed(new WindowEvent(gameFrame, WindowEvent.WINDOW_CLOSED));
+            verify(scannedItemsFrame).dispose();
+        }
+    }
+
+
+    @Test
+    void initGame_initializesFramesAndComponents_multiDisplay() {
+        // Arrange
+        when(multiplayerGameLauncher.createFrame("Fridgely - Multiplayer Game")).thenReturn(gameFrame);
+        when(multiplayerGameLauncher.createFrame("Fridgely - Scanned Items")).thenReturn(scannedItemsFrame);
+
+        // Mock JFrame behaviors
+        doNothing().when(gameFrame).setDefaultCloseOperation(anyInt());
+        doNothing().when(gameFrame).setUndecorated(true);
+        doNothing().when(gameFrame).addWindowListener(any());
+        doNothing().when(gameFrame).setContentPane(any());
+        when(gameFrame.getRootPane()).thenReturn(mock(JRootPane.class, RETURNS_DEEP_STUBS));
+
+        doNothing().when(scannedItemsFrame).setDefaultCloseOperation(anyInt());
+        doNothing().when(scannedItemsFrame).setUndecorated(true);
+        doNothing().when(scannedItemsFrame).setContentPane(any());
+
+        // Prevent fullScreenWindow headless crash
+        doNothing().when(mainAppScreenDevice).setFullScreenWindow(any());
+        doNothing().when(scannedItemsScreenDevice).setFullScreenWindow(any());
+
+        JRootPane mockRootPane = gameFrame.getRootPane();
+        InputMap mockInputMap = mockRootPane.getInputMap();
+        ActionMap mockActionMap = mockRootPane.getActionMap();
+
+        try (var ignored = mockStatic(Fridgely.class); var ignored2 = mockConstruction(MultiplayerGameView.class);
+             var ignored3 = mockConstruction(ScannedItemsView.class)) {
+
+            when(Fridgely.isSingleDisplay()).thenReturn(false);
+            when(Fridgely.getMainAppScreen()).thenReturn(mainAppScreenDevice);
+            when(Fridgely.getScannedItemsScreen()).thenReturn(scannedItemsScreenDevice);
+
+            // Act
+            multiplayerGameLauncher.initGame();
+
+            // Assert full-screen mode
+            verify(mainAppScreenDevice).setFullScreenWindow(gameFrame);
+            verify(scannedItemsScreenDevice).setFullScreenWindow(scannedItemsFrame);
+            verify(gameFrame).setContentPane(any(MultiplayerGameView.class));
+            verify(scannedItemsFrame).setContentPane(any(ScannedItemsView.class));
+            verify(mockInputMap).put(eq(KeyStroke.getKeyStroke("ESCAPE")), eq("escape"));
+            verify(mockActionMap).put(eq("escape"), any(AbstractAction.class));
+
+            // Simulate ESC key press
+            ArgumentCaptor<AbstractAction> escapeActionCaptor = ArgumentCaptor.forClass(AbstractAction.class);
+            verify(mockActionMap).put(eq("escape"), escapeActionCaptor.capture());
+            escapeActionCaptor.getValue().actionPerformed(null);
+            verify(gameFrame).dispose();
+
+            // Simulate window closing
+            ArgumentCaptor<WindowListener> windowListenerCaptor = ArgumentCaptor.forClass(WindowListener.class);
+            verify(gameFrame).addWindowListener(windowListenerCaptor.capture());
+            windowListenerCaptor.getValue().windowClosed(new WindowEvent(gameFrame, WindowEvent.WINDOW_CLOSED));
+            verify(scannedItemsFrame).dispose();
         }
     }
 }
