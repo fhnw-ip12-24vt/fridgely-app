@@ -63,10 +63,6 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
     private FButton newGameButton;
     private FButton exitButton;
 
-    //TEST Components TODO DELTETE AFTER TESTING
-    private JButton testPlus5Score;
-    private JButton testMinus5Score;
-
     private CardLayout playerCardLayout;
 
     public MultiplayerGameView(MultiplayerGameController controller, AppLocalizationService localization,
@@ -113,12 +109,6 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
 
         newGameButton = new FButton(newGameIcon, true);
         exitButton = new FButton(homeIcon, true);
-
-
-        //TODO: DELETE
-        testPlus5Score = new JButton("+5 P");
-        testMinus5Score = new JButton("-5 P");
-
     }
 
     private void setupLayout() {
@@ -140,10 +130,6 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
         controlPanel.setLayout(new GridLayout(2, 1, 5, 5));
         controlPanel.add(newGameButton);
         controlPanel.add(exitButton);
-
-        //TODO: DELETE
-        controlPanel.add(testPlus5Score);
-        controlPanel.add(testMinus5Score);
     }
 
     private void registerListeners() {
@@ -152,17 +138,6 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
 
         newGameButton.addActionListener(e -> startNewGame());
         exitButton.addActionListener(e -> exitGame());
-
-        //TODO: Delete
-        testPlus5Score.addActionListener(e -> {
-            gameController.getGameStateModel().addScore(5);
-            updateGameInfo();
-        });
-
-        testMinus5Score.addActionListener(e -> {
-            gameController.getGameStateModel().addScore(-5);
-            updateGameInfo();
-        });
     }
 
 
