@@ -2,8 +2,8 @@ stages:
   - validate
   - test
   - package
-  - deploy
   - site
+  - deploy
   - pages
 
 image: maven:3.9-eclipse-temurin-21
@@ -33,6 +33,8 @@ test:
   script:
     - mvn $MAVEN_CLI_OPTS test
   artifacts:
+    paths:
+      - target/surefire-reports/
     reports:
       junit:
         - target/surefire-reports/TEST-*.xml
@@ -59,7 +61,7 @@ site:
     - mvn $MAVEN_CLI_OPTS site
   artifacts:
     paths:
-      - target/site
+      - target/site/
     expire_in: 1 week
   rules:
     - changes:
