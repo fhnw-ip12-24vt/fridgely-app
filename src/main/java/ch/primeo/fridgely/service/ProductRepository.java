@@ -19,13 +19,11 @@ import java.util.stream.Collectors;
 public class ProductRepository {
 
     private final ProductJpaRepository productJpaRepository;
-    private final JPAQueryFactory queryFactory;
     private final QProduct qProduct = QProduct.product;
     private final EntityManager entityManager;
 
     public ProductRepository(ProductJpaRepository productRepo, EntityManager entityManager) {
         this.productJpaRepository = productRepo;
-        this.queryFactory = new JPAQueryFactory(entityManager);
         this.entityManager = entityManager;
     }
 
@@ -41,7 +39,10 @@ public class ProductRepository {
             return Map.of();
         }
 
-        List<Product> productList = queryFactory.selectFrom(qProduct).where(qProduct.barcode.in(barcodes)).fetch();
+        List<Product> productList = createQueryFactory()
+                .selectFrom(qProduct)
+                .where(qProduct.barcode.in(barcodes))
+                .fetch();
 
         return productList.stream().collect(Collectors.toMap(Product::getBarcode, product -> product));
     }
