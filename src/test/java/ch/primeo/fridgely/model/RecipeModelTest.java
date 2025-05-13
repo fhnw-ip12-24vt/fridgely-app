@@ -3,6 +3,7 @@ package ch.primeo.fridgely.model;
 import ch.primeo.fridgely.service.RecipeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -11,9 +12,15 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -28,7 +35,6 @@ class RecipeModelTest {
     void setUp() {
         // Arrange: Mock the RecipeRepository and initialize RecipeModel
         recipeRepositoryMock = mock(RecipeRepository.class);
-        List<Product> availableProducts = new ArrayList<>();
         recipeModel = new RecipeModel(recipeRepositoryMock);
     }
 
@@ -293,5 +299,420 @@ class RecipeModelTest {
 
         // Assert
         assertTrue(recipeModel.getAvailableRecipes().isEmpty());
+    }
+
+    @Test
+    void testLoadAvailableRecipesSuccess() {
+        // Arrange
+        RecipeRepository.RecipeDTO dto1 = new RecipeRepository.RecipeDTO(1, "Recipe 1", "Description 1", 3, 5);
+        RecipeRepository.RecipeDTO dto2 = new RecipeRepository.RecipeDTO(2, "Recipe 2", "Description 2", 4, 6);
+        List<RecipeRepository.RecipeDTO> dtos = List.of(dto1, dto2);
+
+        Recipe recipe1 = new Recipe();
+        recipe1.setRecipeId(1);
+        recipe1.setName("Recipe 1");
+
+        Recipe recipe2 = new Recipe();
+        recipe2.setRecipeId(2);
+        recipe2.setName("Recipe 2");
+
+        when(recipeRepositoryMock.getAllRecipes()).thenReturn(dtos);
+        when(recipeRepositoryMock.findById(1)).thenReturn(Optional.of(recipe1));
+        when(recipeRepositoryMock.findById(2)).thenReturn(Optional.of(recipe2));
+
+        // Create a new RecipeModel to trigger loadAvailableRecipes
+        RecipeModel model = new RecipeModel(recipeRepositoryMock);
+
+        // Act
+        List<Recipe> availableRecipes = model.getAvailableRecipes();
+
+        // Assert
+        assertEquals(2, availableRecipes.size());
+        assertTrue(availableRecipes.contains(recipe1));
+        assertTrue(availableRecipes.contains(recipe2));
+    }
+
+    @Test
+    void testLoadAvailableRecipesWithException() {
+        // Arrange
+        when(recipeRepositoryMock.getAllRecipes()).thenThrow(new RuntimeException("Test exception"));
+
+        // Act
+        RecipeModel model = new RecipeModel(recipeRepositoryMock);
+        List<Recipe> availableRecipes = model.getAvailableRecipes();
+
+        // Assert
+        assertEquals(1, availableRecipes.size()); // Should create a dummy recipe
+        assertEquals("Dummy Recipe", availableRecipes.get(0).getName());
+    }
+
+    @Test
+    void testLoadAvailableRecipes_NullDTOs_FallbackToEntities() {
+        // Arrange
+        RecipeRepository freshMock = mock(RecipeRepository.class);
+        when(freshMock.getAllRecipes()).thenReturn(null); // recipeDTOs will be null
+
+        Recipe recipe1 = new Recipe();
+        recipe1.setRecipeId(1);
+        recipe1.setName("Recipe From Entities");
+        List<Recipe> entityRecipes = List.of(recipe1);
+        when(freshMock.getAllRecipesEntities()).thenReturn(entityRecipes);
+
+        // Act
+        RecipeModel model = new RecipeModel(freshMock);
+        List<Recipe> availableRecipes = model.getAvailableRecipes();
+
+        // Assert
+        assertEquals(1, availableRecipes.size());
+        assertEquals("Recipe From Entities", availableRecipes.get(0).getName());
+        verify(freshMock).getAllRecipes();
+        verify(freshMock).getAllRecipesEntities();
+    }
+
+    @Test
+    void testLoadAvailableRecipes_NullDTOsAndNullEntities_FallbackToDummyRecipe() {
+        // Arrange
+        RecipeRepository freshMock = mock(RecipeRepository.class);
+        when(freshMock.getAllRecipes()).thenReturn(null); // recipeDTOs will be null
+        when(freshMock.getAllRecipesEntities()).thenReturn(null); // entities also null
+
+        // Act
+        RecipeModel model = new RecipeModel(freshMock);
+        List<Recipe> availableRecipes = model.getAvailableRecipes();
+
+        // Assert
+        assertEquals(1, availableRecipes.size()); // Should create a dummy recipe
+        assertEquals("Dummy Recipe", availableRecipes.get(0).getName());
+        verify(freshMock).getAllRecipes();
+        verify(freshMock).getAllRecipesEntities();
+    }
+
+    @Test
+    void testLoadAvailableRecipes_NullDTOsAndEntitiesException_FallbackToDummyRecipe() {
+        // Arrange
+        RecipeRepository freshMock = mock(RecipeRepository.class);
+        when(freshMock.getAllRecipes()).thenReturn(null); // recipeDTOs will be null
+        when(freshMock.getAllRecipesEntities()).thenThrow(new RuntimeException("DB error on entities"));
+
+        // Act
+        RecipeModel model = new RecipeModel(freshMock);
+        List<Recipe> availableRecipes = model.getAvailableRecipes();
+
+        // Assert
+        assertEquals(1, availableRecipes.size()); // Should create a dummy recipe
+        assertEquals("Dummy Recipe", availableRecipes.get(0).getName());
+        verify(freshMock).getAllRecipes();
+        verify(freshMock).getAllRecipesEntities();
+    }
+
+    @Test
+    void testGetMatchingIngredientsCountWithNullInputs() {
+        // Arrange
+        Recipe recipe = new Recipe();
+        recipe.setRecipeId(1);
+        List<Product> products = new ArrayList<>();
+
+        // Act & Assert
+        assertEquals(0, recipeModel.getMatchingIngredientsCount(null, products));
+        assertEquals(0, recipeModel.getMatchingIngredientsCount(recipe, null));
+    }
+
+    @Test
+    void testCanMakeRecipe_EmptyIngredientBarcodes_UsingProductsFromRecipe() {
+        // Arrange
+        Recipe recipe = new Recipe();
+        recipe.setRecipeId(1);
+
+        Product product1 = new Product("123", "Product 1", "Product 1", "Product 1", "Desc", "Desc", "Desc", false, false, false, false);
+        Product product2 = new Product("456", "Product 2", "Product 2", "Product 2", "Desc", "Desc", "Desc", false, false, false, false);
+
+        // Create RecipeIngredient objects and add them to the recipe
+        RecipeIngredient ingredient1 = new RecipeIngredient();
+        ingredient1.setProduct(product1);
+        ingredient1.setRecipe(recipe);
+
+        RecipeIngredient ingredient2 = new RecipeIngredient();
+        ingredient2.setProduct(product2);
+        ingredient2.setRecipe(recipe);
+
+        List<RecipeIngredient> ingredients = new ArrayList<>();
+        ingredients.add(ingredient1);
+        ingredients.add(ingredient2);
+        recipe.setIngredients(ingredients);
+
+        List<Product> availableProducts = List.of(product1, product2);
+
+        when(recipeRepositoryMock.getRecipeIngredientBarcodes(1)).thenReturn(List.of());
+
+        // Act
+        boolean result = recipeModel.canMakeRecipe(recipe, availableProducts);
+
+        // Assert
+        assertTrue(result);
+    }
+
+    @Test
+    void testCanMakeRecipe_EmptyIngredientBarcodes_NotEnoughProducts() {
+        // Arrange
+        Recipe recipe = new Recipe();
+        recipe.setRecipeId(1);
+
+        Product product1 = new Product("123", "Product 1", "Product 1", "Product 1", "Desc", "Desc", "Desc", false, false, false, false);
+        Product product2 = new Product("456", "Product 2", "Product 2", "Product 2", "Desc", "Desc", "Desc", false, false, false, false);
+        Product product3 = new Product("789", "Product 3", "Product 3", "Product 3", "Desc", "Desc", "Desc", false, false, false, false);
+
+        // Create RecipeIngredient objects and add them to the recipe
+        RecipeIngredient ingredient1 = new RecipeIngredient();
+        ingredient1.setProduct(product1);
+        ingredient1.setRecipe(recipe);
+
+        RecipeIngredient ingredient2 = new RecipeIngredient();
+        ingredient2.setProduct(product2);
+        ingredient2.setRecipe(recipe);
+
+        RecipeIngredient ingredient3 = new RecipeIngredient();
+        ingredient3.setProduct(product3);
+        ingredient3.setRecipe(recipe);
+
+        List<RecipeIngredient> ingredients = new ArrayList<>();
+        ingredients.add(ingredient1);
+        ingredients.add(ingredient2);
+        ingredients.add(ingredient3);
+        recipe.setIngredients(ingredients);
+
+        List<Product> availableProducts = List.of(product1, product2);
+
+        when(recipeRepositoryMock.getRecipeIngredientBarcodes(1)).thenReturn(List.of());
+
+        // Act
+        boolean result = recipeModel.canMakeRecipe(recipe, availableProducts);
+
+        // Assert
+        assertFalse(result);
+    }
+
+    @Test
+    void testCanMakeRecipe_EmptyIngredientBarcodes_MissingProduct() {
+        // Arrange
+        Recipe recipe = new Recipe();
+        recipe.setRecipeId(1);
+
+        Product product1 = new Product("123", "Product 1", "Product 1", "Product 1", "Desc", "Desc", "Desc", false, false, false, false);
+        Product product2 = new Product("456", "Product 2", "Product 2", "Product 2", "Desc", "Desc", "Desc", false, false, false, false);
+        Product product3 = new Product("789", "Product 3", "Product 3", "Product 3", "Desc", "Desc", "Desc", false, false, false, false);
+
+        // Create RecipeIngredient objects and add them to the recipe
+        RecipeIngredient ingredient1 = new RecipeIngredient();
+        ingredient1.setProduct(product1);
+        ingredient1.setRecipe(recipe);
+
+        RecipeIngredient ingredient2 = new RecipeIngredient();
+        ingredient2.setProduct(product2);
+        ingredient2.setRecipe(recipe);
+
+        List<RecipeIngredient> ingredients = new ArrayList<>();
+        ingredients.add(ingredient1);
+        ingredients.add(ingredient2);
+        recipe.setIngredients(ingredients);
+
+        List<Product> availableProducts = List.of(product1, product3);
+
+        when(recipeRepositoryMock.getRecipeIngredientBarcodes(1)).thenReturn(List.of());
+
+        // Act
+        boolean result = recipeModel.canMakeRecipe(recipe, availableProducts);
+
+        // Assert
+        assertFalse(result);
+    }
+
+    @Test
+    void testGetMatchingIngredientsCount_WithMatchingProducts() {
+        // Arrange
+        Recipe recipe = new Recipe();
+        recipe.setRecipeId(1);
+
+        Product product1 = new Product("123", "Product 1", "Product 1", "Product 1", "Desc", "Desc", "Desc", false, false, false, false);
+        Product product2 = new Product("456", "Product 2", "Product 2", "Product 2", "Desc", "Desc", "Desc", false, false, false, false);
+        Product product3 = new Product("789", "Product 3", "Product 3", "Product 3", "Desc", "Desc", "Desc", false, false, false, false);
+
+        List<Product> availableProducts = List.of(product1, product2, product3);
+
+        when(recipeRepositoryMock.getRecipeIngredientBarcodes(1)).thenReturn(List.of("123", "456", "999"));
+
+        // Act
+        int count = recipeModel.getMatchingIngredientsCount(recipe, availableProducts);
+
+        // Assert
+        assertEquals(2, count);
+    }
+
+    @Test
+    void testLoadAvailableRecipes_EmptyRecipesFromRepository_FallbackToEntities() {
+        // Arrange
+        RecipeRepository freshMock = mock(RecipeRepository.class);
+        when(freshMock.getAllRecipes()).thenReturn(List.of());
+
+        Recipe recipe1 = new Recipe();
+        recipe1.setRecipeId(1);
+        recipe1.setName("Recipe 1");
+
+        when(freshMock.getAllRecipesEntities()).thenReturn(List.of(recipe1));
+
+        // Act
+        RecipeModel model = new RecipeModel(freshMock);
+
+        // Assert
+        List<Recipe> availableRecipes = model.getAvailableRecipes();
+        assertEquals(1, availableRecipes.size());
+        assertEquals("Recipe 1", availableRecipes.get(0).getName());
+
+        // Verify that getAllRecipesEntities was called as a fallback
+        verify(freshMock).getAllRecipesEntities();
+    }
+
+    @Test
+    void testLoadAvailableRecipes_WithNonNullButEmptyRecipeDTOs() {
+        // Arrange
+        RecipeRepository freshMock = mock(RecipeRepository.class);
+
+        // Return empty list (not null, but empty)
+        when(freshMock.getAllRecipes()).thenReturn(new ArrayList<>());
+
+        Recipe recipe1 = new Recipe();
+        recipe1.setRecipeId(1);
+        recipe1.setName("Recipe 1");
+
+        when(freshMock.getAllRecipesEntities()).thenReturn(List.of(recipe1));
+
+        // Act
+        RecipeModel model = new RecipeModel(freshMock);
+
+        // Assert
+        List<Recipe> availableRecipes = model.getAvailableRecipes();
+        assertEquals(1, availableRecipes.size());
+        assertEquals("Recipe 1", availableRecipes.get(0).getName());
+
+        // Verify that getAllRecipesEntities was called as a fallback
+        verify(freshMock).getAllRecipesEntities();
+    }
+
+    @Test
+    void testLoadAvailableRecipes_WithValidRecipeDTOs() {
+        // Arrange
+        RecipeRepository freshMock = mock(RecipeRepository.class);
+
+        // Create DTOs
+        RecipeRepository.RecipeDTO dto1 = new RecipeRepository.RecipeDTO(1, "Recipe 1", "Description 1", 3, 5);
+        RecipeRepository.RecipeDTO dto2 = new RecipeRepository.RecipeDTO(2, "Recipe 2", "Description 2", 4, 6);
+        List<RecipeRepository.RecipeDTO> dtos = List.of(dto1, dto2);
+
+        // Create corresponding Recipe entities
+        Recipe recipe1 = new Recipe();
+        recipe1.setRecipeId(1);
+        recipe1.setName("Recipe 1");
+
+        Recipe recipe2 = new Recipe();
+        recipe2.setRecipeId(2);
+        recipe2.setName("Recipe 2");
+
+        // Setup mock behavior
+        when(freshMock.getAllRecipes()).thenReturn(dtos);
+        when(freshMock.findById(1)).thenReturn(Optional.of(recipe1));
+        when(freshMock.findById(2)).thenReturn(Optional.of(recipe2));
+
+        // Act
+        RecipeModel model = new RecipeModel(freshMock);
+
+        // Assert
+        List<Recipe> availableRecipes = model.getAvailableRecipes();
+        assertEquals(2, availableRecipes.size());
+        assertTrue(availableRecipes.contains(recipe1));
+        assertTrue(availableRecipes.contains(recipe2));
+
+        // Verify that getAllRecipesEntities was not called
+        verify(freshMock, never()).getAllRecipesEntities();
+    }
+
+    @Test
+    void testLoadAvailableRecipes_WithExceptionInFindById() {
+        // Arrange
+        RecipeRepository freshMock = mock(RecipeRepository.class);
+
+        // Create DTOs
+        RecipeRepository.RecipeDTO dto1 = new RecipeRepository.RecipeDTO(1, "Recipe 1", "Description 1", 3, 5);
+        RecipeRepository.RecipeDTO dto2 = new RecipeRepository.RecipeDTO(2, "Recipe 2", "Description 2", 4, 6);
+        List<RecipeRepository.RecipeDTO> dtos = List.of(dto1, dto2);
+
+        // Create corresponding Recipe entity for the second DTO only
+        Recipe recipe2 = new Recipe();
+        recipe2.setRecipeId(2);
+        recipe2.setName("Recipe 2");
+
+        // Setup mock behavior - first findById throws exception, second succeeds
+        when(freshMock.getAllRecipes()).thenReturn(dtos);
+        when(freshMock.findById(1)).thenThrow(new RuntimeException("Test exception"));
+        when(freshMock.findById(2)).thenReturn(Optional.of(recipe2));
+
+        // Act
+        RecipeModel model = new RecipeModel(freshMock);
+
+        // Assert
+        List<Recipe> availableRecipes = model.getAvailableRecipes();
+        assertEquals(1, availableRecipes.size());
+        assertTrue(availableRecipes.contains(recipe2));
+
+        // Verify that getAllRecipesEntities was not called
+        verify(freshMock, never()).getAllRecipesEntities();
+    }
+
+    @Test
+    void testGetPossibleRecipes_FilteringLogic() {
+        // Arrange
+        Recipe recipe1 = new Recipe();
+        recipe1.setRecipeId(1);
+        recipe1.setName("Recipe 1");
+
+        Recipe recipe2 = new Recipe();
+        recipe2.setRecipeId(2);
+        recipe2.setName("Recipe 2");
+
+        Recipe recipe3 = new Recipe();
+        recipe3.setRecipeId(3);
+        recipe3.setName("Recipe 3");
+
+        // Setup mock for getAllRecipes to return DTOs
+        RecipeRepository.RecipeDTO dto1 = new RecipeRepository.RecipeDTO(1, "Recipe 1", "Description 1", 3, 5);
+        RecipeRepository.RecipeDTO dto2 = new RecipeRepository.RecipeDTO(2, "Recipe 2", "Description 2", 4, 6);
+        RecipeRepository.RecipeDTO dto3 = new RecipeRepository.RecipeDTO(3, "Recipe 3", "Description 3", 2, 4);
+        when(recipeRepositoryMock.getAllRecipes()).thenReturn(List.of(dto1, dto2, dto3));
+
+        // Setup mock for findById to return Recipe entities
+        when(recipeRepositoryMock.findById(1)).thenReturn(Optional.of(recipe1));
+        when(recipeRepositoryMock.findById(2)).thenReturn(Optional.of(recipe2));
+        when(recipeRepositoryMock.findById(3)).thenReturn(Optional.of(recipe3));
+
+        // Create a new RecipeModel to load the recipes
+        RecipeModel model = new RecipeModel(recipeRepositoryMock);
+
+        // Create test products
+        Product product1 = new Product("123", "Product 1", "Product 1", "Product 1", "Desc", "Desc", "Desc", false, false, false, false);
+        Product product2 = new Product("456", "Product 2", "Product 2", "Product 2", "Desc", "Desc", "Desc", false, false, false, false);
+        List<Product> products = List.of(product1, product2);
+
+        // Setup mock for canMakeRecipe to return true for recipes 1 and 3, false for recipe 2
+        RecipeModel spyModel = Mockito.spy(model);
+        doReturn(true).when(spyModel).canMakeRecipe(eq(recipe1), eq(products));
+        doReturn(false).when(spyModel).canMakeRecipe(eq(recipe2), eq(products));
+        doReturn(true).when(spyModel).canMakeRecipe(eq(recipe3), eq(products));
+
+        // Act
+        List<Recipe> possibleRecipes = spyModel.getPossibleRecipes(products);
+
+        // Assert
+        assertEquals(2, possibleRecipes.size());
+        assertTrue(possibleRecipes.contains(recipe1));
+        assertFalse(possibleRecipes.contains(recipe2));
+        assertTrue(possibleRecipes.contains(recipe3));
     }
 }

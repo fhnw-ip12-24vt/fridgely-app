@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -98,6 +99,128 @@ class FridgeStockModelTest {
 
         // Assert
         assertEquals(1, productCount);
+    }
+
+    @Test
+    void testRemoveProduct_ExistingProduct() {
+        // Arrange
+        fridgeStockModel.addProduct(product1);
+        fridgeStockModel.addProduct(product2);
+        assertEquals(2, fridgeStockModel.getFridgeProducts().size());
+
+        // Act
+        fridgeStockModel.removeProduct(product1);
+
+        // Assert
+        assertEquals(1, fridgeStockModel.getFridgeProducts().size());
+        assertFalse(fridgeStockModel.getFridgeProducts().contains(product1));
+        assertTrue(fridgeStockModel.getFridgeProducts().contains(product2));
+    }
+
+    @Test
+    void testRemoveProduct_NonExistingProduct() {
+        // Arrange
+        fridgeStockModel.addProduct(product1);
+        assertEquals(1, fridgeStockModel.getFridgeProducts().size());
+
+        Product nonExistingProduct = new Product("999", "Non-existing", "Non-existing", "Non-existing",
+                "Desc", "Desc", "Desc", false, false, false, false);
+
+        // Act
+        fridgeStockModel.removeProduct(nonExistingProduct);
+
+        // Assert
+        assertEquals(1, fridgeStockModel.getFridgeProducts().size());
+        assertTrue(fridgeStockModel.getFridgeProducts().contains(product1));
+    }
+
+    @Test
+    void testRemoveProduct_NullProduct() {
+        // Arrange
+        fridgeStockModel.addProduct(product1);
+        assertEquals(1, fridgeStockModel.getFridgeProducts().size());
+
+        // Act
+        fridgeStockModel.removeProduct(null);
+
+        // Assert
+        assertEquals(1, fridgeStockModel.getFridgeProducts().size());
+        assertTrue(fridgeStockModel.getFridgeProducts().contains(product1));
+    }
+
+    @Test
+    void testGetProducts_WithDefaultProducts() {
+        // Arrange
+        Product defaultProduct1 = new Product("def1", "Default 1", "Default 1", "Default 1",
+                "Desc", "Desc", "Desc", true, false, false, false);
+        Product defaultProduct2 = new Product("def2", "Default 2", "Default 2", "Default 2",
+                "Desc", "Desc", "Desc", true, false, false, false);
+
+        List<Product> defaultProducts = List.of(defaultProduct1, defaultProduct2);
+        FridgeStockModel modelWithDefaults = new FridgeStockModel(defaultProducts);
+
+        modelWithDefaults.addProduct(product1);
+
+        // Act
+        List<Product> allProducts = modelWithDefaults.getProducts();
+
+        // Assert
+        assertEquals(3, allProducts.size());
+        assertTrue(allProducts.contains(product1));
+        assertTrue(allProducts.contains(defaultProduct1));
+        assertTrue(allProducts.contains(defaultProduct2));
+    }
+
+    @Test
+    void testGetProducts_NoDefaultProducts() {
+        // Arrange - create a model with empty default products list
+        FridgeStockModel model = new FridgeStockModel(new ArrayList<>());
+        model.addProduct(product1);
+        model.addProduct(product2);
+
+        // Act
+        List<Product> allProducts = model.getProducts();
+
+        // Assert
+        assertEquals(2, allProducts.size());
+        assertTrue(allProducts.contains(product1));
+        assertTrue(allProducts.contains(product2));
+    }
+
+    @Test
+    void testGetDefaultProducts() {
+        // Arrange
+        Product defaultProduct1 = new Product("def1", "Default 1", "Default 1", "Default 1",
+                "Desc", "Desc", "Desc", true, false, false, false);
+        Product defaultProduct2 = new Product("def2", "Default 2", "Default 2", "Default 2",
+                "Desc", "Desc", "Desc", true, false, false, false);
+
+        List<Product> defaultProducts = List.of(defaultProduct1, defaultProduct2);
+        FridgeStockModel modelWithDefaults = new FridgeStockModel(defaultProducts);
+
+        // Add a non-default product
+        modelWithDefaults.addProduct(product1);
+
+        // Act
+        List<Product> retrievedDefaultProducts = modelWithDefaults.getDefaultProducts();
+
+        // Assert
+        assertEquals(2, retrievedDefaultProducts.size());
+        assertTrue(retrievedDefaultProducts.contains(defaultProduct1));
+        assertTrue(retrievedDefaultProducts.contains(defaultProduct2));
+        assertFalse(retrievedDefaultProducts.contains(product1));
+    }
+
+    @Test
+    void testGetDefaultProducts_EmptyDefaults() {
+        // Arrange - create a model with empty default products list
+        FridgeStockModel model = new FridgeStockModel(new ArrayList<>());
+
+        // Act
+        List<Product> retrievedDefaultProducts = model.getDefaultProducts();
+
+        // Assert
+        assertTrue(retrievedDefaultProducts.isEmpty());
     }
 
     @Test

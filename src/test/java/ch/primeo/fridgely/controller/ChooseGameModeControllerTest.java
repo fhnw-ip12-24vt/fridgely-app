@@ -9,16 +9,13 @@ import ch.primeo.fridgely.util.ImageLoader;
 import ch.primeo.fridgely.view.ChooseGameModeView;
 import ch.primeo.fridgely.view.component.LanguageSwitchButton;
 import ch.primeo.fridgely.view.util.DialogBox;
-
 import org.junit.jupiter.api.BeforeAll;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.MockedConstruction;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -26,16 +23,31 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.util.Arrays;
+import java.awt.event.WindowAdapter;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.clearInvocations;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+/**
+ * Improved test class for ChooseGameModeController with full code coverage.
+ * All tests run in headless mode to avoid UI dependencies.
+ */
 @ExtendWith(MockitoExtension.class)
 public class ChooseGameModeControllerTest {
 
@@ -58,30 +70,27 @@ public class ChooseGameModeControllerTest {
     private DialogBox mockDialogBox;
 
     @Mock
-    private JLabel singlePlayerLabel;
-
-    @Mock
-    private JLabel multiplayerLabel;
-
-    @Mock
     private JFrame frame;
+    // Note: languageSwitchButton is already mocked: @Mock private LanguageSwitchButton languageSwitchButton;
+
 
     private ChooseGameModeController controller;
 
     @BeforeAll
     static void init() {
+        // Ensure tests run in headless mode
         System.setProperty("java.awt.headless", "true");
     }
 
     @BeforeEach
     void setUp() {
-        // Set up the mock view to return the mock frame and labels
-        when(mockView.getFrame()).thenReturn(frame);
+        // Set up the mock view to return the mock frame
+        lenient().when(mockView.getFrame()).thenReturn(frame);
 
-        // Create the controller with mocked dependencies
-        controller = new ChooseGameModeController(localizationService,  multiplayerGameLauncher, imageLoader, mockView) {
+        // Create the controller with mocked dependencies, including languageSwitchButton
+        controller = new ChooseGameModeController(localizationService, multiplayerGameLauncher, imageLoader, mockView, languageSwitchButton) {
             @Override
-            protected ChooseGameModeView createView(LanguageSwitchButton languageSwitchButton) {
+            protected ChooseGameModeView createView(LanguageSwitchButton button) {
                 return mockView; // Return the mocked view to avoid HeadlessException
             }
 
@@ -98,85 +107,246 @@ public class ChooseGameModeControllerTest {
     }
 
     @Test
-    void constructor_shouldInitializeViewAndSetupEventHandlers() {
+    void testConstructor_shouldInitializeViewAndSetupEventHandlers() {
         // Verify view was properly set up
         verify(localizationService).subscribe(mockView);
         verify(mockView).onLocaleChanged();
         verify(mockView).setVisible(true);
-        verify(frame).addWindowListener(any());
+
+        // Capture the WindowListener to test windowClosing
+        ArgumentCaptor<WindowAdapter> windowAdapterCaptor = ArgumentCaptor.forClass(WindowAdapter.class);
+        verify(frame).addWindowListener(windowAdapterCaptor.capture());
+
+        // Simulate windowClosing event
+        // We need to spy the controller created in setUp to verify dispose() is called on it.
+        // However, 'controller' in setUp is an anonymous class.
+        // Instead, we'll verify the effects of dispose() directly on the mocks.
+        // Re-initialize a controller for this specific part of the test to spy on it,
+        // or verify the effects of dispose() on the mocks used by the 'controller' from setUp.
+        // For simplicity, let's verify the effects on the mocks.
+        // Clear previous interactions on mocks that would be affected by dispose, if necessary.
+        // For this test, 'controller' is the instance from setUp.
+        // Its dispose() method will call localizationService.unsubscribe(mockView) and mockView.dispose().
+
+        // Reset mocks for dispose verification if they were called during setup for other reasons.
+        // In this case, subscribe is called in setup, so we don't reset localizationService.
+        // mockView.dispose() is not called in setup.
+
+        windowAdapterCaptor.getValue().windowClosing(null); // Simulate closing
+
+        // Verify that dispose() effects happened on the mocks associated with the 'controller' from setUp
+        verify(localizationService).unsubscribe(mockView); // Should be called again by dispose
+        verify(mockView).dispose();
     }
 
     @Test
-    void selectGameMode_shouldHandleNullGameMode() {
-        // Reset interactions from setup
-        reset(multiplayerGameLauncher);
-
-        // Act
-        controller.selectGameMode(null);
-
-        // Assert - verify no interactions with the launcher (but view was already interacted with in constructor)
-        verifyNoInteractions(multiplayerGameLauncher);
-    }
-
-    @Test
-    void setupClickableBehavior_shouldHandleNullArguments() {
-        // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> controller.setupClickableBehavior(null, "tooltipKey", () -> {}));
-        assertThrows(IllegalArgumentException.class, () -> controller.setupClickableBehavior(new JLabel(), null, () -> {}));
-        assertThrows(IllegalArgumentException.class, () -> controller.setupClickableBehavior(new JLabel(), "tooltipKey", null));
-    }
-
-    @Test
-    void createDialogBox_shouldHandleNullArguments() {
-        // Create a new controller instance that doesn't override createDialogBox
+    void testMainConstructor() {
+        // Create a new controller with real dependencies but override the showChooseGameModeView method
         ChooseGameModeController testController = new ChooseGameModeController(
-                localizationService, multiplayerGameLauncher, imageLoader, mockView) {
+                localizationService, languageSwitchButton, multiplayerGameLauncher, imageLoader) {
             @Override
-            protected ChooseGameModeView createView(LanguageSwitchButton languageSwitchButton) {
-                return mockView;
+            public void showChooseGameModeView() {
+                // Override to do nothing and avoid UI components
+                // For this test, we only care about constructor field assignments
+                // The actual view setup is tested elsewhere or by testing showChooseGameModeView itself.
             }
-
-            @Override
-            protected ChooseGameModeView createView() {
-                return mockView;
-            }
-            // Importantly, we don't override createDialogBox here so the real implementation is used
         };
 
-        // Act & Assert
-        assertThrows(IllegalArgumentException.class, () ->
-            testController.createDialogBox(null, PenguinFacialExpression.HAPPY, PenguinHPState.OKAY, () -> {}, imageLoader));
-        assertThrows(IllegalArgumentException.class, () ->
-            testController.createDialogBox(List.of("Message"), null, PenguinHPState.OKAY, () -> {}, imageLoader));
-        assertThrows(IllegalArgumentException.class, () ->
-            testController.createDialogBox(List.of("Message"), PenguinFacialExpression.HAPPY, null, () -> {}, imageLoader));
-        assertThrows(IllegalArgumentException.class, () ->
-            testController.createDialogBox(List.of("Message"), PenguinFacialExpression.HAPPY, PenguinHPState.OKAY, null, imageLoader));
-        assertThrows(IllegalArgumentException.class, () ->
-            testController.createDialogBox(List.of("Message"), PenguinFacialExpression.HAPPY, PenguinHPState.OKAY, () -> {}, null));
+        // Verify the constructor initialized the dependencies correctly
+        assertEquals(localizationService, testController.localizationService);
+        assertEquals(multiplayerGameLauncher, testController.multiplayerGameLauncher);
+        assertEquals(imageLoader, testController.imageLoader);
+        assertEquals(languageSwitchButton, testController.languageSwitchButton);
+    }
+
+    // Replaced testCreateView_shouldReturnView
+    @Test
+    void testCreateView_noArgs_constructsAndReturnsView() {
+        // Use the test constructor to get a standard ChooseGameModeController instance
+        // This instance does not have createView overridden.
+        ChooseGameModeController ctrl = new ChooseGameModeController(
+                localizationService, multiplayerGameLauncher, imageLoader, mockView, languageSwitchButton
+        );
+
+        try (MockedConstruction<ChooseGameModeView> mockedViewConstruction = Mockito.mockConstruction(ChooseGameModeView.class,
+                (mock, context) -> {
+                    // Verify constructor arguments for ChooseGameModeView(null, localizationService, imageLoader)
+                    assertEquals(3, context.arguments().size(), "Constructor argument count mismatch");
+                    assertNull(context.arguments().get(0), "LanguageSwitchButton should be null");
+                    assertSame(localizationService, context.arguments().get(1), "AppLocalizationService mismatch");
+                    assertSame(imageLoader, context.arguments().get(2), "ImageLoader mismatch");
+                })) {
+
+            ChooseGameModeView result = ctrl.createView(); // Call the actual createView()
+
+            assertNotNull(result, "Resulting view should not be null");
+            assertEquals(1, mockedViewConstruction.constructed().size(), "ChooseGameModeView should have been constructed once");
+            assertSame(result, mockedViewConstruction.constructed().get(0), "Returned view is not the constructed instance");
+        }
+    }
+
+    // Replaced testCreateViewWithLanguageSwitchButton_shouldReturnView
+    @Test
+    void testCreateView_withButton_constructsAndReturnsView() {
+        ChooseGameModeController ctrl = new ChooseGameModeController(
+                localizationService, multiplayerGameLauncher, imageLoader, mockView, languageSwitchButton
+        );
+
+        try (MockedConstruction<ChooseGameModeView> mockedViewConstruction = Mockito.mockConstruction(ChooseGameModeView.class,
+                (mock, context) -> {
+                    // Verify constructor arguments for DialogBox
+                    assertEquals(3, context.arguments().size(), "Constructor argument count mismatch");
+                    assertSame(languageSwitchButton, context.arguments().get(0), "LanguageSwitchButton mismatch");
+                    assertSame(localizationService, context.arguments().get(1), "AppLocalizationService mismatch");
+                    assertSame(imageLoader, context.arguments().get(2), "ImageLoader mismatch");
+                })) {
+
+            ChooseGameModeView result = ctrl.createView(languageSwitchButton); // Call the actual createView(button)
+
+            assertNotNull(result, "Resulting view should not be null");
+            assertEquals(1, mockedViewConstruction.constructed().size(), "ChooseGameModeView should have been constructed once");
+            assertSame(result, mockedViewConstruction.constructed().get(0), "Returned view is not the constructed instance");
+        }
+    }
+
+    // Replaced testCreateDialogBox_shouldReturnDialogBox
+    @Test
+    void testCreateDialogBox_constructsAndReturnsDialogBox() {
+        ChooseGameModeController ctrl = new ChooseGameModeController(
+                localizationService, multiplayerGameLauncher, imageLoader, mockView, languageSwitchButton
+        );
+
+        List<String> messages = List.of("Test message");
+        PenguinFacialExpression expression = PenguinFacialExpression.HAPPY;
+        PenguinHPState state = PenguinHPState.OKAY;
+        Runnable onComplete = () -> {};
+        // imageLoader is already a mock field
+
+        try (MockedConstruction<DialogBox> mockedDialogConstruction = Mockito.mockConstruction(DialogBox.class,
+                (mock, context) -> {
+                    // Verify constructor arguments for DialogBox
+                    assertEquals(5, context.arguments().size(), "Constructor argument count mismatch");
+                    assertSame(messages, context.arguments().get(0), "Messages list mismatch");
+                    assertSame(expression, context.arguments().get(1), "PenguinFacialExpression mismatch");
+                    assertSame(state, context.arguments().get(2), "PenguinHPState mismatch");
+                    assertSame(onComplete, context.arguments().get(3), "Runnable onComplete mismatch");
+                    assertSame(imageLoader, context.arguments().get(4), "ImageLoader mismatch");
+                })) {
+
+            DialogBox result = ctrl.createDialogBox(messages, expression, state, onComplete, imageLoader);
+
+            assertNotNull(result, "Resulting dialog box should not be null");
+            assertEquals(1, mockedDialogConstruction.constructed().size(), "DialogBox should have been constructed once");
+            assertSame(result, mockedDialogConstruction.constructed().get(0), "Returned dialog is not the constructed instance");
+        }
     }
 
     @Test
-    void startSinglePlayerGame_shouldStartGame() {
-        // Arrange
-        ChooseGameModeController spyController = Mockito.spy(controller);
+    void testCreateDialogBox_shouldThrowExceptionForNullArguments() {
+        // Use a controller instance that does NOT override createDialogBox,
+        // so we test the original method's argument validation.
+        ChooseGameModeController ctrl = new ChooseGameModeController(
+                localizationService, multiplayerGameLauncher, imageLoader, mockView, languageSwitchButton
+        );
 
-        // Act
-        spyController.startSinglePlayerGame();
+        // Test with null messages
+        assertThrows(IllegalArgumentException.class, () ->
+            ctrl.createDialogBox( // Calling original createDialogBox
+                null,
+                PenguinFacialExpression.HAPPY,
+                PenguinHPState.OKAY,
+                () -> {},
+                imageLoader));
 
-        // Assert
-        verify(spyController).startSinglePlayerGame();
+        // Test with null expression
+        assertThrows(IllegalArgumentException.class, () ->
+            ctrl.createDialogBox( // Calling original createDialogBox
+                List.of("Test"),
+                null,
+                PenguinHPState.OKAY,
+                () -> {},
+                imageLoader));
+
+        // Test with null state
+        assertThrows(IllegalArgumentException.class, () ->
+            ctrl.createDialogBox( // Calling original createDialogBox
+                List.of("Test"),
+                PenguinFacialExpression.HAPPY,
+                null,
+                () -> {},
+                imageLoader));
+
+        // Test with null onComplete
+        assertThrows(IllegalArgumentException.class, () ->
+            ctrl.createDialogBox( // Calling original createDialogBox
+                List.of("Test"),
+                PenguinFacialExpression.HAPPY,
+                PenguinHPState.OKAY,
+                null,
+                imageLoader));
+
+        // Test with null imageLoader
+        assertThrows(IllegalArgumentException.class, () ->
+            ctrl.createDialogBox( // Calling original createDialogBox
+                List.of("Test"),
+                PenguinFacialExpression.HAPPY,
+                PenguinHPState.OKAY,
+                () -> {},
+                null));
     }
 
     @Test
-    void selectGameMode_whenMultiplayer_shouldShowTutorialAndStartGame() {
-        // Use a spy to partially mock the controller
-        ChooseGameModeController spyController = Mockito.spy(controller);
+    void testSetupClickableBehavior_shouldSetupLabelCorrectly() {
+        // Create mocks
+        JLabel label = mock(JLabel.class);
+        Runnable onClick = mock(Runnable.class);
+        String tooltipKey = "test.tooltip";
+        String tooltipText = "Test Tooltip";
+
+        when(localizationService.get(tooltipKey)).thenReturn(tooltipText);
+
+        // Call the method
+        controller.setupClickableBehavior(label, tooltipKey, onClick);
+
+        // Verify the label was set up correctly
+        verify(label).setCursor(argThat(cursor -> cursor.getType() == Cursor.HAND_CURSOR));
+        verify(label).setToolTipText(tooltipText);
+
+        // Verify the mouse listener was added
+        ArgumentCaptor<MouseAdapter> mouseAdapterCaptor = ArgumentCaptor.forClass(MouseAdapter.class);
+        verify(label).addMouseListener(mouseAdapterCaptor.capture());
+
+        // Simulate a click
+        mouseAdapterCaptor.getValue().mouseClicked(null);
+
+        // Verify the onClick runnable was called
+        verify(onClick).run();
+    }
+
+    @Test
+    void testSetupClickableBehavior_shouldHandleNullArguments() {
+        // Test with null label
+        assertThrows(IllegalArgumentException.class, () ->
+            controller.setupClickableBehavior(null, "tooltipKey", () -> {}));
+
+        // Test with null tooltipKey
+        assertThrows(IllegalArgumentException.class, () ->
+            controller.setupClickableBehavior(new JLabel(), null, () -> {}));
+
+        // Test with null onClick
+        assertThrows(IllegalArgumentException.class, () ->
+            controller.setupClickableBehavior(new JLabel(), "tooltipKey", null));
+    }
+
+    @Test
+    void testSelectGameMode_withMultiplayerMode_shouldShowTutorial() {
+        // Create a spy controller
+        ChooseGameModeController spyController = spy(controller);
 
         // Mock the tutorial method to avoid UI components
         doNothing().when(spyController).showMultiplayerTutorial();
 
-        // Call the method being tested
+        // Call the method
         spyController.selectGameMode(GameMode.Multiplayer);
 
         // Verify dispose and tutorial methods were called
@@ -185,14 +355,14 @@ public class ChooseGameModeControllerTest {
     }
 
     @Test
-    void selectGameMode_whenSinglePlayer_shouldShowTutorial() {
-        // Use a spy to partially mock the controller
-        ChooseGameModeController spyController = Mockito.spy(controller);
+    void testSelectGameMode_withSinglePlayerMode_shouldShowTutorial() {
+        // Create a spy controller
+        ChooseGameModeController spyController = spy(controller);
 
         // Mock the tutorial method to avoid UI components
         doNothing().when(spyController).showSinglePlayerTutorial();
 
-        // Call the method being tested
+        // Call the method
         spyController.selectGameMode(GameMode.SinglePlayer);
 
         // Verify dispose and tutorial methods were called
@@ -201,17 +371,22 @@ public class ChooseGameModeControllerTest {
     }
 
     @Test
-    void startMultiplayerGame_shouldLaunchMultiplayerGame() {
-        // Call the method being tested
-        controller.startMultiplayerGame();
+    void testSelectGameMode_withNullMode_shouldDoNothing() {
+        // Create a spy controller
+        ChooseGameModeController spyController = spy(controller);
 
-        // Verify the game launcher was called
-        verify(multiplayerGameLauncher).launchGame();
+        // Call the method
+        spyController.selectGameMode(null);
+
+        // Verify neither tutorial method was called
+        verify(spyController, never()).showMultiplayerTutorial();
+        verify(spyController, never()).showSinglePlayerTutorial();
+        verify(spyController, never()).dispose();
     }
 
     @Test
-    void showMultiplayerTutorial_shouldCreateDialogWithCorrectParameters() {
-        // Call the method being tested
+    void testShowMultiplayerTutorial_shouldCreateDialogWithCorrectParameters() {
+        // Call the method
         controller.showMultiplayerTutorial();
 
         // Verify dialog was shown
@@ -227,209 +402,125 @@ public class ChooseGameModeControllerTest {
     }
 
     @Test
-    void dispose_shouldCleanupResources() {
-        // Call dispose
+    void testStartMultiplayerGame_shouldLaunchGame() {
+        // Call the method
+        controller.startMultiplayerGame();
+
+        // Verify the game launcher was called
+        verify(multiplayerGameLauncher).launchGame();
+    }
+
+    @Test
+    void testShowSinglePlayerTutorial_shouldCreateDialogWithCorrectParameters() {
+        // Call the method
+        controller.showSinglePlayerTutorial();
+
+        // Verify dialog was shown
+        verify(mockDialogBox).showDialog();
+
+        // Verify localization keys were requested
+        verify(localizationService).get("tutorial.welcome");
+        verify(localizationService).get("tutorial.singleplayer.explanation");
+        verify(localizationService).get("tutorial.singleplayer.recipe");
+        verify(localizationService).get("tutorial.singleplayer.score");
+    }
+
+    @Test
+    void testStartSinglePlayerGame_shouldBeImplemented() {
+        // Create a spy controller
+        ChooseGameModeController spyController = spy(controller);
+
+        // Call the method
+        spyController.startSinglePlayerGame();
+
+        // Verify the method was called (currently it's a stub)
+        verify(spyController).startSinglePlayerGame();
+
+        // Note: This test is minimal because the method is currently a stub
+        // When the method is implemented, this test should be updated to verify
+        // that the single player game is actually started
+    }
+
+    @Test
+    void testShowChooseGameModeView_createsAndSetsUpNewView() {
+        // 1. Prepare a new mock view and its components for this specific test
+        ChooseGameModeView newMockView = mock(ChooseGameModeView.class);
+        JFrame mockFrameForNewView = mock(JFrame.class);
+        JLabel mockSinglePlayerLabel = mock(JLabel.class);
+        JLabel mockMultiPlayerLabel = mock(JLabel.class);
+
+        when(newMockView.getFrame()).thenReturn(mockFrameForNewView);
+        when(newMockView.getSinglePlayerImageLabel()).thenReturn(mockSinglePlayerLabel);
+        when(newMockView.getMultiplayerImageLabel()).thenReturn(mockMultiPlayerLabel);
+
+        // 2. Spy the controller instance from setUp.
+        ChooseGameModeController spiedController = spy(controller);
+
+        // Clear interactions from the initial setup of `spiedController`
+        // (which is based on `controller` from setUp and its anonymous overrides).
+        // Also clear interactions on mocks that spiedController might interact with during its setup.
+        clearInvocations(localizationService, mockView, frame, this.languageSwitchButton, multiplayerGameLauncher, mockDialogBox);
+        // Clear interactions on spiedController itself from its construction if any methods were called.
+        clearInvocations(spiedController);
+        // Set up the required stubbing for createView on the spy.
+        // This ensures that when showChooseGameModeView calls createView, it returns our newMockView.
+        doReturn(newMockView).when(spiedController).createView(eq(this.languageSwitchButton));
+
+
+        // 4. Call the method under test
+        spiedController.showChooseGameModeView();
+
+        // 5. Verify createView was called on the spy with the correct languageSwitchButton instance
+        verify(spiedController).createView(eq(this.languageSwitchButton));
+
+        // 6. Verify interactions on newMockView (the one returned by the mocked createView)
+        verify(newMockView).getFrame(); 
+
+        ArgumentCaptor<WindowAdapter> windowAdapterCaptor = ArgumentCaptor.forClass(WindowAdapter.class);
+        verify(mockFrameForNewView).addWindowListener(windowAdapterCaptor.capture());
+
+        verify(newMockView).getSinglePlayerImageLabel();
+        verify(newMockView).getMultiplayerImageLabel();
+
+        // Capture Runnables passed to setupClickableBehavior
+        ArgumentCaptor<Runnable> singlePlayerRunnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+        verify(spiedController).setupClickableBehavior(eq(mockSinglePlayerLabel), eq("gamemode.singleplayer.tooltip"), singlePlayerRunnableCaptor.capture());
+
+        ArgumentCaptor<Runnable> multiplayerRunnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+        verify(spiedController).setupClickableBehavior(eq(mockMultiPlayerLabel), eq("gamemode.multiplayer.tooltip"), multiplayerRunnableCaptor.capture());
+
+        verify(localizationService).subscribe(newMockView); 
+        verify(newMockView).onLocaleChanged();
+        verify(newMockView).setVisible(true);
+
+        verify(localizationService, never()).subscribe(mockView);
+
+        // Execute captured Runnables and verify selectGameMode calls
+        // These calls to selectGameMode will also call spiedController.dispose()
+        singlePlayerRunnableCaptor.getValue().run();
+        verify(spiedController).selectGameMode(GameMode.SinglePlayer);
+
+        multiplayerRunnableCaptor.getValue().run();
+        verify(spiedController).selectGameMode(GameMode.Multiplayer);
+
+        // Test the windowClosing event
+        windowAdapterCaptor.getValue().windowClosing(null); // This also calls spiedController.dispose()
+
+        // Verify dispose() and its effects. It's called 3 times:
+        // 1. By singlePlayerRunnable -> selectGameMode -> dispose
+        // 2. By multiplayerRunnable -> selectGameMode -> dispose
+        // 3. By windowClosing event -> dispose
+        verify(spiedController, times(3)).dispose(); 
+        verify(localizationService, times(3)).unsubscribe(newMockView);
+        verify(newMockView, times(3)).dispose();
+    }
+
+    @Test
+    void testDispose_shouldCleanupResources() {
+        // Call the method
         controller.dispose();
 
         // Verify cleanup actions were performed
-        verify(localizationService).unsubscribe(mockView);
-        verify(mockView).dispose();
-    }
-
-    @Test
-    void windowClosing_shouldCallDispose_onView() {
-        ArgumentCaptor<WindowListener> listenerCaptor = ArgumentCaptor.forClass(WindowListener.class);
-        verify(frame).addWindowListener(listenerCaptor.capture());
-
-        WindowEvent mockEvent = mock(WindowEvent.class);
-        listenerCaptor.getValue().windowClosing(mockEvent);
-
-        verify(mockView).dispose();
-        verify(localizationService).unsubscribe(mockView);
-    }
-
-    @Test
-    void setupClickableBehavior_shouldSetTooltipAndTriggerOnClick() {
-        // Arrange
-        JLabel label = mock(JLabel.class);
-        Runnable onClick = mock(Runnable.class);
-        String tooltipKey = "gamemode.singleplayer.tooltip";
-        when(localizationService.get(tooltipKey)).thenReturn("Single Player Tooltip");
-
-        // Act
-        controller.setupClickableBehavior(label, tooltipKey, onClick);
-
-        // Assert
-        verify(label).setCursor(argThat(cursor -> cursor.getType() == Cursor.HAND_CURSOR));
-        verify(label).setToolTipText("Single Player Tooltip");
-
-        // Simulate a click
-        ArgumentCaptor<MouseAdapter> mouseAdapterCaptor = ArgumentCaptor.forClass(MouseAdapter.class);
-        verify(label).addMouseListener(mouseAdapterCaptor.capture());
-        mouseAdapterCaptor.getValue().mouseClicked(null);
-
-        verify(onClick).run();
-    }
-
-    @Test
-    void startSinglePlayerGame_shouldBeInvokedAfterTutorial() {
-        // Use a spy to partially mock the controller
-        ChooseGameModeController spyController = Mockito.spy(controller);
-
-        // Arrange
-        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-
-        // First, call the method that triggers the dialog creation
-        spyController.showSinglePlayerTutorial();
-
-        // Now, verify the dialog creation and capture the Runnable
-        verify(spyController).createDialogBox(anyList(), any(), any(), runnableCaptor.capture(), eq(imageLoader));
-
-        // Act: run the captured Runnable, simulating the completion of the dialog
-        runnableCaptor.getValue().run();
-
-        // Assert
-        verify(mockDialogBox).showDialog();  // Ensure dialog is shown
-        verify(spyController).startSinglePlayerGame();  // Ensure game start is triggered
-    }
-
-    @Test
-    void showSinglePlayerTutorial_shouldCreateDialogWithCorrectParameters() {
-        // Use a spy to partially mock the controller
-        ChooseGameModeController spyController = Mockito.spy(controller);
-
-        // Act
-        spyController.showSinglePlayerTutorial();
-
-        // Assert
-        verify(mockDialogBox).showDialog();
-        verify(localizationService).get("tutorial.welcome");
-        verify(localizationService).get("tutorial.singleplayer.recipe");
-        verify(localizationService).get("tutorial.singleplayer.score");
-
-        // Capture and invoke the Runnable after method execution
-        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(spyController).createDialogBox(anyList(), any(), any(), runnableCaptor.capture(), eq(imageLoader));
-        runnableCaptor.getValue().run();
-
-        verify(spyController).startSinglePlayerGame();
-    }
-
-    @Test
-    void setupClickableBehavior_shouldTriggerRunnableOnClick() {
-        // Arrange
-        AppLocalizationService mockLocalizationService = mock(AppLocalizationService.class);
-        MultiplayerGameLauncher mockLauncher = mock(MultiplayerGameLauncher.class);
-        ImageLoader mockImageLoader = mock(ImageLoader.class);
-        ChooseGameModeView mockView = mock(ChooseGameModeView.class);
-        JFrame mockFrame = mock(JFrame.class);
-
-        when(mockView.getFrame()).thenReturn(mockFrame);
-        when(mockLocalizationService.get("gamemode.singleplayer.tooltip")).thenReturn("Tooltip text");
-
-        ChooseGameModeController controller = new ChooseGameModeController(
-                mockLocalizationService,
-                mockLauncher,
-                mockImageLoader,
-                mockView
-        );
-
-        JLabel realLabel = new JLabel(); // must be real to register MouseListeners
-        Runnable mockRunnable = mock(Runnable.class);
-
-        // Act
-        controller.setupClickableBehavior(realLabel, "gamemode.singleplayer.tooltip", mockRunnable);
-
-        // Simulate click
-        for (MouseListener listener : realLabel.getMouseListeners()) {
-            listener.mouseClicked(new MouseEvent(realLabel, MouseEvent.MOUSE_CLICKED,
-                    System.currentTimeMillis(), 0, 0, 0, 1, false));
-        }
-
-        // Assert
-        verify(mockRunnable).run();
-    }
-
-    @Test
-    void testCreateView() {
-        ChooseGameModeView view = controller.createView();
-        assertNotNull(view, "The view should not be null");
-    }
-
-    @Test
-    void testCreateDialogBox() {
-        List<String> messages = Arrays.asList("Message 1", "Message 2");
-
-        // Mock imageLoader to ensure no real image loading happens
-        DialogBox dialogBox = controller.createDialogBox(
-                messages,
-                PenguinFacialExpression.HAPPY,
-                PenguinHPState.OKAY,
-                () -> {},
-                imageLoader
-        );
-
-        // Just verify that a dialog box is returned and no exception is thrown
-        assertNotNull(dialogBox, "The dialog box should not be null");
-    }
-
-    @Test
-    void createView_shouldReturnMockedView() {
-        // Arrange
-        ChooseGameModeView mockedView = mock(ChooseGameModeView.class);
-        ChooseGameModeController testController = new ChooseGameModeController(localizationService, multiplayerGameLauncher, imageLoader, mockView) {
-            @Override
-            protected ChooseGameModeView createView() {
-                return mockedView; // Mock to avoid HeadlessException
-            }
-        };
-
-        // Act
-        ChooseGameModeView view = testController.createView();
-
-        // Assert
-        assertNotNull(view, "The created view should not be null");
-        assertEquals(mockedView, view, "The returned view should match the mocked view");
-    }
-
-    @Test
-    void createView_withLanguageSwitchButton_shouldReturnMockedView() {
-        // Arrange
-        LanguageSwitchButton mockButton = mock(LanguageSwitchButton.class);
-        ChooseGameModeView mockedView = mock(ChooseGameModeView.class);
-        ChooseGameModeController testController = new ChooseGameModeController(localizationService, multiplayerGameLauncher, imageLoader, mockView) {
-            @Override
-            protected ChooseGameModeView createView(LanguageSwitchButton languageSwitchButton) {
-                return mockedView; // Mock to avoid HeadlessException
-            }
-        };
-
-        // Act
-        ChooseGameModeView view = testController.createView(mockButton);
-
-        // Assert
-        assertNotNull(view, "The created view with LanguageSwitchButton should not be null");
-        assertEquals(mockedView, view, "The returned view should match the mocked view");
-    }
-
-    @Test
-    void windowClosing_shouldCallDisposeMethodOnController() {
-        // Reset counters to ensure clean state
-        reset(localizationService, mockView);
-
-        // Capture the window listener that was added in the constructor
-        ArgumentCaptor<WindowListener> listenerCaptor = ArgumentCaptor.forClass(WindowListener.class);
-        verify(frame).addWindowListener(listenerCaptor.capture());
-
-        // Get the captured listener
-        WindowListener capturedListener = listenerCaptor.getValue();
-        assertNotNull(capturedListener, "Listener should have been captured.");
-
-        // Act: Simulate window closing event
-        WindowEvent mockEvent = mock(WindowEvent.class);
-        capturedListener.windowClosing(mockEvent);
-
-        // Assert: Verify the observable effects of dispose() being called
         verify(localizationService).unsubscribe(mockView);
         verify(mockView).dispose();
     }

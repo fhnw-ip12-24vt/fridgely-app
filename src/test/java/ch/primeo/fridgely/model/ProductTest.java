@@ -391,6 +391,141 @@ class ProductTest {
         assertEquals(0, hashCode); // Barcode is null, hashCode should be 0
     }
 
+    @Test
+    void testGetExplanationKey_BioLocal() {
+        // Arrange
+        Product product = new Product();
+        product.setBio(true);
+        product.setLocal(true);
+        product.setLowCo2(false);
+        product.setDescription("default");
+
+        // Act
+        String key = product.getExplanationKey();
+
+        // Assert
+        assertEquals("product.bio.local.highCO2", key);
+    }
+
+    @Test
+    void testGetExplanationKey_NonBioForeign() {
+        // Arrange
+        Product product = new Product();
+        product.setBio(false);
+        product.setLocal(false);
+        product.setLowCo2(true);
+        product.setDescription("default");
+
+        // Act
+        String key = product.getExplanationKey();
+
+        // Assert
+        assertEquals("product.non_bio.foreign.lowCO2", key);
+    }
+
+    @Test
+    void testGetExplanationKey_WithSpecificDescription() {
+        // Arrange
+        Product product = new Product();
+        product.setBio(true);
+        product.setLocal(false);
+        product.setDescription("meat");
+
+        // Act
+        String key = product.getExplanationKey();
+
+        // Assert
+        assertEquals("product.bio.foreign.meat", key);
+    }
+
+    @Test
+    void testGetExplanationKey_WaterIntensive() {
+        // Arrange
+        Product product = new Product();
+        product.setBio(false);
+        product.setLocal(true);
+        product.setDescription("water_intensive");
+
+        // Act
+        String key = product.getExplanationKey();
+
+        // Assert
+        assertEquals("product.non_bio.local.water_intensive", key);
+    }
+
+    @Test
+    void testGetExplanationKey_CoffeeBelt() {
+        // Arrange
+        Product product = new Product();
+        product.setBio(true);
+        product.setLocal(false);
+        product.setDescription("coffee_belt");
+
+        // Act
+        String key = product.getExplanationKey();
+
+        // Assert
+        assertEquals("product.bio.foreign.coffee_belt", key);
+    }
+
+    @Test
+    void testIsNotDefaultProduct_True() {
+        // Arrange
+        Product product = new Product();
+        product.setDefaultProduct(false);
+
+        // Act & Assert
+        assertTrue(product.isNotDefaultProduct());
+    }
+
+    @Test
+    void testIsNotDefaultProduct_False() {
+        // Arrange
+        Product product = new Product();
+        product.setDefaultProduct(true);
+
+        // Act & Assert
+        assertFalse(product.isNotDefaultProduct());
+    }
+
+    @Test
+    void testIsLowCo2_True() {
+        // Arrange
+        Product product = new Product();
+        product.setLowCo2(true);
+
+        // Act & Assert
+        assertTrue(product.isLowCo2());
+    }
+
+    @Test
+    void testIsLowCo2_False() {
+        // Arrange
+        Product product = new Product();
+        product.setLowCo2(false);
+
+        // Act & Assert
+        assertFalse(product.isLowCo2());
+    }
+
+    @Test
+    void testSetLowCo2() {
+        // Arrange
+        Product product = new Product();
+
+        // Act
+        product.setLowCo2(true);
+
+        // Assert
+        assertTrue(product.isLowCo2());
+
+        // Act again
+        product.setLowCo2(false);
+
+        // Assert again
+        assertFalse(product.isLowCo2());
+    }
+
     // Nested subclass to trigger getClass() mismatch in equals()
     static class ExtendedProduct extends Product {
         ExtendedProduct(String code) {
@@ -406,5 +541,13 @@ class ProductTest {
         Product extendedProduct = new ExtendedProduct("123456789");
         assertNotEquals(product, extendedProduct);
         assertNotEquals(extendedProduct, product);
+    }
+
+    @Test
+    void testEqualsWithNullObject() {
+        Product product = new Product();
+        product.setBarcode("123456789");
+
+        assertNotEquals(product, null);
     }
 }

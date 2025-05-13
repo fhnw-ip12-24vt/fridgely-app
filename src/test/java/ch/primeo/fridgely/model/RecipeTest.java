@@ -286,4 +286,191 @@ class RecipeTest {
         recipe.setIngredients(new ArrayList<>());
         assertEquals(0, recipe.getIngredients().size());
     }
+
+    @Test
+    void testGetDefaultProducts_WithDefaultProducts() {
+        // Arrange
+        Recipe recipe = new Recipe();
+
+        // Create products
+        Product defaultProduct1 = new Product("123", "Default 1", "Default 1", "Default 1",
+                "Desc", "Desc", "Desc", true, false, false, false);
+        Product defaultProduct2 = new Product("456", "Default 2", "Default 2", "Default 2",
+                "Desc", "Desc", "Desc", true, false, false, false);
+        Product nonDefaultProduct = new Product("789", "Non Default", "Non Default", "Non Default",
+                "Desc", "Desc", "Desc", false, false, false, false);
+
+        // Create recipe ingredients
+        RecipeIngredient ingredient1 = new RecipeIngredient();
+        ingredient1.setProduct(defaultProduct1);
+        ingredient1.setRecipe(recipe);
+
+        RecipeIngredient ingredient2 = new RecipeIngredient();
+        ingredient2.setProduct(defaultProduct2);
+        ingredient2.setRecipe(recipe);
+
+        RecipeIngredient ingredient3 = new RecipeIngredient();
+        ingredient3.setProduct(nonDefaultProduct);
+        ingredient3.setRecipe(recipe);
+
+        // Add ingredients to recipe
+        List<RecipeIngredient> ingredients = new ArrayList<>();
+        ingredients.add(ingredient1);
+        ingredients.add(ingredient2);
+        ingredients.add(ingredient3);
+        recipe.setIngredients(ingredients);
+
+        // Act
+        List<Product> defaultProducts = recipe.getDefaultProducts();
+
+        // Assert
+        assertEquals(2, defaultProducts.size());
+        assertTrue(defaultProducts.contains(defaultProduct1));
+        assertTrue(defaultProducts.contains(defaultProduct2));
+        assertFalse(defaultProducts.contains(nonDefaultProduct));
+    }
+
+    @Test
+    void testGetDefaultProducts_NoDefaultProducts() {
+        // Arrange
+        Recipe recipe = new Recipe();
+
+        // Create products
+        Product nonDefaultProduct1 = new Product("123", "Non Default 1", "Non Default 1", "Non Default 1",
+                "Desc", "Desc", "Desc", false, false, false, false);
+        Product nonDefaultProduct2 = new Product("456", "Non Default 2", "Non Default 2", "Non Default 2",
+                "Desc", "Desc", "Desc", false, false, false, false);
+
+        // Create recipe ingredients
+        RecipeIngredient ingredient1 = new RecipeIngredient();
+        ingredient1.setProduct(nonDefaultProduct1);
+        ingredient1.setRecipe(recipe);
+
+        RecipeIngredient ingredient2 = new RecipeIngredient();
+        ingredient2.setProduct(nonDefaultProduct2);
+        ingredient2.setRecipe(recipe);
+
+        // Add ingredients to recipe
+        List<RecipeIngredient> ingredients = new ArrayList<>();
+        ingredients.add(ingredient1);
+        ingredients.add(ingredient2);
+        recipe.setIngredients(ingredients);
+
+        // Act
+        List<Product> defaultProducts = recipe.getDefaultProducts();
+
+        // Assert
+        assertTrue(defaultProducts.isEmpty());
+    }
+
+    @Test
+    void testGetFridgeProducts_WithFridgeProducts() {
+        // Arrange
+        Recipe recipe = new Recipe();
+
+        // Create products
+        Product defaultProduct = new Product("123", "Default", "Default", "Default",
+                "Desc", "Desc", "Desc", true, false, false, false);
+        Product fridgeProduct1 = new Product("456", "Fridge 1", "Fridge 1", "Fridge 1",
+                "Desc", "Desc", "Desc", false, false, false, false);
+        Product fridgeProduct2 = new Product("789", "Fridge 2", "Fridge 2", "Fridge 2",
+                "Desc", "Desc", "Desc", false, false, false, false);
+
+        // Create recipe ingredients
+        RecipeIngredient ingredient1 = new RecipeIngredient();
+        ingredient1.setProduct(defaultProduct);
+        ingredient1.setRecipe(recipe);
+
+        RecipeIngredient ingredient2 = new RecipeIngredient();
+        ingredient2.setProduct(fridgeProduct1);
+        ingredient2.setRecipe(recipe);
+
+        RecipeIngredient ingredient3 = new RecipeIngredient();
+        ingredient3.setProduct(fridgeProduct2);
+        ingredient3.setRecipe(recipe);
+
+        // Add ingredients to recipe
+        List<RecipeIngredient> ingredients = new ArrayList<>();
+        ingredients.add(ingredient1);
+        ingredients.add(ingredient2);
+        ingredients.add(ingredient3);
+        recipe.setIngredients(ingredients);
+
+        // Act
+        List<Product> fridgeProducts = recipe.getFridgeProducts();
+
+        // Assert
+        assertEquals(2, fridgeProducts.size());
+        assertTrue(fridgeProducts.contains(fridgeProduct1));
+        assertTrue(fridgeProducts.contains(fridgeProduct2));
+        assertFalse(fridgeProducts.contains(defaultProduct));
+    }
+
+    @Test
+    void testGetFridgeProducts_NoFridgeProducts() {
+        // Arrange
+        Recipe recipe = new Recipe();
+
+        // Create products
+        Product defaultProduct1 = new Product("123", "Default 1", "Default 1", "Default 1",
+                "Desc", "Desc", "Desc", true, false, false, false);
+        Product defaultProduct2 = new Product("456", "Default 2", "Default 2", "Default 2",
+                "Desc", "Desc", "Desc", true, false, false, false);
+
+        // Create recipe ingredients
+        RecipeIngredient ingredient1 = new RecipeIngredient();
+        ingredient1.setProduct(defaultProduct1);
+        ingredient1.setRecipe(recipe);
+
+        RecipeIngredient ingredient2 = new RecipeIngredient();
+        ingredient2.setProduct(defaultProduct2);
+        ingredient2.setRecipe(recipe);
+
+        // Add ingredients to recipe
+        List<RecipeIngredient> ingredients = new ArrayList<>();
+        ingredients.add(ingredient1);
+        ingredients.add(ingredient2);
+        recipe.setIngredients(ingredients);
+
+        // Act
+        List<Product> fridgeProducts = recipe.getFridgeProducts();
+
+        // Assert
+        assertTrue(fridgeProducts.isEmpty());
+    }
+
+    @Test
+    void testGetProducts() {
+        // Arrange
+        Recipe recipe = new Recipe();
+
+        // Create products
+        Product product1 = new Product("123", "Product 1", "Product 1", "Product 1",
+                "Desc", "Desc", "Desc", true, false, false, false);
+        Product product2 = new Product("456", "Product 2", "Product 2", "Product 2",
+                "Desc", "Desc", "Desc", false, false, false, false);
+
+        // Create recipe ingredients
+        RecipeIngredient ingredient1 = new RecipeIngredient();
+        ingredient1.setProduct(product1);
+        ingredient1.setRecipe(recipe);
+
+        RecipeIngredient ingredient2 = new RecipeIngredient();
+        ingredient2.setProduct(product2);
+        ingredient2.setRecipe(recipe);
+
+        // Add ingredients to recipe
+        List<RecipeIngredient> ingredients = new ArrayList<>();
+        ingredients.add(ingredient1);
+        ingredients.add(ingredient2);
+        recipe.setIngredients(ingredients);
+
+        // Act
+        List<Product> products = recipe.getProducts();
+
+        // Assert
+        assertEquals(2, products.size());
+        assertTrue(products.contains(product1));
+        assertTrue(products.contains(product2));
+    }
 }

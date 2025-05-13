@@ -314,4 +314,30 @@ class RecipeRepositoryTest {
         // we expect an empty list (the error handling path)
         assertTrue(recipes.isEmpty());
     }
+
+    @Test
+    void getAllRecipesEntities_shouldReturnRecipesFromRepository() {
+        // Arrange
+        List<Recipe> expectedRecipes = getRecipes();
+        when(recipeJpaRepository.findAll()).thenReturn(expectedRecipes);
+
+        // Act
+        List<Recipe> result = recipeRepository.getAllRecipesEntities();
+
+        // Assert
+        assertEquals(expectedRecipes, result);
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    void getAllRecipesEntities_shouldHandleExceptionAndReturnEmptyList() {
+        // Arrange
+        when(recipeJpaRepository.findAll()).thenThrow(new RuntimeException("Test exception"));
+
+        // Act
+        List<Recipe> result = recipeRepository.getAllRecipesEntities();
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
 }

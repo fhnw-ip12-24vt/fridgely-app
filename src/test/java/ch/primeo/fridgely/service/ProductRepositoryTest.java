@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -114,5 +116,113 @@ class ProductRepositoryTest {
 
         // Verify the result is not null
         assertNotNull(result);
+    }
+
+    @Test
+    void testGetProductsByBarcodesWithEmptyList() {
+        // Act
+        var result = productRepository.getProductsByBarcodes(List.of());
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetProductsByBarcodesWithNullList() {
+        // Act
+        var result = productRepository.getProductsByBarcodes(null);
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetProductsByBarcodesAsListWithEmptyList() {
+        // Act
+        var result = productRepository.getProductsByBarcodesAsList(List.of());
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetProductsByBarcodesAsListWithNullList() {
+        // Act
+        var result = productRepository.getProductsByBarcodesAsList(null);
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void getProductsByBarcodes_ExistingBarcodes_ReturnsMapOfProducts() {
+        // Arrange
+        List<String> barcodes = List.of("123", "789");
+        List<Product> expectedProducts = List.of(product1, defaultProduct);
+
+        Mockito.doReturn(queryFactory).when(productRepository).createQueryFactory();
+        when(queryFactory.selectFrom(QProduct.product)).thenReturn(jpaQuery);
+        when(jpaQuery.where(QProduct.product.barcode.in(barcodes))).thenReturn(jpaQuery);
+        when(jpaQuery.fetch()).thenReturn(expectedProducts);
+
+        // Act
+        Map<String, Product> result = productRepository.getProductsByBarcodes(barcodes);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(product1, result.get("123"));
+        assertEquals(defaultProduct, result.get("789"));
+        verify(productRepository).createQueryFactory();
+    }
+
+    @Test
+    void getProductsByBarcodes_NoMatchingProducts_ReturnsEmptyMap() {
+        // Arrange
+        List<String> barcodes = List.of("nonexistent1", "nonexistent2");
+
+        Mockito.doReturn(queryFactory).when(productRepository).createQueryFactory();
+        when(queryFactory.selectFrom(QProduct.product)).thenReturn(jpaQuery);
+        when(jpaQuery.where(QProduct.product.barcode.in(barcodes))).thenReturn(jpaQuery);
+        when(jpaQuery.fetch()).thenReturn(Collections.emptyList());
+
+        // Act
+        Map<String, Product> result = productRepository.getProductsByBarcodes(barcodes);
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(productRepository).createQueryFactory();
+    }
+
+    @Test
+    void testGetProductsByBarcodesAsList() {
+        // Arrange
+        List<String> barcodes = List.of("123", "456");
+        List<Product> products = List.of(product1);
+
+        when(productJpaRepository.findAll(QProduct.product.barcode.in(barcodes))).thenReturn(products);
+
+        // Act
+        var result = productRepository.getProductsByBarcodesAsList(barcodes);
+
+        // Assert
+        assertEquals(1, result.size());
+        assertEquals(product1, result.get(0));
+    }
+
+    @Test
+    void testGetAllProducts() {
+        // Arrange
+        List<Product> products = List.of(product1, defaultProduct);
+        when(productJpaRepository.findAll()).thenReturn(products);
+
+        // Act
+        var result = productRepository.getAllProducts();
+
+        // Assert
+        assertEquals(2, result.size());
+        assertTrue(result.contains(product1));
+        assertTrue(result.contains(defaultProduct));
     }
 }
