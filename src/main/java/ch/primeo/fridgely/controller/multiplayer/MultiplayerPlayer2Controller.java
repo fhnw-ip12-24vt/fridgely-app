@@ -55,7 +55,7 @@ public class MultiplayerPlayer2Controller {
      *
      * @param matchRatio the ratio of matching ingredients to total ingredients
      */
-    private void updatePenguinHPForRecipe(double matchRatio) {
+    void updatePenguinHPForRecipe(double matchRatio) {
         // If match ratio is above 0.5, increase HP, otherwise decrease HP
         if (matchRatio >= 0.5) {
             penguinModel.modifyHP(GameConfig.HP_INCREASE);
