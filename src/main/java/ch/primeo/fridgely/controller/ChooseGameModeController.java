@@ -29,12 +29,12 @@ import java.util.List;
 @Scope("singleton")
 public class ChooseGameModeController implements BaseController {
 
-
-    private final AppLocalizationService localizationService;
-    private ChooseGameModeView view;
-    private MultiplayerGameLauncher multiplayerGameLauncher;
-    private final ImageLoader imageLoader;
-    private LanguageSwitchButton languageSwitchButton;
+    // Made package-private for testing
+    final AppLocalizationService localizationService;
+    ChooseGameModeView view;
+    final MultiplayerGameLauncher multiplayerGameLauncher;
+    final ImageLoader imageLoader;
+    final LanguageSwitchButton languageSwitchButton;
 
     /**
      * Constructs the controller and sets up UI event handlers.
@@ -59,11 +59,12 @@ public class ChooseGameModeController implements BaseController {
 
     // Constructor for testing purposes
     protected ChooseGameModeController(AppLocalizationService localization, MultiplayerGameLauncher launcher,
-                                       ImageLoader imageLoader, ChooseGameModeView view) {
+                                       ImageLoader imageLoader, ChooseGameModeView view, LanguageSwitchButton languageSwitchButton) {
 
         this.localizationService = localization;
         this.multiplayerGameLauncher = launcher;
         this.imageLoader = imageLoader;
+        this.languageSwitchButton = languageSwitchButton; // Assign the passed languageSwitchButton
         this.view = view;
 
         this.view.getFrame().addWindowListener(new WindowAdapter() {
@@ -79,7 +80,8 @@ public class ChooseGameModeController implements BaseController {
     }
 
     public void showChooseGameModeView() {
-        this.view = new ChooseGameModeView(languageSwitchButton, this.localizationService, imageLoader);
+        // Use the createView method which can be mocked for testing
+        this.view = createView(this.languageSwitchButton);
 
         this.view.getFrame().addWindowListener(new WindowAdapter() {
             @Override
@@ -187,7 +189,7 @@ public class ChooseGameModeController implements BaseController {
         createDialogBox(tutorialMessages, PenguinFacialExpression.HAPPY, PenguinHPState.OKAY,
                 this::startMultiplayerGame, imageLoader).showDialog();
     }
-    
+
     /**
      * Starts the multiplayer game after the tutorial.
      */
@@ -215,9 +217,12 @@ public class ChooseGameModeController implements BaseController {
 
     /**
      * Starts the single player game after the tutorial.
+     * This is a placeholder that will be implemented in a future version.
+     * Currently just a stub for testing purposes.
      */
     void startSinglePlayerGame() {
-        // TODO: Implement the logic to start the single player game
+        // This will be implemented in a future version
+        // For now, it's just a stub that can be tested
     }
 
     /**
