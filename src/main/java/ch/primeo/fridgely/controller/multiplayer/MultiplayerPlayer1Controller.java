@@ -94,6 +94,11 @@ public class MultiplayerPlayer1Controller {
     }
 
     private int calculateRoundScore() {
+        // Prevent division by zero
+        if (roundScannedItems == 0) {
+            return 0;
+        }
+
         double roundHelper = roundScore < 0 ? -0.5 : 0.5;
         int sum = (int) ((double) (roundScore / roundScannedItems) + roundHelper);
 
