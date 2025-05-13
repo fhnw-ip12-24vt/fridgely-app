@@ -196,18 +196,4 @@ public class MultiplayerGameStateModel {
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         propertyChangeSupport.removePropertyChangeListener(listener);
     }
-
-    /**
-     * Gets the winner of the game, or null if there's a tie or the game isn't over.
-     *
-     * @return Player.PLAYER1, Player.PLAYER2, or null for a tie
-     */
-    public Player getWinner() {
-        if (!gameOver) {
-            return null;
-        }
-        return null;
-
-      // TODO
-    }
 }
