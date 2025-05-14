@@ -94,7 +94,7 @@ class GameConfigTest {
 
     @Test
     void testScorePlayer2Decrease() {
-        assertEquals(-6, GameConfig.SCORE_PLAYER2_DECREASE);
+        assertEquals(-4, GameConfig.SCORE_PLAYER2_DECREASE);
     }
 
     @Test

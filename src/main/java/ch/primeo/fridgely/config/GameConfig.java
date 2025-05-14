@@ -20,6 +20,7 @@ public class GameConfig {
      * Minimum number of products that must be scanned per round.
      */
     public static final int MIN_PRODUCTS_PER_ROUND = 3;
+    public static final int MAX_PRODUCTS = 20;
     
     /**
      * Starting HP value for the penguin.
@@ -81,7 +82,7 @@ public class GameConfig {
     public static final int SCORE_LOW_CO2 = 1;
 
     public static final int SCORE_PLAYER2_INCREASE = 8;
-    public static final int SCORE_PLAYER2_DECREASE = -6;
+    public static final int SCORE_PLAYER2_DECREASE = -4;
 
     /**
      * Score values for the rounds;

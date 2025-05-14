@@ -82,6 +82,18 @@ class RecipeTest {
     }
 
     @Test
+    void testGetNameWithNullLanguage() {
+        // Arrange
+        Recipe recipe = new Recipe();
+        recipe.setName("Recipe");
+        recipe.setNameDE(null);
+        recipe.setNameFR(null);
+
+        // Act & Assert
+        assertEquals("Recipe", recipe.getName(null));
+    }
+
+    @Test
     void testGetAndSetDescription() {
         Recipe recipe = new Recipe();
         recipe.setDescription("Delicious pasta recipe");

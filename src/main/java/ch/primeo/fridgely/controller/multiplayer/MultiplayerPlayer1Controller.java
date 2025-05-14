@@ -71,6 +71,10 @@ public class MultiplayerPlayer1Controller {
             // Update penguin HP
             updatePenguinHPForProduct(product);
 
+            if (fridgeStockModel.getFridgeProducts().size() >= GameConfig.MAX_PRODUCTS) {
+                finishTurn();
+            }
+
             return product;
         }
         return null;
