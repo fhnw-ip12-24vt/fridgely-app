@@ -66,7 +66,6 @@ public class MultiplayerPlayer1Controller {
 
             roundScore += calculateProductScore(product);
             roundScannedItems++;
-            //gameStateModel.addScore(score);
 
             // Update penguin HP
             updatePenguinHPForProduct(product);

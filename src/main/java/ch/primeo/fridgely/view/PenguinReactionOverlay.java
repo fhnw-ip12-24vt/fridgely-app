@@ -14,14 +14,15 @@ import java.awt.image.BufferedImage;
  * Overlay panel to show a penguin reaction sprite for a short duration.
  */
 public class PenguinReactionOverlay extends JWindow {
-    private final BufferedImage penguinImage;
     private static final int OVERLAY_SIZE_X = 300;
     private static final int OVERLAY_SIZE_Y = 450;
     private static final int DISPLAY_TIME_MS = 5000;
 
     private final Window parent;
+    private final ImageLoader imageLoader;
     private final AppLocalizationService localization;
-    private final Product product;
+
+    private BufferedImage penguinImage;
 
     private JPanel rootPanel;
     private JPanel reactionPanel;
@@ -31,12 +32,13 @@ public class PenguinReactionOverlay extends JWindow {
 
     private JButton okButton;
 
-    public PenguinReactionOverlay(Window parent, PenguinFacialExpression expression, AppLocalizationService localization, ImageLoader imageLoader, Product product) {
+    private Timer timer;
+
+    public PenguinReactionOverlay(Window parent, AppLocalizationService localization, ImageLoader imageLoader) {
         super(parent);
         this.parent = parent;
+        this.imageLoader = imageLoader;
         this.localization = localization;
-        this.product = product;
-        this.penguinImage = imageLoader.loadBufferedImage(expression.getSprite());
 
         initializeControls();
         setupLayout();
@@ -81,7 +83,6 @@ public class PenguinReactionOverlay extends JWindow {
         descTextArea.setEditable(false);
         descTextArea.setLineWrap(true);
         descTextArea.setOpaque(false);
-        descTextArea.setText(getDescriptionText());
         descTextArea.setBorder(BorderFactory.createEmptyBorder());
         descTextArea.setFont(UIManager.getFont("Label.font"));
 
@@ -95,19 +96,23 @@ public class PenguinReactionOverlay extends JWindow {
         setContentPane(rootPanel);
     }
 
-    public void showAndAutoHide() {
+    public void showAndAutoHide(PenguinFacialExpression expression, Product product) {
+        if (timer != null && timer.isRunning()) timer.stop();
+
+        penguinImage = imageLoader.loadBufferedImage(expression.getSprite());
+        descTextArea.setText(getDescriptionText(product));
         setVisible(true);
-        Timer timer = new Timer(DISPLAY_TIME_MS, e -> close());
+        timer = new Timer(DISPLAY_TIME_MS, e -> close());
         timer.setRepeats(false);
         timer.start();
     }
 
     private void close() {
         setVisible(false);
-        dispose();
+        timer.stop();
     }
 
-    private String getDescriptionText() {
+    private String getDescriptionText(Product product) {
         if (product == null) {
             return "";
         }

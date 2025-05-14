@@ -49,7 +49,7 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
     private final MultiplayerPlayer1Controller player1Controller;
     private final AppLocalizationService localizationService;
     private final ImageLoader imageLoader;
-
+    private final PenguinReactionOverlay overlay;
     private JLabel scanPromptLabel;
     private JLabel scanningPenguinLabel;
     private String scanPromptBase;
@@ -70,7 +70,7 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
         this.player1Controller = gameController.getPlayer1Controller();
         this.localizationService = localization;
         this.imageLoader = imageLoader;
-
+        this.overlay = new PenguinReactionOverlay(SwingUtilities.getWindowAncestor(this), localizationService, imageLoader);
         initializeComponents();
         setupLayout();
         registerListeners();
@@ -186,34 +186,28 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
     private void scanBarcode(String barcode) {
         System.out.println("[DEBUG] scanBarcode called with: '" + barcode + "'");
         setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.WAIT_CURSOR));
+
         statusLabel.setText(localizationService.get(KEY_SCANNING_PRODUCT));
-        boolean wasInStock = false;
-        for (Product p : gameController.getFridgeStockModel().getProducts()) {
-            if (p.getBarcode() != null && p.getBarcode().equals(barcode)) {
-                wasInStock = true;
-                break;
-            }
-        }
+
         Product product = player1Controller.scanProduct(barcode);
+        // If product not null --> product was added to fridge
         if (product != null) {
             String language = localizationService.getLanguage();
             String productName = product.getName(language);
-            boolean isGood = product.isBio() || product.isLocal();
-            PenguinFacialExpression reaction;
-            if (wasInStock) {
-                // Removal
-                statusLabel.setText(String.format(localizationService.get(KEY_REMOVED_FROM_STOCK_FMT), productName));
-                reaction = isGood ? PenguinFacialExpression.DISAPPOINTED : PenguinFacialExpression.HAPPY;
-            } else {
-                // Addition
-                statusLabel.setText(String.format(localizationService.get(KEY_ADDED_TO_STOCK_FMT), productName));
-                reaction = isGood ? PenguinFacialExpression.HAPPY : PenguinFacialExpression.DISAPPOINTED;
-            }
-            java.awt.Toolkit.getDefaultToolkit().beep();
-            // Show penguin reaction overlay (1 second)
-            Window topLevel = SwingUtilities.getWindowAncestor(this);
-            PenguinReactionOverlay overlay = new PenguinReactionOverlay(topLevel, reaction, localizationService, imageLoader, product);
-            overlay.showAndAutoHide();
+
+            // TODO: add different reactions
+            boolean isGood = product.isBio() || product.isLocal() || product.isLowCo2();
+            PenguinFacialExpression reaction = isGood ? PenguinFacialExpression.HAPPY : PenguinFacialExpression.DISAPPOINTED;
+
+            // Addition
+            statusLabel.setText(String.format(localizationService.get(KEY_ADDED_TO_STOCK_FMT), productName));
+            overlay.showAndAutoHide(reaction, product);
+            System.out.println("[DEBUG] continue");
+
+            // java.awt.Toolkit.getDefaultToolkit().beep();
+
+            // Show penguin reaction overlay
+
         } else {
             statusLabel.setText(String.format(localizationService.get(KEY_PRODUCT_NOT_FOUND_FMT), barcode));
         }
