@@ -15,22 +15,16 @@ import java.awt.event.MouseEvent;
  */
 public class FinishTurnButton extends JButton {
 
-    private final AppLocalizationService localizationService;
-
     private static final int BUTTON_HEIGHT = 50;
 
     /**
      * Constructs a LanguageSwitchButton and subscribes to localization changes.
      *
-     * @param localization the localization service for text updates
      */
-    public FinishTurnButton(AppLocalizationService localization) {
-        super(localization.get("finish_turn_button"));
-        this.localizationService = localization;
+    public FinishTurnButton() {
+
 
         configureButton();
-        localization.subscribe(this::updateText);
-        updateText();
         setEnabled(isEnabled());
     }
 
@@ -51,7 +45,7 @@ public class FinishTurnButton extends JButton {
         setBorderPainted(false);
 
         // Set visual properties
-        setFont(new Font("SansSerif", Font.BOLD, 24));
+        //setFont(new Font("SansSerif", Font.BOLD, 24));
 
         // Fix sizing issues
         Dimension buttonSize = new Dimension(getPreferredSize().width, BUTTON_HEIGHT);
@@ -99,12 +93,5 @@ public class FinishTurnButton extends JButton {
         } else {
             setBackground(UIConfig.DISABLED_COLOR);
         }
-    }
-
-    /**
-     * Updates the button text to match the current language.
-     */
-    private void updateText() {
-        setText(localizationService.get("finish_turn_button"));
     }
 }
