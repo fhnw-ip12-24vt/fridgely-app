@@ -130,6 +130,9 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         setOpaque(false);
         setPreferredSize(screenSize);
 
+        productCardsPanel.setBorder(BorderFactory.createEmptyBorder(45, 0, 0, 0));
+        defaultProductCardsPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+
         //JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         //headerPanel.setOpaque(false);
         //headerPanel.add(headerLabel);
