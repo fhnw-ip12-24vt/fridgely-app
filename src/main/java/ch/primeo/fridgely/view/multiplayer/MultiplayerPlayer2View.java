@@ -76,7 +76,7 @@ public class MultiplayerPlayer2View extends JPanel implements PropertyChangeList
         unifiedRecipePanel = new UnifiedRecipePanel(gameController, gameController.getProductRepository(), imageLoader, localizationService);
 
         // initialize with empty text; will be set in onLocaleChanged()
-        finishTurnButton = new FinishTurnButton(localizationService);
+        finishTurnButton = new FinishTurnButton();
         statusLabel = new JLabel();
     }
 

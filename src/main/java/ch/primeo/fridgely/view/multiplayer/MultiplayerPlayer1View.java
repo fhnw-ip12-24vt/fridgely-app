@@ -87,7 +87,7 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
      */
     private void initializeComponents() {
         scanPromptLabel = new JLabel("", SwingConstants.CENTER);
-        finishTurnButton = new FinishTurnButton(localizationService);
+        finishTurnButton = new FinishTurnButton();
         statusLabel = new JLabel("");
         scanningPenguinLabel = new JLabel();
         minProductsLabel = new JLabel("");
