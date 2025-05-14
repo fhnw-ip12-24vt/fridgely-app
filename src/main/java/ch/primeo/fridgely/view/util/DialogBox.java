@@ -27,7 +27,7 @@ import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.lang.reflect.Field;
+import java.lang.reflect.Field; // Keep for onCompleteCallback modification if showDialog is tested deeply
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +40,7 @@ public class DialogBox extends JPanel {
     private final JFrame frame;
 
     private final List<String> messages;
-    int currentMessageIndex = 0; // Changed from private
+    int currentMessageIndex = 0; 
     private final PenguinFacialExpression penguinExpression;
     private final PenguinHPState penguinHPState;
     private BufferedImage penguinImage;
@@ -49,9 +49,9 @@ public class DialogBox extends JPanel {
     private BufferedImage dialogArrowDown;
     private boolean showArrowUp = true;
     private final Timer arrowAnimationTimer;
-    private final Runnable onCompleteCallback;
+    private Runnable onCompleteCallback; // Made non-final to be replaced by showDialog
     private final JLabel messageLabel;
-    JButton skipButton; // Changed from private final
+    JButton skipButton; 
     private final AppLocalizationService localizationService;
 
     private static final int ARROW_ANIMATION_DELAY = 500; // milliseconds
@@ -65,6 +65,7 @@ public class DialogBox extends JPanel {
 
     /**
      * Creates a dialog box with a sequence of messages, penguin expression, HP state, and a callback.
+     * This constructor is for application use.
      * @param msgs the list of messages to display
      * @param expression the penguin facial expression to show
      * @param state the penguin HP state to show
@@ -73,21 +74,36 @@ public class DialogBox extends JPanel {
      */
     public DialogBox(List<String> msgs, PenguinFacialExpression expression, PenguinHPState state, Runnable callback,
             ImageLoader imageLoader) {
+        this(msgs, expression, state, callback, imageLoader, new JFrame());
+    }
+
+    /**
+     * Package-private constructor for testing, allowing JFrame injection.
+     */
+    DialogBox(List<String> msgs, PenguinFacialExpression expression, PenguinHPState state, Runnable callback,
+            ImageLoader imageLoader, JFrame frameInstance) {
 
         this.imageLoader = imageLoader;
         this.localizationService = FridgelyContext.getBean(AppLocalizationService.class);
+        this.frame = frameInstance;
 
-        this.frame = new JFrame();
+        // Configure frame - these calls will go to the mock in tests
         this.frame.setUndecorated(true);
-
-        Fridgely.getMainAppScreen().setFullScreenWindow(frame);
-
+        if (Fridgely.getMainAppScreen() != null) {
+            Fridgely.getMainAppScreen().setFullScreenWindow(this.frame);
+        }
         this.frame.setVisible(true);
+        // For tests with mock JFrame, ensure a default size if needed by other logic.
+        // This might be better handled by stubbing frame.getSize() in the test itself.
+        if (this.frame.getSize().width == 0 && this.frame.getSize().height == 0) {
+            this.frame.setSize(800,600); // Default size if not set (e.g. mock)
+        }
+
 
         this.messages = new ArrayList<>(msgs);
         this.penguinExpression = expression;
         this.penguinHPState = state;
-        this.onCompleteCallback = callback;
+        this.onCompleteCallback = callback; // Initial callback
 
         setOpaque(false);
         setLayout(null); // Use absolute positioning for components
@@ -131,7 +147,9 @@ public class DialogBox extends JPanel {
     private void skipToEnd() {
         arrowAnimationTimer.stop();
         onCompleteCallback.run();
-        frame.dispose();
+        if (frame != null) { 
+            frame.dispose();
+        }
     }
 
     /**
@@ -182,14 +200,16 @@ public class DialogBox extends JPanel {
     /**
      * Advances to the next message or completes the dialog.
      */
-    void nextMessage() { // Changed from private
+    void nextMessage() { 
         currentMessageIndex++;
         if (currentMessageIndex < messages.size()) {
             updateMessage();
         } else {
             arrowAnimationTimer.stop();
             onCompleteCallback.run();
-            frame.dispose();
+            if (frame != null) { 
+                frame.dispose();
+            }
         }
     }
 
@@ -255,7 +275,15 @@ public class DialogBox extends JPanel {
      */
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(this.frame.getWidth() - 100, 200);
+        if (frame != null) {
+            // Ensure frame.getWidth() doesn't cause issues with mocks if not stubbed
+            int frameWidth = frame.getWidth();
+            if (frameWidth == 0 && messages != null && !messages.isEmpty()) { // Basic fallback for mock
+                frameWidth = 800; // Default if mock doesn't provide width
+            }
+            return new Dimension(frameWidth - 100, 200);
+        }
+        return new Dimension(700, 200); // Default preferred size
     }
 
     /**
@@ -285,6 +313,13 @@ public class DialogBox extends JPanel {
      * Shows the dialog box with the specified messages and callback.
      */
     public void showDialog() {
+        // If frame is a mock, many operations here might need careful stubbing in tests
+        // or this method might be out of scope for pure unit testing of DialogBox logic.
+        if (frame == null) {
+            System.err.println("DialogBox.showDialog() called with null frame. Skipping UI operations.");
+            return;
+        }
+
         Component oldGlassPane = frame.getGlassPane();
 
         // Create a glass pane that positions the dialog at the bottom
@@ -337,32 +372,33 @@ public class DialogBox extends JPanel {
             int hpY = yPos - scaledHeight - 20; // Position above the dialog with some padding
             hpLabel.setBounds(hpX, hpY, scaledWidth, scaledHeight);
             hpLabel.setOpaque(false);
-            glassPane.add(hpLabel);
+            // Add hpLabel only if glassPane is not null (which it should be if frame is not null)
+            if (glassPane != null) {
+                glassPane.add(hpLabel);
+            }
         }
+
 
         frame.setGlassPane(glassPane);
         glassPane.setVisible(true);
 
         // Store original callback
-        final Runnable originalCallback = onCompleteCallback;
+        final Runnable originalCallbackReference = this.onCompleteCallback;
 
-        // Create new callback that restores the glass pane and then calls the original
-        Runnable combinedCallback = () -> {
-            glassPane.setVisible(false);
-            frame.setGlassPane(oldGlassPane);
-            frame.dispose();
-            // Ensure we run this in the EDT to prevent timing issues
-            SwingUtilities.invokeLater(originalCallback);
+        this.onCompleteCallback = () -> { // Replace instance's callback
+            if (glassPane != null) { 
+                glassPane.setVisible(false);
+            }
+            if (frame != null) { 
+                frame.setGlassPane(oldGlassPane);
+                frame.dispose();
+            }
+            if (originalCallbackReference != null) {
+                SwingUtilities.invokeLater(originalCallbackReference);
+            }
         };
-
-        // Replace this instance's callback
-        try {
-            Field field = DialogBox.class.getDeclaredField("onCompleteCallback");
-            field.setAccessible(true);
-            field.set(this, combinedCallback);
-        } catch (Exception e) {
-            System.err.println("Failed to update callback: " + e.getMessage());
-        }
+        
+        // Removed reflection for onCompleteCallback, as it's now non-final
 
         // Ensure the dialog gets focus so the user can click it
         this.requestFocusInWindow();

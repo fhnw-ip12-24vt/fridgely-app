@@ -15,6 +15,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.awt.GraphicsDevice;
 import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
@@ -36,23 +39,30 @@ class DialogBoxTest {
     private Runnable mockCallback;
 
     @Mock
-    private GraphicsDevice mockGraphicsDevice; // Added mock for GraphicsDevice
+    private GraphicsDevice mockGraphicsDevice;
+
+    @Mock
+    private JFrame mockFrame;
+
+    @Mock
+    private JPanel mockGlassPane;
 
     private List<String> testMessages;
     private DialogBox dialogBox;
 
     @BeforeEach
     void setUp() {
-        System.setProperty("java.awt.headless", "true");
-
         testMessages = Arrays.asList("Message 1", "Message 2", "Message 3");
 
         // Mock the localization service
         when(mockLocalizationService.get("tutorial.button.skip")).thenReturn("Skip");
 
+        // Stub mockFrame methods
+        when(mockFrame.getSize()).thenReturn(new Dimension(800, 600)); // Default size for tests
+
         // Use try-with-resources to mock static methods
         try (MockedStatic<FridgelyContext> mockedFridgelyContext = mockStatic(FridgelyContext.class);
-             MockedStatic<Fridgely> mockedFridgely = mockStatic(Fridgely.class)) { // Mock Fridgely class
+             MockedStatic<Fridgely> mockedFridgely = mockStatic(Fridgely.class)) {
 
             // Set up the mock for FridgelyContext
             mockedFridgelyContext.when(() -> FridgelyContext.getBean(AppLocalizationService.class))
@@ -60,15 +70,15 @@ class DialogBoxTest {
 
             // Set up the mock for Fridgely.getMainAppScreen()
             mockedFridgely.when(Fridgely::getMainAppScreen).thenReturn(mockGraphicsDevice);
-            // The call to mockGraphicsDevice.setFullScreenWindow(any(Window.class)) will do nothing by default.
 
-            // Create the dialog box with our mocks
+            // Create the dialog box with our mocks, using the package-private constructor
             dialogBox = new DialogBox(
                     testMessages,
                     PenguinFacialExpression.HAPPY,
                     PenguinHPState.OKAY,
                     mockCallback,
-                    mockImageLoader
+                    mockImageLoader,
+                    mockFrame // Inject mock JFrame
             );
         }
     }
