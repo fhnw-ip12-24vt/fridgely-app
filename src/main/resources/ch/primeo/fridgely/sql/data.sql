@@ -1,10 +1,10 @@
 INSERT INTO product (barcode, name, nameDE, nameFR, description, descriptionDE, descriptionFR,
                       is_default_product, is_bio, is_local, is_low_co2)
 VALUES('001', 'Tomato', 'Tomate', 'Tomate', 'Local organic tomato', 'Lokale Bio-Tomate', 'Tomate bio locale', 0, 1, 1, 1),
-       ('002', 'Egg', 'Ei', 'Œuf', 'Organic free-range egg', 'Bio-Freilandei', 'Œuf bio de plein air', 0, 1, 0, 1),
-       ('003', 'Cheese', 'Käse', 'Fromage - France', 'Imported cheese block from France', 'Importierter Käseblock aus Frankreich','Bloc de fromage importé de France', 0, 0, 0, 0),
+       ('002', 'Egg', 'Ei', 'Œuf', 'Organic free-range egg', 'Bio-Freilandei', 'Œuf bio de plein air', 0, 1, 1, 1),
+       ('003', 'Cheese', 'Käse', 'Fromage - France', 'Imported cheese block from France', 'Importierter Käseblock aus Frankreich','Bloc de fromage importé de France', 0, 0, 1, 0),
        ('004', 'Carrots', 'Karotten', 'Carottes Locales', 'Basket full of local carrots', 'Korb voller lokaler Karotten','Panier plein de carottes locales', 0, 0, 1, 1),
-       ('005', 'Butter', 'Butter', 'Beurre', 'Organic butter made from grass-fed cows', 'Bio-Butter aus grasgefütterten Kühen', 'Beurre bio issu de vaches nourries à l''herbe', 0, 1, 0, 0),
+       ('005', 'Butter', 'Butter', 'Beurre', 'Organic butter made from grass-fed cows', 'Bio-Butter aus grasgefütterten Kühen', 'Beurre bio issu de vaches nourries à l''herbe', 0, 1, 1, 0),
        ('006', 'Beef', 'Rindfleisch', 'Bœuf', 'meat', 'Importiertes Rindfleisch aus Argentinien', 'Bœuf importé d''Argentine', 0, 0, 0, 0),
        ('007', 'Milk', 'Milch', 'Lait', 'Fresh organic milk from local farms', 'Frische Bio-Milch von lokalen Bauernhöfen', 'Lait bio frais des fermes locales', 0, 1, 1, 1),
        ('008', 'Spinach', 'Spinat', 'Épinard', 'Local fresh spinach leaves', 'Lokale frische Spinatblätter', 'Feuilles d''épinard fraîches locales', 0, 0, 1, 1),
@@ -173,11 +173,11 @@ VALUES
 INSERT INTO recipe_ingredient (id, recipe_recipe_id, product_barcode)
 VALUES
     -- 1
-    (1, 1, '002'), (2, 1, '005'), (3, 1, '015'),
+    (1, 1, '002'), (2, 1, '005'), (3, 1, 'EEE'),
     -- 2
     (4, 2, 'AAA'), (5, 2, '003'), (6, 2, '005'),
     -- 3
-    (7, 3, 'CCC'), (8, 3, '001'), (9, 3, '015'),
+    (7, 3, 'CCC'), (8, 3, '001'), (9, 3, 'EEE'),
     -- 4
     (10, 4, '012'), (11, 4, 'BBB'), (12, 4, '017'),
     -- 5
@@ -195,23 +195,23 @@ VALUES
     -- 11
     (32, 11, '006'), (33, 11, '004'), (34, 11, '011'),
     -- 12
-    (35, 12, '026'), (36, 12, '001'), (37, 12, '015'),
+    (35, 12, '026'), (36, 12, '001'), (37, 12, 'EEE'),
     -- 13
     (38, 13, 'AAA'), (39, 13, '005'), (40, 13, '007'),
     -- 14
-    (41, 14, '002'), (42, 14, '003'), (43, 14, '015'),
+    (41, 14, '002'), (42, 14, '003'), (43, 14, 'EEE'),
     -- 15
     (44, 15, '004'), (45, 15, '008'), (46, 15, '017'),
     -- 16
     (47, 16, '012'), (48, 16, '004'), (49, 16, '008'),
     -- 17
-    (50, 17, '011'), (51, 17, '015'), (52, 17, '017'),
+    (50, 17, '011'), (51, 17, 'EEE'), (52, 17, '017'),
     -- 18
     (53, 18, 'AAA'), (54, 18, '024'), (55, 18, '022'),
     -- 19
     (56, 19, '002'), (57, 19, '001'), (58, 19, 'AAA'),
     -- 20
-    (59, 20, '002'), (60, 20, '008'), (61, 20, '011'), (62, 20, '017'),
+    (59, 20, '002'), (60, 20, '003'), (61, 20, '005'), (62, 20, '007'), (121, 20, 'AAA'),
     -- 21
     (63, 21, 'AAA'), (64, 21, '010'),
     -- 22
@@ -231,7 +231,7 @@ VALUES
     -- 29
     (80, 29, '008'), (81, 29, '003'),
     -- 30
-    (82, 30, '020'), (83, 30, '008'), (84, 30, '017'), (85, 30, '015'),
+    (82, 30, '020'), (83, 30, '008'), (84, 30, '017'), (85, 30, 'EEE'),
     -- 31*
     (86, 31, '004'), (87, 31, 'EEE'),
     -- 32
@@ -247,7 +247,7 @@ VALUES
     -- 37
     (100, 37, 'AAA'), (101, 37, '002'), (102, 37, '003'),
     -- 38
-    (103, 38, '022'), (104, 38, '015'),
+    (103, 38, '022'), (104, 38, 'EEE'),
     -- 39
     (105, 39, '011'), (106, 39, '017'),
     -- 40

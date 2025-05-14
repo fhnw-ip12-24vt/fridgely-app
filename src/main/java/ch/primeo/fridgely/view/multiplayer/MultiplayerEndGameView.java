@@ -27,6 +27,7 @@ public class MultiplayerEndGameView extends JPanel implements PropertyChangeList
     private JLabel titleLabel;
     private JLabel penguinImageLabel;
     private JLabel scoreLabel;
+    private JLabel messageLabel;
     private JButton playAgainButton;
     private JButton menuButton;
 
@@ -43,7 +44,7 @@ public class MultiplayerEndGameView extends JPanel implements PropertyChangeList
 
     public void initializeComponent(){
         // Titel
-        titleLabel = new JLabel("DANKE FÜR SPIELEN!");
+        titleLabel = new JLabel(localizationService.get("endscreen.multiplayer.title"));
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
         // Pinguin-Bild
@@ -57,13 +58,18 @@ public class MultiplayerEndGameView extends JPanel implements PropertyChangeList
             penguinImageLabel.setText("Penguin Image Placeholder");
         }
 
+        int score = gameController.getGameStateModel().getScore();
+
+        //Message
+        messageLabel = new JLabel(String.format((localizationService.get("endscreen.multiplayer." + PenguinHPState.fromHP(score).name().toLowerCase()))));
+        messageLabel.setHorizontalAlignment(SwingConstants.CENTER);
         // Punktzahl
-        scoreLabel = new JLabel(String.format("Score: %d", gameController.getGameStateModel().getScore()));
+        scoreLabel = new JLabel(String.format(localizationService.get("label.player_score"), score));
         scoreLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
         // Buttons
-        playAgainButton = new JButton("Nochmal spielen");
-        menuButton = new JButton("Menü");
+        playAgainButton = new JButton(localizationService.get("endscreen.multiplayer.playagain"));
+        menuButton = new JButton(localizationService.get("endscreen.multiplayer.menu"));
 
     }
 
@@ -83,8 +89,12 @@ public class MultiplayerEndGameView extends JPanel implements PropertyChangeList
         gbc.gridy = 1;
         add(penguinImageLabel, gbc);
 
-        // Punktzahl hinzufügen
+        //Message hinzufügen
         gbc.gridy = 2;
+        add(messageLabel, gbc);
+
+        // Punktzahl hinzufügen
+        gbc.gridy = 3;
         add(scoreLabel, gbc);
 
         // Buttons hinzufügen
@@ -92,7 +102,7 @@ public class MultiplayerEndGameView extends JPanel implements PropertyChangeList
         buttonPanel.add(playAgainButton);
         buttonPanel.add(menuButton);
 
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         add(buttonPanel, gbc);
 
     }

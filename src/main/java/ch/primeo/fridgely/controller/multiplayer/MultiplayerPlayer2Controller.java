@@ -84,15 +84,17 @@ public class MultiplayerPlayer2Controller {
         int totalFridgeProductsStored = fridgeStockModel.getFridgeProducts().size();
         int totalWastedProducts = totalFridgeProductsStored - totalFridgeProductsUsed;
 
-        //TODO Correct SCORE
         int score = 0;
+        // Rests 0 if only one product is left
         if (totalWastedProducts == 0) {
             score = GameConfig.SCORE_PLAYER1_INCREASE;
-        } else if (totalWastedProducts >= 2) {
+        } else if (totalWastedProducts == 2) {
             // Ensure that the score is not more negative than the increase
-            score = totalWastedProducts * GameConfig.SCORE_PLAYER2_DECREASE % GameConfig.SCORE_PLAYER2_INCREASE;
+            score = totalWastedProducts * GameConfig.SCORE_PLAYER2_DECREASE;;
+        } else if (totalWastedProducts > 2) {
+            score = 2 * GameConfig.SCORE_PLAYER2_DECREASE;
         }
-        score = totalWastedProducts * GameConfig.SCORE_PLAYER2_DECREASE;
+
         gameStateModel.addScore(score);
 
         // Switch to next player/round

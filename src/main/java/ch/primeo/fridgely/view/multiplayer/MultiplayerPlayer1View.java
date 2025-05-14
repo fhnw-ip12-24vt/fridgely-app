@@ -212,7 +212,7 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
             java.awt.Toolkit.getDefaultToolkit().beep();
             // Show penguin reaction overlay (1 second)
             Window topLevel = SwingUtilities.getWindowAncestor(this);
-            PenguinReactionOverlay overlay = new PenguinReactionOverlay(topLevel, reaction, imageLoader);
+            PenguinReactionOverlay overlay = new PenguinReactionOverlay(topLevel, reaction, imageLoader, product);
             overlay.showAndAutoHide();
         } else {
             statusLabel.setText(String.format(localizationService.get(KEY_PRODUCT_NOT_FOUND_FMT), barcode));
