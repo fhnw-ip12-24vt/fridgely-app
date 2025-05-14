@@ -45,7 +45,7 @@ public class AppLocalizationService {
      */
     public AppLocalizationService(AppConfig config) {
         var startupLanguage = config.getConfiguredAppLanguage() == null
-                ? "en"
+                ? "de"
                 : config.getConfiguredAppLanguage();
 
         if (locales.contains(Locale.forLanguageTag(startupLanguage))) {

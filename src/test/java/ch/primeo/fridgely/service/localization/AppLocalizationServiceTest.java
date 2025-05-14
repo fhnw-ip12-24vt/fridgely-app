@@ -160,11 +160,11 @@ class AppLocalizationServiceTest {
     }
 
     @Test
-    void testConstructor_withNullConfiguredLanguage_defaultsToEnglish() {
+    void testConstructor_withNullConfiguredLanguage_defaultsToGerman() {
         when(mockAppConfig.getConfiguredAppLanguage()).thenReturn(null);
         appLocalizationService = new AppLocalizationService(mockAppConfig);
-        assertEquals("en", appLocalizationService.getLanguage());
-        assertEquals("English", appLocalizationService.get("home.button.lang"));
+        assertEquals("de", appLocalizationService.getLanguage());
+        assertEquals("Deutsch", appLocalizationService.get("home.button.lang"));
     }
 
     @Test
