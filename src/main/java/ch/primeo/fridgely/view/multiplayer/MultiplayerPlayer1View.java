@@ -12,7 +12,7 @@ import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import ch.primeo.fridgely.service.localization.LocalizationObserver;
 import ch.primeo.fridgely.util.ImageLoader;
 import ch.primeo.fridgely.view.PenguinReactionOverlay;
-import ch.primeo.fridgely.view.component.FinishTurnButton;
+import ch.primeo.fridgely.view.component.ControlButton;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -87,7 +87,7 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
      */
     private void initializeComponents() {
         scanPromptLabel = new JLabel("", SwingConstants.CENTER);
-        finishTurnButton = new FinishTurnButton();
+        finishTurnButton = new ControlButton(localizationService.get("finish_turn_button"));
         statusLabel = new JLabel("");
         scanningPenguinLabel = new JLabel();
         minProductsLabel = new JLabel("");
@@ -212,7 +212,7 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
             java.awt.Toolkit.getDefaultToolkit().beep();
             // Show penguin reaction overlay (1 second)
             Window topLevel = SwingUtilities.getWindowAncestor(this);
-            PenguinReactionOverlay overlay = new PenguinReactionOverlay(topLevel, reaction, imageLoader, product);
+            PenguinReactionOverlay overlay = new PenguinReactionOverlay(topLevel, reaction, localizationService, imageLoader, product);
             overlay.showAndAutoHide();
         } else {
             statusLabel.setText(String.format(localizationService.get(KEY_PRODUCT_NOT_FOUND_FMT), barcode));

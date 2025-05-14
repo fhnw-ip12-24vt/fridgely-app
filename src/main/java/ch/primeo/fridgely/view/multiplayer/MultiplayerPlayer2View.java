@@ -8,7 +8,7 @@ import ch.primeo.fridgely.model.Recipe;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import ch.primeo.fridgely.service.localization.LocalizationObserver;
 import ch.primeo.fridgely.util.ImageLoader;
-import ch.primeo.fridgely.view.component.FinishTurnButton;
+import ch.primeo.fridgely.view.component.ControlButton;
 import ch.primeo.fridgely.view.component.UnifiedRecipePanel;
 
 import javax.swing.*;
@@ -39,7 +39,7 @@ public class MultiplayerPlayer2View extends JPanel implements PropertyChangeList
     private final ImageLoader imageLoader;
 
     private UnifiedRecipePanel unifiedRecipePanel;
-    private FinishTurnButton finishTurnButton;
+    private ControlButton finishTurnButton;
     private JLabel statusLabel;
 
     /**
@@ -76,7 +76,7 @@ public class MultiplayerPlayer2View extends JPanel implements PropertyChangeList
         unifiedRecipePanel = new UnifiedRecipePanel(gameController, gameController.getProductRepository(), imageLoader, localizationService);
 
         // initialize with empty text; will be set in onLocaleChanged()
-        finishTurnButton = new FinishTurnButton();
+        finishTurnButton = new ControlButton(localizationService.get("finish_turn_button"));
         statusLabel = new JLabel();
     }
 

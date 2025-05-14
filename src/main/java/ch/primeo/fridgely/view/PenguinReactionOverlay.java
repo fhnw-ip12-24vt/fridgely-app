@@ -3,7 +3,9 @@ package ch.primeo.fridgely.view;
 import ch.primeo.fridgely.config.UIConfig;
 import ch.primeo.fridgely.model.PenguinFacialExpression;
 import ch.primeo.fridgely.model.Product;
+import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import ch.primeo.fridgely.util.ImageLoader;
+import ch.primeo.fridgely.view.component.ControlButton;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,21 +16,37 @@ import java.awt.image.BufferedImage;
  */
 public class PenguinReactionOverlay extends JWindow {
     private final BufferedImage penguinImage;
-    private static final int OVERLAY_SIZE_X = 260;
-    private static final int OVERLAY_SIZE_Y = 400;
-    private static final int DISPLAY_TIME_MS = 4000;
+    private static final int OVERLAY_SIZE_X = 300;
+    private static final int OVERLAY_SIZE_Y = 450;
+    private static final int DISPLAY_TIME_MS = 5000;
 
-    public PenguinReactionOverlay(Window parent, PenguinFacialExpression expression, ImageLoader imageLoader, Product product) {
+    private final Window parent;
+    private final AppLocalizationService localization;
+    private final Product product;
+
+    private JPanel rootPanel;
+    private JPanel reactionPanel;
+    private JPanel descPanel;
+
+    private JTextArea descTextArea;
+
+    private JButton okButton;
+
+    public PenguinReactionOverlay(Window parent, PenguinFacialExpression expression, AppLocalizationService localization, ImageLoader imageLoader, Product product) {
         super(parent);
+        this.parent = parent;
+        this.localization = localization;
+        this.product = product;
         this.penguinImage = imageLoader.loadBufferedImage(expression.getSprite());
-        setBackground(new Color(238, 238, 238));
-        setAlwaysOnTop(true);
-        setSize(OVERLAY_SIZE_X, OVERLAY_SIZE_Y);
-        setLocationRelativeTo(parent);
-        setFocusableWindowState(false);
-        setType(Type.POPUP);
 
-        JPanel panel = new JPanel() {
+        initializeControls();
+        setupLayout();
+    }
+
+    public void initializeControls() {
+        rootPanel = new JPanel();
+        descPanel = new JPanel();
+        reactionPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -41,29 +59,63 @@ public class PenguinReactionOverlay extends JWindow {
             }
         };
 
-        JPanel rootPanel = new JPanel();
+        descTextArea = new JTextArea();
+
+        okButton = new ControlButton("OK");
+        okButton.addActionListener(e -> close());
+    }
+
+    public void setupLayout() {
+//        setBackground(new Color(238, 238, 238));
+        setBackground(new Color(0, 0, 0));
+        setAlwaysOnTop(true);
+        setSize(OVERLAY_SIZE_X, OVERLAY_SIZE_Y);
+        setLocationRelativeTo(parent);
+        setFocusableWindowState(false);
+        setType(Type.POPUP);
+
+        reactionPanel.setOpaque(false);
+
+        rootPanel.setLayout(new BorderLayout(5, 5));
+        descPanel.setLayout(new BorderLayout(5, 5));
+
+        descTextArea.setEditable(false);
+        descTextArea.setLineWrap(true);
+        descTextArea.setOpaque(false);
+        descTextArea.setText(getDescriptionText());
+        descTextArea.setBorder(BorderFactory.createEmptyBorder());
+        descTextArea.setFont(UIManager.getFont("Label.font"));
+
+        descPanel.add(descTextArea, BorderLayout.CENTER);
+        descPanel.add(okButton, BorderLayout.SOUTH);
+
         rootPanel.setLayout(new BorderLayout());
-        rootPanel.add(panel, BorderLayout.CENTER);
-
-        JPanel descPanel = new JPanel();
-        descPanel.setLayout(new BorderLayout());
-
-        JLabel descLabel = new JLabel();
-        String text = (product.isLocal() ? "✅ Lokal\n" : "❌ Nicht Lokal\n") +
-                (product.isBio() ? "✅ Bio\n" : "❌ Nicht Bio\n") +
-                (product.isLowCo2() ? "✅ Niedriger CO2 Ausstoss" : "❌ Hoher CO2 Ausstoss");
-        descLabel.setText(text);
-        descPanel.add(descLabel, BorderLayout.CENTER);
-
+        rootPanel.add(reactionPanel, BorderLayout.CENTER);
         rootPanel.add(descPanel, BorderLayout.SOUTH);
-        panel.setOpaque(false);
+
         setContentPane(rootPanel);
     }
 
     public void showAndAutoHide() {
         setVisible(true);
-        Timer timer = new Timer(DISPLAY_TIME_MS, e -> setVisible(false));
+        Timer timer = new Timer(DISPLAY_TIME_MS, e -> close());
         timer.setRepeats(false);
         timer.start();
+    }
+
+    private void close() {
+        setVisible(false);
+        dispose();
+    }
+
+    private String getDescriptionText() {
+        if (product == null) {
+            return "";
+        }
+
+        return product.getName(localization.getLanguage()) + ":\n" +
+                localization.get(product.isLocal() ? "product.isLocal" : "product.isNotLocal") + "\n" +
+                localization.get(product.isBio() ? "product.isBio" : "product.isNotBio") + "\n" +
+                localization.get(product.isLowCo2() ? "product.isLowCo2" : "product.isHighCo2");
     }
 }

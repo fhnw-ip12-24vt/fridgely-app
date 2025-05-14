@@ -1,29 +1,24 @@
 package ch.primeo.fridgely.view.component;
 
 import ch.primeo.fridgely.config.UIConfig;
-import ch.primeo.fridgely.service.localization.AppLocalizationService;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 /**
  * A button for switching the application language.
  */
-public class FinishTurnButton extends JButton {
+public class ControlButton extends JButton {
 
     private static final int BUTTON_HEIGHT = 50;
 
     /**
      * Constructs a LanguageSwitchButton and subscribes to localization changes.
      *
+     * @param text the text to display on the button
      */
-    public FinishTurnButton() {
-
-
+    public ControlButton(String text) {
+        super(text);
         configureButton();
         setEnabled(isEnabled());
     }
