@@ -1,11 +1,15 @@
 package ch.primeo.fridgely.view.util;
 
 import ch.primeo.fridgely.Fridgely;
+import ch.primeo.fridgely.FridgelyContext;
 import ch.primeo.fridgely.model.PenguinFacialExpression;
 import ch.primeo.fridgely.model.PenguinHPState;
+import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import ch.primeo.fridgely.util.ImageLoader;
+import ch.primeo.fridgely.view.component.ControlButton;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -15,6 +19,7 @@ import javax.swing.Timer;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -35,7 +40,7 @@ public class DialogBox extends JPanel {
     private final JFrame frame;
 
     private final List<String> messages;
-    private int currentMessageIndex = 0;
+    int currentMessageIndex = 0; // Changed from private
     private final PenguinFacialExpression penguinExpression;
     private final PenguinHPState penguinHPState;
     private BufferedImage penguinImage;
@@ -46,11 +51,15 @@ public class DialogBox extends JPanel {
     private final Timer arrowAnimationTimer;
     private final Runnable onCompleteCallback;
     private final JLabel messageLabel;
+    JButton skipButton; // Changed from private final
+    private final AppLocalizationService localizationService;
 
     private static final int ARROW_ANIMATION_DELAY = 500; // milliseconds
     private static final int DIALOG_PADDING = 20;
     private static final int PENGUIN_SIZE = 70;
     private static final int HP_IMAGE_SIZE = 600; // New constant for HP image size
+    private static final int SKIP_BUTTON_WIDTH = 220;
+    private static final int SKIP_BUTTON_HEIGHT = 40;
 
     private final ImageLoader imageLoader;
 
@@ -60,11 +69,13 @@ public class DialogBox extends JPanel {
      * @param expression the penguin facial expression to show
      * @param state the penguin HP state to show
      * @param callback the callback to run when dialog is complete
+     * @param imageLoader the image loader to use for loading images
      */
     public DialogBox(List<String> msgs, PenguinFacialExpression expression, PenguinHPState state, Runnable callback,
             ImageLoader imageLoader) {
 
         this.imageLoader = imageLoader;
+        this.localizationService = FridgelyContext.getBean(AppLocalizationService.class);
 
         this.frame = new JFrame();
         this.frame.setUndecorated(true);
@@ -79,6 +90,7 @@ public class DialogBox extends JPanel {
         this.onCompleteCallback = callback;
 
         setOpaque(false);
+        setLayout(null); // Use absolute positioning for components
 
         // Load images
         loadImages();
@@ -90,6 +102,12 @@ public class DialogBox extends JPanel {
         messageLabel.setForeground(Color.BLACK);
         add(messageLabel);
         updateMessage();
+
+        // Create the skip button - will be added to glass pane later
+        skipButton = new ControlButton(localizationService.get("tutorial.button.skip"));
+        skipButton.setFocusPainted(false);
+        skipButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        skipButton.addActionListener(e -> skipToEnd());
 
         // Set up the animation timer
         arrowAnimationTimer = new Timer(ARROW_ANIMATION_DELAY, e -> {
@@ -105,6 +123,15 @@ public class DialogBox extends JPanel {
                 nextMessage();
             }
         });
+    }
+
+    /**
+     * Skips to the end of the dialog, completing it immediately.
+     */
+    private void skipToEnd() {
+        arrowAnimationTimer.stop();
+        onCompleteCallback.run();
+        frame.dispose();
     }
 
     /**
@@ -155,7 +182,7 @@ public class DialogBox extends JPanel {
     /**
      * Advances to the next message or completes the dialog.
      */
-    private void nextMessage() {
+    void nextMessage() { // Changed from private
         currentMessageIndex++;
         if (currentMessageIndex < messages.size()) {
             updateMessage();
@@ -284,6 +311,12 @@ public class DialogBox extends JPanel {
 
         setBounds(xPos, yPos, dialogWidth, dialogHeight);
         glassPane.add(this);
+
+        // Add the skip button to the glass pane in the top right corner
+        int skipButtonX = frameSize.width - SKIP_BUTTON_WIDTH - 20; // 20px from right edge
+        int skipButtonY = 20; // 20px from top edge
+        skipButton.setBounds(skipButtonX, skipButtonY, SKIP_BUTTON_WIDTH, SKIP_BUTTON_HEIGHT);
+        glassPane.add(skipButton);
 
         // Add HP image if available - now it will be drawn behind the dialog
         if (penguinHPImage != null) {
