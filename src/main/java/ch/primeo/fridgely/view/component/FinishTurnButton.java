@@ -34,6 +34,13 @@ public class FinishTurnButton extends JButton {
         setEnabled(isEnabled());
     }
 
+    public FinishTurnButton(String text, AppLocalizationService localizationService){
+        super(text);
+        this.localizationService = localizationService;
+        configureButton();
+        setEnabled(isEnabled());
+    }
+
     /**
      * Configures the button's appearance and properties.
      */

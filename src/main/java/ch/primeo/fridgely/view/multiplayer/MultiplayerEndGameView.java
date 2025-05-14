@@ -6,6 +6,7 @@ import ch.primeo.fridgely.model.PenguinModel;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import ch.primeo.fridgely.service.localization.LocalizationObserver;
 import ch.primeo.fridgely.util.ImageLoader;
+import ch.primeo.fridgely.view.component.FinishTurnButton;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,8 +29,8 @@ public class MultiplayerEndGameView extends JPanel implements PropertyChangeList
     private JLabel penguinImageLabel;
     private JLabel scoreLabel;
     private JLabel messageLabel;
-    private JButton playAgainButton;
-    private JButton menuButton;
+    private FinishTurnButton playAgainButton;
+    private FinishTurnButton menuButton;
 
 
     public MultiplayerEndGameView(MultiplayerGameController gameController, AppLocalizationService localizationService, ImageLoader imageLoader) {
@@ -68,8 +69,8 @@ public class MultiplayerEndGameView extends JPanel implements PropertyChangeList
         scoreLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
         // Buttons
-        playAgainButton = new JButton(localizationService.get("endscreen.multiplayer.playagain"));
-        menuButton = new JButton(localizationService.get("endscreen.multiplayer.menu"));
+        playAgainButton = new FinishTurnButton(localizationService.get("endscreen.multiplayer.playagain"), localizationService);
+        menuButton = new FinishTurnButton(localizationService.get("endscreen.multiplayer.menu"), localizationService);
 
     }
 
