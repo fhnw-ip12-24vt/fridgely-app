@@ -70,13 +70,16 @@ class MultiplayerPlayer2ControllerTest {
         when(gameStateModel.getCurrentPlayer()).thenReturn(MultiplayerGameStateModel.Player.PLAYER2);
         Recipe mockRecipe = mock(Recipe.class);
         when(recipeModel.getSelectedRecipe()).thenReturn(mockRecipe);
-        when(mockRecipe.getFridgeProducts()).thenReturn(Collections.emptyList()); // For score calculation
-        when(fridgeStockModel.getFridgeProducts()).thenReturn(Collections.emptyList()); // For score calculation
+        // Default case for this existing test, let's assume 0 wasted products for simplicity
+        // to ensure it still passes and tests the general flow.
+        // totalFridgeProductsUsed = 0, totalFridgeProductsStored = 0 => totalWastedProducts = 0
+        when(mockRecipe.getFridgeProducts()).thenReturn(Collections.emptyList()); 
+        when(fridgeStockModel.getFridgeProducts()).thenReturn(Collections.emptyList()); 
         when(gameStateModel.isGameOver()).thenReturn(false); // Explicitly game not over
 
         controller.finishTurn();
 
-        verify(gameStateModel).addScore(anyInt());
+        verify(gameStateModel).addScore(GameConfig.SCORE_PLAYER1_INCREASE); // Updated to reflect specific score
         verify(gameStateModel).nextPlayer();
         verify(recipeModel).selectRecipe(null); // Should be called
         verify(fridgeStockModel).clear(); // Should be called
@@ -87,13 +90,15 @@ class MultiplayerPlayer2ControllerTest {
         when(gameStateModel.getCurrentPlayer()).thenReturn(MultiplayerGameStateModel.Player.PLAYER2);
         Recipe mockRecipe = mock(Recipe.class);
         when(recipeModel.getSelectedRecipe()).thenReturn(mockRecipe);
-        when(mockRecipe.getFridgeProducts()).thenReturn(Collections.emptyList()); // For score calculation
-        when(fridgeStockModel.getFridgeProducts()).thenReturn(Collections.emptyList()); // For score calculation
+        // Default case for this existing test, let's assume 0 wasted products for simplicity.
+        // totalFridgeProductsUsed = 0, totalFridgeProductsStored = 0 => totalWastedProducts = 0
+        when(mockRecipe.getFridgeProducts()).thenReturn(Collections.emptyList());
+        when(fridgeStockModel.getFridgeProducts()).thenReturn(Collections.emptyList());
         when(gameStateModel.isGameOver()).thenReturn(true); // Explicitly game over
 
         controller.finishTurn();
 
-        verify(gameStateModel).addScore(anyInt());
+        verify(gameStateModel).addScore(GameConfig.SCORE_PLAYER1_INCREASE); // Updated to reflect specific score
         verify(gameStateModel).nextPlayer();
         verify(recipeModel, never()).selectRecipe(null); // Should NOT be called
         verify(fridgeStockModel, never()).clear(); // Should NOT be called
@@ -155,5 +160,79 @@ class MultiplayerPlayer2ControllerTest {
         verify(penguinModel, times(2)).modifyHP(GameConfig.HP_DECREASE);
     }
 
+    @Test
+    void testFinishTurn_Score_NoWastedProducts() {
+        when(gameStateModel.getCurrentPlayer()).thenReturn(MultiplayerGameStateModel.Player.PLAYER2);
+        Recipe mockRecipe = mock(Recipe.class);
+        when(recipeModel.getSelectedRecipe()).thenReturn(mockRecipe);
+        when(gameStateModel.isGameOver()).thenReturn(false);
 
+        // totalWastedProducts = 0 (e.g., 5 used, 5 stored)
+        when(mockRecipe.getFridgeProducts()).thenReturn(Collections.nCopies(5, null));
+        when(fridgeStockModel.getFridgeProducts()).thenReturn(Collections.nCopies(5, null));
+
+        controller.finishTurn();
+
+        verify(gameStateModel).addScore(GameConfig.SCORE_PLAYER1_INCREASE);
+        verify(gameStateModel).nextPlayer();
+        verify(recipeModel).selectRecipe(null);
+        verify(fridgeStockModel).clear();
+    }
+
+    @Test
+    void testFinishTurn_Score_OneWastedProduct() {
+        when(gameStateModel.getCurrentPlayer()).thenReturn(MultiplayerGameStateModel.Player.PLAYER2);
+        Recipe mockRecipe = mock(Recipe.class);
+        when(recipeModel.getSelectedRecipe()).thenReturn(mockRecipe);
+        when(gameStateModel.isGameOver()).thenReturn(false);
+
+        // totalWastedProducts = 1 (e.g., 5 used, 6 stored)
+        when(mockRecipe.getFridgeProducts()).thenReturn(Collections.nCopies(5, null));
+        when(fridgeStockModel.getFridgeProducts()).thenReturn(Collections.nCopies(6, null));
+
+        controller.finishTurn();
+
+        verify(gameStateModel).addScore(0); // Score should be 0
+        verify(gameStateModel).nextPlayer();
+        verify(recipeModel).selectRecipe(null);
+        verify(fridgeStockModel).clear();
+    }
+
+    @Test
+    void testFinishTurn_Score_TwoWastedProducts() {
+        when(gameStateModel.getCurrentPlayer()).thenReturn(MultiplayerGameStateModel.Player.PLAYER2);
+        Recipe mockRecipe = mock(Recipe.class);
+        when(recipeModel.getSelectedRecipe()).thenReturn(mockRecipe);
+        when(gameStateModel.isGameOver()).thenReturn(false);
+
+        // totalWastedProducts = 2 (e.g., 5 used, 7 stored)
+        when(mockRecipe.getFridgeProducts()).thenReturn(Collections.nCopies(5, null));
+        when(fridgeStockModel.getFridgeProducts()).thenReturn(Collections.nCopies(7, null));
+
+        controller.finishTurn();
+
+        verify(gameStateModel).addScore(2 * GameConfig.SCORE_PLAYER2_DECREASE);
+        verify(gameStateModel).nextPlayer();
+        verify(recipeModel).selectRecipe(null);
+        verify(fridgeStockModel).clear();
+    }
+
+    @Test
+    void testFinishTurn_Score_MoreThanTwoWastedProducts() {
+        when(gameStateModel.getCurrentPlayer()).thenReturn(MultiplayerGameStateModel.Player.PLAYER2);
+        Recipe mockRecipe = mock(Recipe.class);
+        when(recipeModel.getSelectedRecipe()).thenReturn(mockRecipe);
+        when(gameStateModel.isGameOver()).thenReturn(false);
+
+        // totalWastedProducts = 3 (e.g., 5 used, 8 stored)
+        when(mockRecipe.getFridgeProducts()).thenReturn(Collections.nCopies(5, null));
+        when(fridgeStockModel.getFridgeProducts()).thenReturn(Collections.nCopies(8, null));
+
+        controller.finishTurn();
+
+        verify(gameStateModel).addScore(2 * GameConfig.SCORE_PLAYER2_DECREASE); // Capped at 2 * decrease
+        verify(gameStateModel).nextPlayer();
+        verify(recipeModel).selectRecipe(null);
+        verify(fridgeStockModel).clear();
+    }
 }
