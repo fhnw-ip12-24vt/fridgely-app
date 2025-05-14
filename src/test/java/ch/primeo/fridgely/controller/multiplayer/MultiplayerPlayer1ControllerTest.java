@@ -9,6 +9,7 @@ import ch.primeo.fridgely.model.multiplayer.MultiplayerGameStateModel;
 import ch.primeo.fridgely.service.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assumptions; // Added for Assumptions
 
 import java.util.ArrayList;
 import java.util.List;
@@ -414,5 +415,74 @@ class MultiplayerPlayer1ControllerTest {
             expectedMixedScore = (int) (scaledScore + rhMixed);
         }
         verify(gameStateModel).addScore(expectedMixedScore);
+    }
+
+    @Test
+    void scanProduct_autoFinishesTurn_whenMaxProductsReached() {
+        // Arrange
+        when(gameStateModel.getCurrentPlayer()).thenReturn(MultiplayerGameStateModel.Player.PLAYER1);
+        Product mockProduct = mock(Product.class);
+        when(productRepository.getProductByBarcode("barcode_max_trigger")).thenReturn(mockProduct);
+        when(fridgeStockModel.getProducts()).thenReturn(new ArrayList<>()); // Product not in fridge initially
+        when(fridgeStockModel.addProduct(mockProduct)).thenReturn(true); // Product added successfully
+
+        List<Product> fridgeAtMaxCapacity = new ArrayList<>();
+        for (int i = 0; i < GameConfig.MAX_PRODUCTS; i++) {
+            fridgeAtMaxCapacity.add(mock(Product.class));
+        }
+        // This mock simulates the state of the fridge *after* the product is added and its size is checked.
+        when(fridgeStockModel.getFridgeProducts()).thenReturn(fridgeAtMaxCapacity);
+
+        // Act
+        controller.scanProduct("barcode_max_trigger");
+
+        // Assert
+        // Verify that finishTurn() was called and executed its main logic.
+        // This assumes GameConfig.MAX_PRODUCTS >= GameConfig.MIN_PRODUCTS_PER_ROUND for finishTurn to proceed.
+        if (GameConfig.MAX_PRODUCTS >= GameConfig.MIN_PRODUCTS_PER_ROUND) {
+            verify(gameStateModel).addScore(anyInt());
+            verify(gameStateModel).nextPlayer();
+        } else {
+            // If MAX_PRODUCTS < MIN_PRODUCTS_PER_ROUND, finishTurn is called but returns early.
+            // To verify the call itself in this specific edge case, a spy on controller would be needed.
+            // For this test, we focus on the outcome when finishTurn can fully execute.
+            // If this configuration is common, specific tests for it might be warranted.
+            // For now, we assume the typical case where MAX_PRODUCTS allows for a valid round completion.
+            // If finishTurn returns early, neither addScore nor nextPlayer would be called by it.
+            // This part of the assertion might need refinement based on how GameConfig can be set.
+            // Sticking to the primary success path:
+            verify(gameStateModel).addScore(anyInt()); // Will fail if the else condition above is true and MIN_PRODUCTS_PER_ROUND is not met
+            verify(gameStateModel).nextPlayer(); // Will fail if the else condition above is true
+        }
+    }
+
+    @Test
+    void scanProduct_doesNotAutoFinishTurn_whenBelowMaxProducts() {
+        // This test is meaningful if MAX_PRODUCTS > 0.
+        // If MAX_PRODUCTS is 0, the condition size >= MAX_PRODUCTS is always true for non-negative sizes.
+        Assumptions.assumeTrue(GameConfig.MAX_PRODUCTS > 0, "Test skipped if MAX_PRODUCTS is 0, as auto-finish would always trigger.");
+
+        // Arrange
+        when(gameStateModel.getCurrentPlayer()).thenReturn(MultiplayerGameStateModel.Player.PLAYER1);
+        Product mockProduct = mock(Product.class);
+        when(productRepository.getProductByBarcode("barcode_below_max")).thenReturn(mockProduct);
+        when(fridgeStockModel.getProducts()).thenReturn(new ArrayList<>()); // Product not in fridge initially
+        when(fridgeStockModel.addProduct(mockProduct)).thenReturn(true); // Product added successfully
+
+        List<Product> fridgeBelowMaxCapacity = new ArrayList<>();
+        // Simulate fridge having one less than MAX_PRODUCTS *after* the current product is notionally added.
+        for (int i = 0; i < GameConfig.MAX_PRODUCTS - 1; i++) {
+            fridgeBelowMaxCapacity.add(mock(Product.class));
+        }
+        // This mock simulates the state of the fridge *after* the product is added and its size is checked.
+        when(fridgeStockModel.getFridgeProducts()).thenReturn(fridgeBelowMaxCapacity);
+
+        // Act
+        controller.scanProduct("barcode_below_max");
+
+        // Assert
+        // Verify that finishTurn() was not called, so no change in player or score addition from it.
+        verify(gameStateModel, never()).addScore(anyInt()); // Check specifically score by finishTurn
+        verify(gameStateModel, never()).nextPlayer();
     }
 }
