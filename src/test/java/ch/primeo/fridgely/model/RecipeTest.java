@@ -44,6 +44,44 @@ class RecipeTest {
     }
 
     @Test
+    void testGetNameWithEmptyLanguage() {
+        // Arrange
+        Recipe recipe = new Recipe();
+        recipe.setName("Recipe");
+        recipe.setNameDE("Rezept");
+        recipe.setNameFR("Recette");
+
+        // Act & Assert
+        assertEquals("Recipe", recipe.getName(""));
+    }
+
+    @Test
+    void testGetNameWithUppercaseLanguageCode() {
+        // Arrange
+        Recipe recipe = new Recipe();
+        recipe.setName("Recipe");
+        recipe.setNameDE("Rezept");
+        recipe.setNameFR("Recette");
+
+        // Act & Assert
+        assertEquals("Rezept", recipe.getName("DE"));
+        assertEquals("Recette", recipe.getName("FR"));
+    }
+
+    @Test
+    void testGetNameWithNullLocalizedName() {
+        // Arrange
+        Recipe recipe = new Recipe();
+        recipe.setName("Recipe");
+        recipe.setNameDE(null);
+        recipe.setNameFR(null);
+
+        // Act & Assert
+        assertEquals("Recipe", recipe.getName("de"));
+        assertEquals("Recipe", recipe.getName("fr"));
+    }
+
+    @Test
     void testGetAndSetDescription() {
         Recipe recipe = new Recipe();
         recipe.setDescription("Delicious pasta recipe");

@@ -5,6 +5,7 @@ import ch.primeo.fridgely.controller.multiplayer.MultiplayerGameController;
 import ch.primeo.fridgely.model.Product;
 import ch.primeo.fridgely.model.Recipe;
 import ch.primeo.fridgely.service.ProductRepository;
+import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import ch.primeo.fridgely.util.ImageLoader;
 
 import javax.swing.*;
@@ -48,6 +49,8 @@ public class UnifiedRecipePanel extends JPanel {
     //Y-coordinate for mouse dragging/touchscrolling
     private int lastY;
 
+    private final AppLocalizationService localizationService;
+
 
     /**
      * Constructs a new unified recipe panel.
@@ -56,12 +59,13 @@ public class UnifiedRecipePanel extends JPanel {
      * @param productRepo the repository for product data
      * @param imageLoader the image loader for loading images
      */
-    public UnifiedRecipePanel(MultiplayerGameController controller, ProductRepository productRepo, ImageLoader imageLoader) {
+    public UnifiedRecipePanel(MultiplayerGameController controller, ProductRepository productRepo, ImageLoader imageLoader, AppLocalizationService localizationService) {
         this.gameController = controller;
         this.recipeModel = gameController.getRecipeModel();
         this.productRepository = productRepo;
         this.loadedRecipeCards = new HashMap<>();
         this.imageLoader = imageLoader;
+        this.localizationService = localizationService;
 
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -238,7 +242,7 @@ public class UnifiedRecipePanel extends JPanel {
         JPanel headerPanel = new JPanel(new BorderLayout(5, 0));
 
         // Recipe title
-        JLabel titleLabel = new JLabel(recipe.getName());
+        JLabel titleLabel = new JLabel(recipe.getName(localizationService.getLanguage()));
         headerPanel.add(titleLabel, BorderLayout.CENTER);
 
 

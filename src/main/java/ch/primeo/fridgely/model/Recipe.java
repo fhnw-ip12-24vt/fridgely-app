@@ -85,6 +85,14 @@ public class Recipe {
         return recipeId;
     }
 
+    public String getName(String language) {
+        return switch (language != null ? language.toLowerCase() : "") {
+            case "de" -> nameDE != null ? nameDE : name;
+            case "fr" -> nameFR != null ? nameFR : name;
+            default -> name;
+        };
+    }
+
     public String getName() {
         return name;
     }
