@@ -27,7 +27,6 @@ import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.lang.reflect.Field; // Keep for onCompleteCallback modification if showDialog is tested deeply
 import java.util.ArrayList;
 import java.util.List;
 
