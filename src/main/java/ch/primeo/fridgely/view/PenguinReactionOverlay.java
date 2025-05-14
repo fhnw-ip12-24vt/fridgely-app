@@ -1,6 +1,5 @@
 package ch.primeo.fridgely.view;
 
-import ch.primeo.fridgely.config.UIConfig;
 import ch.primeo.fridgely.model.PenguinFacialExpression;
 import ch.primeo.fridgely.model.Product;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
