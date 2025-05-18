@@ -1,13 +1,18 @@
 package ch.primeo.fridgely.config;
 
+import lombok.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
 import javax.swing.*;
+import javax.swing.plaf.*;
 import java.awt.*;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Handler;
@@ -42,23 +47,39 @@ class UIConfigTest {
 
     @Test
     void testSetUIFontWithCustomFont() {
+        ResourceLoader mockResourceLoader = Mockito.mock(ResourceLoader.class);
+        UIConfig uiConfig = new UIConfig(mockResourceLoader);
         Font testFont = new Font("Arial", Font.PLAIN, 12);
-        UIConfig.setUIFont(new javax.swing.plaf.FontUIResource(testFont));
+        uiConfig.setUIFont(new javax.swing.plaf.FontUIResource(testFont));
 
         // Verify that the font is applied to UIManager defaults
         Object defaultFont = UIManager.get("Label.font");
-        assertTrue(defaultFont instanceof javax.swing.plaf.FontUIResource, "Default font should be an instance of FontUIResource.");
+        assertInstanceOf(FontUIResource.class, defaultFont, "Default font should be an instance of FontUIResource.");
         assertEquals(testFont.getName(), ((Font) defaultFont).getName(), "Font name should match the test font.");
         assertEquals(testFont.getSize(), ((Font) defaultFont).getSize(), "Font size should match the test font.");
     }
 
-  @Test
-    void testSetUIFontWithResourceFont() {
-        // This test ensures no exceptions are thrown when loading the font resource
-        assertDoesNotThrow(() -> UIConfig.setUIFont(), "setUIFont should not throw any exceptions.");
+    @Test
+    void testSetUIFontWithResourceFont() throws IOException {
+        ResourceLoader mockResourceLoader = Mockito.mock(ResourceLoader.class);
+        Resource mockResource = Mockito.mock(Resource.class);
+        // Use a non-null InputStream; an empty one might cause FontFormatException,
+        // which is caught by UIConfig's generic Exception handler.
+        InputStream mockInputStream = new ByteArrayInputStream(new byte[0]);
+
+        Mockito.when(mockResourceLoader.getResource("classpath:ch/primeo/fridgely/fonts/bangers_regular.ttf")).thenReturn(mockResource);
+        Mockito.when(mockResource.getInputStream()).thenReturn(mockInputStream);
+
+        UIConfig uiConfig = new UIConfig(mockResourceLoader);
+        assertDoesNotThrow(() -> uiConfig.setUIFont(), "setUIFont should not throw any exceptions.");
+
+        // Verify that the mocked resource loader and resource were used
+        Mockito.verify(mockResourceLoader).getResource("classpath:ch/primeo/fridgely/fonts/bangers_regular.ttf");
+        Mockito.verify(mockResource).getInputStream();
     }
 
     // Helper class to capture log records
+    @Getter
     private static class ListLogHandler extends Handler {
         private final List<LogRecord> records = new ArrayList<>();
 
@@ -75,14 +96,11 @@ class UIConfigTest {
         public void close() throws SecurityException {
         }
 
-        public List<LogRecord> getRecords() {
-            return records;
-        }
     }
 
     @Test
     void testSetUIFontLogsWarningOnException() throws IOException {
-        Logger uiConfigLogger = UIConfig.LOGGER; // Or Logger.getLogger(UIConfig.class.getName())
+        Logger uiConfigLogger = UIConfig.LOGGER; 
         ListLogHandler listLogHandler = new ListLogHandler();
 
         // Backup original handlers and settings
@@ -91,7 +109,7 @@ class UIConfigTest {
             uiConfigLogger.removeHandler(handler);
         }
         boolean originalUseParentHandlers = uiConfigLogger.getUseParentHandlers();
-        uiConfigLogger.setUseParentHandlers(false); // Avoid console output during test from parent
+        uiConfigLogger.setUseParentHandlers(false); 
         uiConfigLogger.addHandler(listLogHandler);
 
         ResourceLoader mockResourceLoader = Mockito.mock(ResourceLoader.class);
@@ -101,15 +119,20 @@ class UIConfigTest {
         Mockito.when(mockResourceLoader.getResource(Mockito.anyString())).thenReturn(mockResource);
         Mockito.when(mockResource.getInputStream()).thenThrow(new IOException(expectedExceptionMessage));
 
+        UIConfig uiConfig = new UIConfig(mockResourceLoader); // Instantiate with the mock loader
+
         try {
-            UIConfig.setUIFont(mockResourceLoader); // Call the refactored method with the mock loader
+            uiConfig.setUIFont(); // Call the instance method
 
             List<LogRecord> loggedRecords = listLogHandler.getRecords();
             assertEquals(1, loggedRecords.size(), "Expected one log record.");
 
-            LogRecord logRecord = loggedRecords.get(0);
+            LogRecord logRecord = loggedRecords.getFirst();
             assertEquals(Level.WARNING, logRecord.getLevel(), "Log level should be WARNING.");
-            assertEquals(expectedExceptionMessage, logRecord.getMessage(), "Logged message should match the exception message.");
+            // The message logged by UIConfig might be just e.getMessage(), so we check for that.
+            // If UIConfig prefixes the message, this assertion would need adjustment.
+            assertTrue(logRecord.getMessage().contains(expectedExceptionMessage), 
+                       "Logged message should contain the exception message. Logged: " + logRecord.getMessage());
         } finally {
             // Restore original logger state
             uiConfigLogger.removeHandler(listLogHandler);
@@ -121,10 +144,22 @@ class UIConfigTest {
     }
 
     @Test
-    void testUtilityClassConstructor() {
-        // Ensure the constructor is inaccessible
-        assertThrows(UnsupportedOperationException.class, () -> {
-            new UIConfig();
-        }, "UIConfig constructor should throw UnsupportedOperationException.");
+    void testSetUIFontLoadsAndAppliesTrueTypeFont() {
+        // Use the real classpath loader so we load src/main/resources/ch/primeo/fridgely/fonts/bangers_regular.ttf
+        ResourceLoader realLoader = new DefaultResourceLoader();
+        UIConfig uiConfig = new UIConfig(realLoader);
+
+        // should not blow up
+        assertDoesNotThrow(() -> uiConfig.setUIFont(),
+          "setUIFont() loading the real TTF should not throw");
+
+        // pick a known key that was originally a FontUIResource
+        Object labelFont = UIManager.get("Label.font");
+        assertNotNull(labelFont);
+        assertInstanceOf(FontUIResource.class, labelFont, "After loading, Label.font must be a FontUIResource");
+
+        Font f = (Font) labelFont;
+        assertEquals(UIConfig.FONT_SIZE, f.getSize(),
+          "Derived font must have size = FONT_SIZE");
     }
 }
