@@ -12,8 +12,8 @@ import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
+import java.awt.event.*;
 
 /**
  * Launcher for the multiplayer game mode. Initializes and starts the multiplayer game.
@@ -105,7 +105,7 @@ public class MultiplayerGameLauncher {
 
         // Add escape key to close game frame
         gameFrame.getRootPane().getInputMap()
-                .put(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0), "escape");
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "escape");
         gameFrame.getRootPane().getActionMap().put("escape", new javax.swing.AbstractAction() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
