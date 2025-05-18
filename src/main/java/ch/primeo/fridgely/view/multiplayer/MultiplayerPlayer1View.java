@@ -65,12 +65,14 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
      * @param controller   the main game controller
      * @param localization the service for text localization
      */
-    public MultiplayerPlayer1View(MultiplayerGameController controller, AppLocalizationService localization, ImageLoader imageLoader) {
+    public MultiplayerPlayer1View(MultiplayerGameController controller, AppLocalizationService localization,
+                                  ImageLoader imageLoader) {
         this.gameController = controller;
         this.player1Controller = gameController.getPlayer1Controller();
         this.localizationService = localization;
         this.imageLoader = imageLoader;
-        this.overlay = new PenguinReactionOverlay(SwingUtilities.getWindowAncestor(this), localizationService, imageLoader);
+        this.overlay = new PenguinReactionOverlay(SwingUtilities.getWindowAncestor(this), localizationService,
+                imageLoader);
         initializeComponents();
         setupLayout();
         registerListeners();
@@ -91,7 +93,8 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
         statusLabel = new JLabel("");
         scanningPenguinLabel = new JLabel();
         minProductsLabel = new JLabel("");
-        scanningPenguinLabel.setIcon(imageLoader.loadScaledImage("/ch/primeo/fridgely/sprites/penguin_scanning.png", 250, 250));
+        scanningPenguinLabel.setIcon(imageLoader.loadScaledImage("/ch/primeo/fridgely/sprites/penguin_scanning.png",
+                250, 250));
     }
 
     /**
@@ -197,7 +200,8 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
 
             // TODO: add different reactions
             boolean isGood = product.isBio() || product.isLocal() || product.isLowCo2();
-            PenguinFacialExpression reaction = isGood ? PenguinFacialExpression.HAPPY : PenguinFacialExpression.DISAPPOINTED;
+            PenguinFacialExpression reaction = isGood ? PenguinFacialExpression.HAPPY :
+                    PenguinFacialExpression.DISAPPOINTED;
 
             // Addition
             statusLabel.setText(String.format(localizationService.get(KEY_ADDED_TO_STOCK_FMT), productName));
@@ -221,6 +225,7 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
      */
     private void finishTurn() {
         player1Controller.finishTurn();
+        overlay.dispose();
         updateComponentStates();
     }
 

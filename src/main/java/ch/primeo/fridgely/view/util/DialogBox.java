@@ -39,7 +39,7 @@ public class DialogBox extends JPanel {
     private final JFrame frame;
 
     private final List<String> messages;
-    int currentMessageIndex = 0; 
+    int currentMessageIndex = 0;
     private final PenguinFacialExpression penguinExpression;
     private final PenguinHPState penguinHPState;
     private BufferedImage penguinImage;
@@ -50,7 +50,7 @@ public class DialogBox extends JPanel {
     private final Timer arrowAnimationTimer;
     private Runnable onCompleteCallback; // Made non-final to be replaced by showDialog
     private final JLabel messageLabel;
-    JButton skipButton; 
+    JButton skipButton;
     private final AppLocalizationService localizationService;
 
     private static final int ARROW_ANIMATION_DELAY = 500; // milliseconds
@@ -65,14 +65,15 @@ public class DialogBox extends JPanel {
     /**
      * Creates a dialog box with a sequence of messages, penguin expression, HP state, and a callback.
      * This constructor is for application use.
-     * @param msgs the list of messages to display
-     * @param expression the penguin facial expression to show
-     * @param state the penguin HP state to show
-     * @param callback the callback to run when dialog is complete
+     *
+     * @param msgs        the list of messages to display
+     * @param expression  the penguin facial expression to show
+     * @param state       the penguin HP state to show
+     * @param callback    the callback to run when dialog is complete
      * @param imageLoader the image loader to use for loading images
      */
     public DialogBox(List<String> msgs, PenguinFacialExpression expression, PenguinHPState state, Runnable callback,
-            ImageLoader imageLoader) {
+                     ImageLoader imageLoader) {
         this(msgs, expression, state, callback, imageLoader, new JFrame());
     }
 
@@ -80,7 +81,7 @@ public class DialogBox extends JPanel {
      * Package-private constructor for testing, allowing JFrame injection.
      */
     DialogBox(List<String> msgs, PenguinFacialExpression expression, PenguinHPState state, Runnable callback,
-            ImageLoader imageLoader, JFrame frameInstance) {
+              ImageLoader imageLoader, JFrame frameInstance) {
 
         this.imageLoader = imageLoader;
         this.localizationService = FridgelyContext.getBean(AppLocalizationService.class);
@@ -95,7 +96,7 @@ public class DialogBox extends JPanel {
         // For tests with mock JFrame, ensure a default size if needed by other logic.
         // This might be better handled by stubbing frame.getSize() in the test itself.
         if (this.frame.getSize().width == 0 && this.frame.getSize().height == 0) {
-            this.frame.setSize(800,600); // Default size if not set (e.g. mock)
+            this.frame.setSize(800, 600); // Default size if not set (e.g. mock)
         }
 
 
@@ -146,7 +147,7 @@ public class DialogBox extends JPanel {
     private void skipToEnd() {
         arrowAnimationTimer.stop();
         onCompleteCallback.run();
-        if (frame != null) { 
+        if (frame != null) {
             frame.dispose();
         }
     }
@@ -199,14 +200,14 @@ public class DialogBox extends JPanel {
     /**
      * Advances to the next message or completes the dialog.
      */
-    void nextMessage() { 
+    void nextMessage() {
         currentMessageIndex++;
         if (currentMessageIndex < messages.size()) {
             updateMessage();
         } else {
             arrowAnimationTimer.stop();
             onCompleteCallback.run();
-            if (frame != null) { 
+            if (frame != null) {
                 frame.dispose();
             }
         }
@@ -214,6 +215,7 @@ public class DialogBox extends JPanel {
 
     /**
      * Paints the dialog box, penguin, HP image, and arrow.
+     *
      * @param g the Graphics context
      */
     @Override
@@ -270,6 +272,7 @@ public class DialogBox extends JPanel {
 
     /**
      * Returns the preferred size of the dialog box.
+     *
      * @return the preferred Dimension
      */
     @Override
@@ -303,7 +306,8 @@ public class DialogBox extends JPanel {
         messageLabel.setBounds(
                 penguinAreaWidth + horizontalPadding,
                 verticalPadding,
-                Math.max((int)(width - penguinAreaWidth - (horizontalPadding * 2) - Math.max(20, width * 0.025)), 100), // Slightly wider, still responsive
+                Math.max((int) (width - penguinAreaWidth - (horizontalPadding * 2) - Math.max(20, width * 0.025)),
+                        100), // Slightly wider, still responsive
                 height - (verticalPadding * 2)
         );
     }
@@ -385,10 +389,10 @@ public class DialogBox extends JPanel {
         final Runnable originalCallbackReference = this.onCompleteCallback;
 
         this.onCompleteCallback = () -> { // Replace instance's callback
-            if (glassPane != null) { 
+            if (glassPane != null) {
                 glassPane.setVisible(false);
             }
-            if (frame != null) { 
+            if (frame != null) {
                 frame.setGlassPane(oldGlassPane);
                 frame.dispose();
             }
@@ -396,7 +400,7 @@ public class DialogBox extends JPanel {
                 SwingUtilities.invokeLater(originalCallbackReference);
             }
         };
-        
+
         // Removed reflection for onCompleteCallback, as it's now non-final
 
         // Ensure the dialog gets focus so the user can click it

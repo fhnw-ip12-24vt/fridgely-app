@@ -76,7 +76,7 @@ public class ControlButton extends JButton {
     @Override
     public void setEnabled(boolean b) {
         super.setEnabled(b);
-        if(b) {
+        if (b) {
             setBackground(UIConfig.ACTIVE_COLOR);
         } else {
             setBackground(UIConfig.DISABLED_COLOR);

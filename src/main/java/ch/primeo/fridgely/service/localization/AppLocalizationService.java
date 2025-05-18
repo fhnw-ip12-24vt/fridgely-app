@@ -41,6 +41,7 @@ public class AppLocalizationService {
 
     /**
      * Constructs the AppLocalization with the given startup language.
+     *
      * @param config the application configuration
      */
     public AppLocalizationService(AppConfig config) {
@@ -77,6 +78,7 @@ public class AppLocalizationService {
 
     /**
      * Gets the localized string for the given key.
+     *
      * @param key the resource key
      * @return the localized string
      */
@@ -86,6 +88,7 @@ public class AppLocalizationService {
 
     /**
      * Subscribes an observer to locale changes.
+     *
      * @param observer the observer to subscribe
      */
     public void subscribe(LocalizationObserver observer) {
@@ -94,6 +97,7 @@ public class AppLocalizationService {
 
     /**
      * Unsubscribes an observer from locale changes.
+     *
      * @param observer the observer to unsubscribe
      */
     public void unsubscribe(LocalizationObserver observer) {
@@ -102,6 +106,7 @@ public class AppLocalizationService {
 
     /**
      * Gets the current language code.
+     *
      * @return the current language code
      */
     public String getLanguage() {

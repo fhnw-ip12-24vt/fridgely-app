@@ -17,8 +17,19 @@ public class UIConfig {
         throw new UnsupportedOperationException("GameConfig is a utility class and cannot be instantiated");
     }
 
+    /**
+     * Background color for the game UI.
+     */
     public static final Color BACKGROUND_COLOR = new Color(248, 248, 255);
+
+    /**
+     * Color for the active button in the game UI.
+     */
     public static final Color ACTIVE_COLOR = new Color(131, 180, 225);
+
+    /**
+     * Color for the inactive button in the game UI.
+     */
     public static final Color DISABLED_COLOR = new Color(193, 193, 193);
 
     static final Logger LOGGER = Logger.getLogger(UIConfig.class.getName());
@@ -27,13 +38,14 @@ public class UIConfig {
      */
     public static final int FONT_SIZE = 24;
 
-    public static void setUIFont (javax.swing.plaf.FontUIResource f){
+    public static void setUIFont(javax.swing.plaf.FontUIResource f) {
         Enumeration keys = UIManager.getDefaults().keys();
         while (keys.hasMoreElements()) {
             Object key = keys.nextElement();
-            Object value = UIManager.get (key);
-            if (value instanceof javax.swing.plaf.FontUIResource)
-                UIManager.put (key, f);
+            Object value = UIManager.get(key);
+            if (value instanceof javax.swing.plaf.FontUIResource) {
+                UIManager.put(key, f);
+            }
         }
     }
 
@@ -44,10 +56,10 @@ public class UIConfig {
 
     // Refactored method to accept ResourceLoader
     public static void setUIFont(ResourceLoader resourceLoader) {
-        try{
-           // Use the provided resourceLoader instance
-           Resource resource = resourceLoader.getResource("classpath:ch/primeo/fridgely/fonts/bangers_regular.ttf");
-           InputStream fontStream = resource.getInputStream();
+        try {
+            // Use the provided resourceLoader instance
+            Resource resource = resourceLoader.getResource("classpath:ch/primeo/fridgely/fonts/bangers_regular.ttf");
+            InputStream fontStream = resource.getInputStream();
             //File fontFile = new File("src/main/resources/ch/primeo/fridgely/fonts/bangers_regular.ttf");
             Font font = Font.createFont(Font.TRUETYPE_FONT, fontStream).deriveFont(Font.PLAIN, FONT_SIZE);
             setUIFont(new javax.swing.plaf.FontUIResource(font));

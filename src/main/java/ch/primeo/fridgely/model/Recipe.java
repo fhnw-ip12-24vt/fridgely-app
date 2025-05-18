@@ -178,9 +178,9 @@ public class Recipe {
     @Transient // Not persisted
     public String getLocalizedName(String language) {
         return switch (language) {
-        case "de" -> getNameDE() != null ? getNameDE() : getName();
-        case "fr" -> getNameFR() != null ? getNameFR() : getName();
-        default -> getName(); // Default to base name (English)
+            case "de" -> getNameDE() != null ? getNameDE() : getName();
+            case "fr" -> getNameFR() != null ? getNameFR() : getName();
+            default -> getName(); // Default to base name (English)
         };
     }
 
@@ -193,9 +193,9 @@ public class Recipe {
     @Transient // Not persisted
     public String getLocalizedDescription(String language) {
         return switch (language) {
-        case "de" -> getDescriptionDE() != null ? getDescriptionDE() : getDescription();
-        case "fr" -> getDescriptionFR() != null ? getDescriptionFR() : getDescription();
-        default -> getDescription(); // Default to base description (English)
+            case "de" -> getDescriptionDE() != null ? getDescriptionDE() : getDescription();
+            case "fr" -> getDescriptionFR() != null ? getDescriptionFR() : getDescription();
+            default -> getDescription(); // Default to base description (English)
         };
     }
 

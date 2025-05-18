@@ -1,13 +1,11 @@
 package ch.primeo.fridgely.model;
 
-//import ch.primeo.fridgely.model.RecipeIngredient; // Not needed anymore
 import ch.primeo.fridgely.service.RecipeRepository;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -45,10 +43,11 @@ public class RecipeModel {
         this.propertyChangeSupport = new PropertyChangeSupport(this);
         loadAvailableRecipes();
     }
-      /**
+
+    /**
      * Loads available recipes from the repository.
      */
-      void loadAvailableRecipes() {
+    void loadAvailableRecipes() {
         List<Recipe> oldRecipes = new ArrayList<>(availableRecipes);
         availableRecipes.clear();
 
@@ -86,7 +85,6 @@ public class RecipeModel {
         }
 
         System.out.println("Loaded " + availableRecipes.size() + " recipes");
-        //propertyChangeSupport.firePropertyChange(PROP_AVAILABLE_RECIPES, oldRecipes, new ArrayList<>(availableRecipes));
     }
 
     /**
@@ -99,22 +97,20 @@ public class RecipeModel {
     }
 
 
-
     /**
      * Gets a list of recipes that can be made with the given products.
      *
      * @param productsInStorage the products available in the storage (fridge + default)
      * @return a list of possible recipes
      */
-    public List<Recipe> getPossibleRecipes(List<Product> productsInStorage){
-       List<Recipe> recipesTest = availableRecipes;
+    public List<Recipe> getPossibleRecipes(List<Product> productsInStorage) {
+        List<Recipe> recipesTest = availableRecipes;
         return availableRecipes.stream()
                 .filter(recipe -> canMakeRecipe(recipe, productsInStorage))
                 .toList();
     }
 
     /**
-
      * Gets the currently selected recipe.
      *
      * @return the selected recipe, or null if none is selected
@@ -133,7 +129,8 @@ public class RecipeModel {
         selectedRecipe = recipe;
         propertyChangeSupport.firePropertyChange(PROP_SELECTED_RECIPE, oldRecipe, selectedRecipe);
     }
-      /**
+
+    /**
      * Gets ingredients for a recipe from the repository.
      *
      * @param recipe the recipe to get ingredients for
@@ -156,7 +153,7 @@ public class RecipeModel {
     /**
      * Checks if a recipe can be made with the given products.
      *
-     * @param recipe the recipe to check
+     * @param recipe            the recipe to check
      * @param productsInStorage the available products in the storage
      * @return true if the recipe can be made, false otherwise
      */
@@ -178,7 +175,9 @@ public class RecipeModel {
 
             // Sequential search for matching products
             int i = 0;
-            while(i < recipeProducts.size() && productsInStorage.contains(recipeProducts.get(i))) i++;
+            while (i < recipeProducts.size() && productsInStorage.contains(recipeProducts.get(i))) {
+                i++;
+            }
 
             return i == recipeProducts.size();
         }
@@ -195,7 +194,7 @@ public class RecipeModel {
     /**
      * Gets the matching ingredients count for a recipe.
      *
-     * @param recipe the recipe to check
+     * @param recipe   the recipe to check
      * @param products the available products
      * @return the number of ingredients that match products in the fridge
      */

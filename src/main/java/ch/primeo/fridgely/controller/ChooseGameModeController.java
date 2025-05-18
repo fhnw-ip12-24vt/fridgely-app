@@ -37,10 +37,12 @@ public class ChooseGameModeController implements BaseController {
     final LanguageSwitchButton languageSwitchButton;
 
     /**
-     * Constructs the controller and sets up UI event handlers.
-     * @param localization the localization service for text updates
+     * Constructor for ChooseGameModeController.
+     *
+     * @param localization         the localization service
      * @param languageSwitchButton the button for switching languages
-     * @param launcher the launcher for multiplayer game mode
+     * @param launcher             the multiplayer game launcher
+     * @param imageLoader          the image loader
      */
     @Autowired
     public ChooseGameModeController(
@@ -59,7 +61,8 @@ public class ChooseGameModeController implements BaseController {
 
     // Constructor for testing purposes
     protected ChooseGameModeController(AppLocalizationService localization, MultiplayerGameLauncher launcher,
-                                       ImageLoader imageLoader, ChooseGameModeView view, LanguageSwitchButton languageSwitchButton) {
+                                       ImageLoader imageLoader, ChooseGameModeView view,
+                                       LanguageSwitchButton languageSwitchButton) {
 
         this.localizationService = localization;
         this.multiplayerGameLauncher = launcher;

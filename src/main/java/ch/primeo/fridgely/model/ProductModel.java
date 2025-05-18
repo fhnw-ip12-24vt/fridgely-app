@@ -1,6 +1,7 @@
 package ch.primeo.fridgely.model;
 
 import ch.primeo.fridgely.service.ProductRepository;
+
 import java.util.List;
 
 /**

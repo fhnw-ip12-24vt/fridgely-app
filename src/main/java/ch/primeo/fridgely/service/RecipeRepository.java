@@ -10,10 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -40,7 +36,7 @@ public class RecipeRepository {
 
     @Autowired
     public RecipeRepository(AppLocalizationService localization, FridgeStockRepository stockRepo,
-            RecipeJpaRepository recipeJpaRepo, EntityManager entityManager) {
+                            RecipeJpaRepository recipeJpaRepo, EntityManager entityManager) {
         this.localizationService = localization;
         this.fridgeStockRepository = stockRepo;
         this.recipeJpaRepository = recipeJpaRepo;

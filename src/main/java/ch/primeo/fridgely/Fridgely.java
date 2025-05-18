@@ -10,7 +10,9 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.util.logging.Logger;
+
 import lombok.Getter;
+
 
 @SpringBootApplication
 public class Fridgely {
@@ -33,7 +35,7 @@ public class Fridgely {
     @Getter
     private static boolean isSingleDisplay = false;
 
-    public static void main(String[] args) throws InterruptedException {    
+    public static void main(String[] args) throws InterruptedException {
         detectScreens();
         UIConfig.setUIFont();
 
@@ -73,14 +75,16 @@ public class Fridgely {
             // Fallback logic
             if (mainAppScreen == null) {
                 mainAppScreen = ge.getDefaultScreenDevice();
-                LOGGER.warning("Target main app screen (1024x600) not found. Using default: " + mainAppScreen.getIDstring());
+                LOGGER.warning("Target main app screen (1024x600) not found. Using default: "
+                        + mainAppScreen.getIDstring());
             }
             if (scannedItemsScreen == null) {
                 if (screens.length > 1) {
                     for (GraphicsDevice screen : screens) {
                         if (screen != mainAppScreen) {
                             scannedItemsScreen = screen;
-                            LOGGER.warning("Target scanned items screen (1920x1080) not found. Using a different screen: " + scannedItemsScreen.getIDstring());
+                            LOGGER.warning("Target scanned items screen (1920x1080) not found. Using a different "
+                                    + "screen: " + scannedItemsScreen.getIDstring());
                             break;
                         }
                     }

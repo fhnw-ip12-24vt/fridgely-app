@@ -33,7 +33,8 @@ public class MultiplayerEndGameView extends JPanel implements PropertyChangeList
     private ControlButton menuButton;
 
 
-    public MultiplayerEndGameView(MultiplayerGameController gameController, AppLocalizationService localizationService, ImageLoader imageLoader) {
+    public MultiplayerEndGameView(MultiplayerGameController gameController,
+                                  AppLocalizationService localizationService, ImageLoader imageLoader) {
         this.gameController = gameController;
         this.localizationService = localizationService;
         this.imageLoader = imageLoader;
@@ -43,7 +44,7 @@ public class MultiplayerEndGameView extends JPanel implements PropertyChangeList
         registerListeners();
     }
 
-    public void initializeComponent(){
+    public void initializeComponent() {
         // Titel
         titleLabel = new JLabel(localizationService.get("endscreen.multiplayer.title"));
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -52,7 +53,8 @@ public class MultiplayerEndGameView extends JPanel implements PropertyChangeList
         penguinImageLabel = new JLabel();
         penguinImageLabel.setHorizontalAlignment(SwingConstants.CENTER);
         try {
-            ImageIcon penguinIcon = imageLoader.loadImage(PenguinHPState.fromHP(gameController.getGameStateModel().getScore()).getSpritePath());
+            ImageIcon penguinIcon =
+                    imageLoader.loadImage(PenguinHPState.fromHP(gameController.getGameStateModel().getScore()).getSpritePath());
             Image scaledImage = penguinIcon.getImage().getScaledInstance(350, 350, Image.SCALE_SMOOTH);
             penguinImageLabel.setIcon(new ImageIcon(scaledImage));
         } catch (Exception e) {
@@ -62,7 +64,8 @@ public class MultiplayerEndGameView extends JPanel implements PropertyChangeList
         int score = gameController.getGameStateModel().getScore();
 
         //Message
-        messageLabel = new JLabel(String.format((localizationService.get("endscreen.multiplayer." + PenguinHPState.fromHP(score).name().toLowerCase()))));
+        messageLabel =
+                new JLabel(String.format((localizationService.get("endscreen.multiplayer." + PenguinHPState.fromHP(score).name().toLowerCase()))));
         messageLabel.setHorizontalAlignment(SwingConstants.CENTER);
         // Punktzahl
         scoreLabel = new JLabel(String.format(localizationService.get("label.player_score"), score));
@@ -74,7 +77,7 @@ public class MultiplayerEndGameView extends JPanel implements PropertyChangeList
 
     }
 
-    public void setupLaylout(){
+    public void setupLaylout() {
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);

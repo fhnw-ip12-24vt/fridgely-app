@@ -45,11 +45,11 @@ public class MultiplayerPlayer2View extends JPanel implements PropertyChangeList
     /**
      * Constructs a new Player 2 view.
      *
-     * @param controller      the main game controller
+     * @param controller   the main game controller
      * @param localization the service for text localization
      */
     public MultiplayerPlayer2View(MultiplayerGameController controller,
-            AppLocalizationService localization, ImageLoader imageLoader) {
+                                  AppLocalizationService localization, ImageLoader imageLoader) {
         this.gameController = controller;
         this.player2Controller = gameController.getPlayer2Controller();
         this.localizationService = localization;
@@ -73,7 +73,8 @@ public class MultiplayerPlayer2View extends JPanel implements PropertyChangeList
      */
     private void initializeComponents() {
         // Create the unified recipe panel
-        unifiedRecipePanel = new UnifiedRecipePanel(gameController, gameController.getProductRepository(), imageLoader, localizationService);
+        unifiedRecipePanel = new UnifiedRecipePanel(gameController, gameController.getProductRepository(),
+                imageLoader, localizationService);
 
         // initialize with empty text; will be set in onLocaleChanged()
         finishTurnButton = new ControlButton(localizationService.get("finish_turn_button"));

@@ -66,7 +66,7 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
     private CardLayout playerCardLayout;
 
     public MultiplayerGameView(MultiplayerGameController controller, AppLocalizationService localization,
-            JFrame frame, ImageLoader imageLoader) {
+                               JFrame frame, ImageLoader imageLoader) {
         this.gameController = controller;
         this.localizationService = localization;
         this.imageLoader = imageLoader;
@@ -104,7 +104,7 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
 
         //Get Icons for buttons
         ImageIcon newGameIcon = imageLoader.loadScaledImage("/ch/primeo/fridgely/icons/restart.png", 50, 50);
-        ImageIcon homeIcon  = imageLoader.loadScaledImage("/ch/primeo/fridgely/icons/home.png", 50, 50);
+        ImageIcon homeIcon = imageLoader.loadScaledImage("/ch/primeo/fridgely/icons/home.png", 50, 50);
 
 
         newGameButton = new FButton(newGameIcon, true);
@@ -141,20 +141,18 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
     }
 
 
-
     private void showCurrentPlayerView() {
         MultiplayerGameStateModel.Player currentPlayer = gameController.getGameStateModel().getCurrentPlayer();
-        if(gameController.getGameStateModel().isGameOver()){
+        if (gameController.getGameStateModel().isGameOver()) {
             Window window = SwingUtilities.getWindowAncestor(this);
             if (window instanceof JFrame frame) {
                 frame.setContentPane(new MultiplayerEndGameView(gameController, localizationService, imageLoader));
                 frame.revalidate();
                 frame.repaint();
             }
-        }
-        else if (currentPlayer == MultiplayerGameStateModel.Player.PLAYER1) {
+        } else if (currentPlayer == MultiplayerGameStateModel.Player.PLAYER1) {
             playerCardLayout.show(playerPanel, "player1");
-        }else {
+        } else {
             playerCardLayout.show(playerPanel, "player2");
             player2View.updateRecipeList();
         }

@@ -31,6 +31,7 @@ public enum PenguinFacialExpression {
 
     /**
      * Returns the sprite path for this facial expression.
+     *
      * @return the sprite image path
      */
     public String getSprite() {
@@ -38,12 +39,12 @@ public enum PenguinFacialExpression {
 
         // Nice checkstyle rules, if cases are indented one more scope, it cries.
         return switch (this) {
-        case HAPPY -> basePath + "happy.png";
-        case NEUTRAL -> basePath + "neutral.png";
-        case ALERT -> basePath + "alert.png";
-        case CRITICAL -> basePath + "what.png";
-        case ANGRY -> basePath + "angry.png";
-        case DISAPPOINTED -> basePath + "disappointed.png";
+            case HAPPY -> basePath + "happy.png";
+            case NEUTRAL -> basePath + "neutral.png";
+            case ALERT -> basePath + "alert.png";
+            case CRITICAL -> basePath + "what.png";
+            case ANGRY -> basePath + "angry.png";
+            case DISAPPOINTED -> basePath + "disappointed.png";
         };
     }
 }

@@ -56,15 +56,17 @@ public class ChooseGameModeView implements LocalizationObserver {
 
     /**
      * Constructor for the ChooseGameModeView. Initializes the components and sets up the layout.
-     * @param button the language switch button
+     *
+     * @param button       the language switch button
      * @param localization the localization service for text updates
      */
-    public ChooseGameModeView(LanguageSwitchButton button, AppLocalizationService localization, ImageLoader imageLoader) {
+    public ChooseGameModeView(LanguageSwitchButton button, AppLocalizationService localization,
+                              ImageLoader imageLoader) {
         this.langButton = button;
         this.localizationService = localization;
         this.imageLoader = imageLoader;
 
-        if(!Fridgely.isSingleDisplay()) {
+        if (!Fridgely.isSingleDisplay()) {
             Fridgely.getMainAppScreen().setFullScreenWindow(frame);
         } else {
             var screenBounds = Fridgely.getMainAppScreen().getDefaultConfiguration().getBounds();

@@ -24,13 +24,13 @@ public class MultiplayerPlayer1Controller {
     /**
      * Constructs a new Player 1 controller.
      *
-     * @param stockModel  the model for the fridge stock
-     * @param stateModel  the model for the game state
-     * @param penguinModel  the model for the penguin HP
-     * @param productRepo the repository for accessing products
+     * @param stockModel   the model for the fridge stock
+     * @param stateModel   the model for the game state
+     * @param penguinModel the model for the penguin HP
+     * @param productRepo  the repository for accessing products
      */
     public MultiplayerPlayer1Controller(FridgeStockModel stockModel, MultiplayerGameStateModel stateModel,
-            PenguinModel penguinModel, ProductRepository productRepo) {
+                                        PenguinModel penguinModel, ProductRepository productRepo) {
         this.fridgeStockModel = stockModel;
         this.gameStateModel = stateModel;
         this.penguinModel = penguinModel;
@@ -110,7 +110,7 @@ public class MultiplayerPlayer1Controller {
 
         if (sum < 0) {
             sum = (int) ((double) sum / minScore * GameConfig.SCORE_PLAYER1_DECREASE + roundHelper);
-        } else  {
+        } else {
             sum = (int) ((double) sum / maxScore * GameConfig.SCORE_PLAYER1_INCREASE + roundHelper);
         }
 

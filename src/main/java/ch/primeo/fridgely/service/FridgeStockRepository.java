@@ -21,7 +21,7 @@ public class FridgeStockRepository {
     /**
      * Initializes a new FridgeStockRepository with JPA dependencies.
      *
-     * @param manager    the EntityManager for QueryDSL
+     * @param manager the EntityManager for QueryDSL
      */
 
     public FridgeStockRepository(EntityManager manager) {

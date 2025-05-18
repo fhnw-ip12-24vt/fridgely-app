@@ -22,6 +22,9 @@ public class Product {
     private boolean isLocal;
     private boolean isLowCo2;
 
+    /**
+     * Path to the default image when the product image is not found.
+     */
     public static final String PRODUCT_IMAGE_NOT_FOUND_PATH = "/ch/primeo/fridgely/productimages/notfound.png";
 
     /**
@@ -47,7 +50,7 @@ public class Product {
      * @param lowCo2         whether the product is lowCo2
      */
     public Product(String code, String nameE, String nameD, String nameF, String descriptionE, String descriptionD,
-            String descriptionF, boolean defaultProduct, boolean bio, boolean local, boolean lowCo2) {
+                   String descriptionF, boolean defaultProduct, boolean bio, boolean local, boolean lowCo2) {
         this.barcode = code;
         this.name = nameE;
         this.nameDE = nameD;
@@ -69,9 +72,9 @@ public class Product {
      */
     public String getName(String language) {
         return switch (language != null ? language.toLowerCase() : "") {
-        case "de" -> nameDE != null ? nameDE : name;
-        case "fr" -> nameFR != null ? nameFR : name;
-        default -> name;
+            case "de" -> nameDE != null ? nameDE : name;
+            case "fr" -> nameFR != null ? nameFR : name;
+            default -> name;
         };
     }
 
@@ -109,19 +112,17 @@ public class Product {
         this.nameFR = nameF;
     }
 
-    public String getDescription(){
+    public String getDescription() {
         return description;
     }
 
     public String getExplanationKey() {
         String key = "product.";
-        if(isBio) key = key + "bio.";
-        else key = key + "non_bio.";
+        key += (isBio) ? "bio." : "non_bio.";
 
-        if(isLocal) key = key + "local.";
-        else key = key + "foreign.";
+        key += (isLocal) ? "local." : "foreign.";
 
-        switch(description){
+        switch (description) {
             case "meat" -> key = key + "meat";
             case "water_intensive" -> key = key + "water_intensive";
             case "coffee_belt" -> key = key + "coffee_belt";
@@ -151,9 +152,13 @@ public class Product {
         this.descriptionFR = descriptionF;
     }
 
-    public boolean isDefaultProduct() { return isDefaultProduct; }
+    public boolean isDefaultProduct() {
+        return isDefaultProduct;
+    }
 
-    public boolean isNotDefaultProduct() { return !isDefaultProduct; }
+    public boolean isNotDefaultProduct() {
+        return !isDefaultProduct;
+    }
 
     public void setDefaultProduct(boolean defaultProduct) {
         this.isDefaultProduct = defaultProduct;
@@ -175,9 +180,13 @@ public class Product {
         this.isLocal = local;
     }
 
-    public boolean isLowCo2() { return isLowCo2; }
+    public boolean isLowCo2() {
+        return isLowCo2;
+    }
 
-    public void setLowCo2(boolean lowCo2) { isLowCo2 = lowCo2; }
+    public void setLowCo2(boolean lowCo2) {
+        isLowCo2 = lowCo2;
+    }
 
     public String getProductImagePath() {
         if (barcode == null) {

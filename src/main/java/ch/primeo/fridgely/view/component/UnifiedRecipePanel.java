@@ -59,7 +59,8 @@ public class UnifiedRecipePanel extends JPanel {
      * @param productRepo the repository for product data
      * @param imageLoader the image loader for loading images
      */
-    public UnifiedRecipePanel(MultiplayerGameController controller, ProductRepository productRepo, ImageLoader imageLoader, AppLocalizationService localizationService) {
+    public UnifiedRecipePanel(MultiplayerGameController controller, ProductRepository productRepo,
+                              ImageLoader imageLoader, AppLocalizationService localizationService) {
         this.gameController = controller;
         this.recipeModel = gameController.getRecipeModel();
         this.productRepository = productRepo;
@@ -125,7 +126,6 @@ public class UnifiedRecipePanel extends JPanel {
     private RecipeSelectionListener recipeSelectionListener;
 
 
-
     /**
      * Sets the listener for recipe selection.
      *
@@ -134,6 +134,7 @@ public class UnifiedRecipePanel extends JPanel {
     public void setRecipeSelectionListener(RecipeSelectionListener listener) {
         this.recipeSelectionListener = listener;
     }
+
     /**
      * Updates the recipe list with the current recipes from the model. This clears and reloads the entire list.
      */
@@ -273,14 +274,16 @@ public class UnifiedRecipePanel extends JPanel {
         card.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             @Override
             public void mouseDragged(java.awt.event.MouseEvent e) {
-                scrollPane.getViewport().dispatchEvent(SwingUtilities.convertMouseEvent(card, e, scrollPane.getViewport()));
+                scrollPane.getViewport().dispatchEvent(SwingUtilities.convertMouseEvent(card, e,
+                        scrollPane.getViewport()));
             }
         });
         // Add mouse press to start dragging
         card.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mousePressed(java.awt.event.MouseEvent e) {
-                scrollPane.getViewport().dispatchEvent(SwingUtilities.convertMouseEvent(card, e, scrollPane.getViewport()));
+                scrollPane.getViewport().dispatchEvent(SwingUtilities.convertMouseEvent(card, e,
+                        scrollPane.getViewport()));
             }
         });
 
@@ -302,7 +305,7 @@ public class UnifiedRecipePanel extends JPanel {
         List<Product> productsInRecipe = recipe.getProducts();
 
         //Load product image
-        for(Product product : productsInRecipe) {
+        for (Product product : productsInRecipe) {
             // Load the image icon for the ingredient
             ImageIcon icon = getProductImageIcon(product.getBarcode());
 
@@ -324,11 +327,13 @@ public class UnifiedRecipePanel extends JPanel {
      */
     private ImageIcon getProductImageIcon(String barcode) {
         // Try to load from product images folder
-        ImageIcon icon = imageLoader.loadScaledImage("/ch/primeo/fridgely/productimages/" + barcode + ".png", INGREDIENT_ICON_SIZE, INGREDIENT_ICON_SIZE);
+        ImageIcon icon = imageLoader.loadScaledImage("/ch/primeo/fridgely/productimages/" + barcode + ".png",
+                INGREDIENT_ICON_SIZE, INGREDIENT_ICON_SIZE);
 
         if (icon == null) {
             // If not found, try the default image
-            icon = imageLoader.loadScaledImage("/ch/primeo/fridgely/productimages/notfound.png", INGREDIENT_ICON_SIZE, INGREDIENT_ICON_SIZE);
+            icon = imageLoader.loadScaledImage("/ch/primeo/fridgely/productimages/notfound.png", INGREDIENT_ICON_SIZE
+                    , INGREDIENT_ICON_SIZE);
         }
 
         return icon;

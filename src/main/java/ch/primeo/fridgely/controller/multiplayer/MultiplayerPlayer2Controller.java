@@ -20,13 +20,13 @@ public class MultiplayerPlayer2Controller {
     /**
      * Constructs a new Player 2 controller.
      *
-     * @param stockModel the model for the fridge stock
-     * @param stateModel the model for the game state
-     * @param penguModel the model for the penguin HP
+     * @param stockModel  the model for the fridge stock
+     * @param stateModel  the model for the game state
+     * @param penguModel  the model for the penguin HP
      * @param recipeModel the model for recipes
      */
     public MultiplayerPlayer2Controller(FridgeStockModel stockModel, MultiplayerGameStateModel stateModel,
-            PenguinModel penguModel, RecipeModel recipeModel) {
+                                        PenguinModel penguModel, RecipeModel recipeModel) {
         this.fridgeStockModel = stockModel;
         this.gameStateModel = stateModel;
         this.penguinModel = penguModel;
@@ -90,7 +90,7 @@ public class MultiplayerPlayer2Controller {
             score = GameConfig.SCORE_PLAYER1_INCREASE;
         } else if (totalWastedProducts == 2) {
             // Ensure that the score is not more negative than the increase
-            score = totalWastedProducts * GameConfig.SCORE_PLAYER2_DECREASE;;
+            score = totalWastedProducts * GameConfig.SCORE_PLAYER2_DECREASE;
         } else if (totalWastedProducts > 2) {
             score = 2 * GameConfig.SCORE_PLAYER2_DECREASE;
         }

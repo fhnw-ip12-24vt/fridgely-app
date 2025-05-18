@@ -16,18 +16,18 @@ import javax.sql.DataSource;
 public class DataLoader implements CommandLineRunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DataLoader.class);
-    
+
     private final DataSource dataSource;
-    
+
     public DataLoader(DataSource source) {
         this.dataSource = source;
     }
-    
+
     @Override
     public void run(String... args) {
         try {
             LOGGER.info("Loading initial data from SQL script");
-            
+
             // Load and execute the SQL script
             ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator();
             resourceDatabasePopulator.addScript(new ClassPathResource("ch/primeo/fridgely/sql/data.sql"));

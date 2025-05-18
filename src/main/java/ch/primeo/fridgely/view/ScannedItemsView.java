@@ -66,16 +66,17 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
      * @param frame        the parent JFrame for this view
      */
     public ScannedItemsView(MultiplayerGameController controller, AppLocalizationService localization, JFrame frame,
-            ImageLoader imageLoader) {
+                            ImageLoader imageLoader) {
         this.gameController = controller;
         this.localizationService = localization;
         this.imageLoader = imageLoader;
         //screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        cardSize = new Dimension((int)(screenSize.width * PERCENTAGE_CARDWIDTH), (int)(screenSize.height * PERCENTAGE_CARDHEIGHT));
-        imageSize = (int)(cardSize.width * PERCENTAGE_IMAGESIZE);
-        gapSizeH = (int)((screenSize.width * PERCENTAGE_HGAPSIZE));
-        gapSizeV = (int)((screenSize.height * PERCENTAGE_VGAPSIZE));
-        fontSize = (int)(screenSize.height * PERCENTAGE_FONTSIZE);
+        cardSize = new Dimension((int) (screenSize.width * PERCENTAGE_CARDWIDTH),
+                (int) (screenSize.height * PERCENTAGE_CARDHEIGHT));
+        imageSize = (int) (cardSize.width * PERCENTAGE_IMAGESIZE);
+        gapSizeH = (int) ((screenSize.width * PERCENTAGE_HGAPSIZE));
+        gapSizeV = (int) ((screenSize.height * PERCENTAGE_VGAPSIZE));
+        fontSize = (int) (screenSize.height * PERCENTAGE_FONTSIZE);
 
         // Load images
         LABEL_LOCAL = imageLoader.loadScaledImage("/ch/primeo/fridgely/sprites/LocalAndBio/local.png", 50, 50);
@@ -224,7 +225,7 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         tagsPanel.setOpaque(false);
         // bio tag
         JLabel bioLabel = new JLabel();
-        bioLabel.setIcon(product.isBio()? LABEL_BIO : LABEL_NON_BIO);
+        bioLabel.setIcon(product.isBio() ? LABEL_BIO : LABEL_NON_BIO);
         bioLabel.setMaximumSize(new Dimension(cardSize.width / 3, cardSize.height / 3));
 //        bioLabel.setOpaque(true);
 //        bioLabel.setFont(new Font(nameLabel.getFont().getName(), Font.BOLD, (int)(fontSize*.6)));
@@ -236,7 +237,7 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         tagsPanel.add(bioLabel);
         // local tag
         JLabel localLabel = new JLabel();
-        localLabel.setIcon(product.isLocal()? LABEL_LOCAL : LABEL_NON_LOCAL);
+        localLabel.setIcon(product.isLocal() ? LABEL_LOCAL : LABEL_NON_LOCAL);
         localLabel.setMaximumSize(new Dimension(cardSize.width / 3, cardSize.height / 3));
 //        JLabel localLabel = new JLabel(product.isLocal()
 //                ? localizationService.get(KEY_LABEL_LOCAL)
@@ -250,7 +251,7 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
 //                        1, true), BorderFactory.createEmptyBorder(2, 8, 2, 8)));
         tagsPanel.add(localLabel);
         text.add(tagsPanel, BorderLayout.CENTER);
-        text.setMaximumSize(new Dimension(cardSize.width , (int)(cardSize.height * .2)));
+        text.setMaximumSize(new Dimension(cardSize.width, (int) (cardSize.height * .2)));
         card.add(text, BorderLayout.PAGE_START);
         return card;
     }

@@ -55,7 +55,8 @@ public class PenguinReactionOverlay extends JWindow {
                     int w = penguinImage.getWidth();
                     int h = penguinImage.getHeight();
                     int size = Math.min(OVERLAY_SIZE_X, Math.min(w, h));
-                    g.drawImage(penguinImage, (OVERLAY_SIZE_X - size) / 2, (OVERLAY_SIZE_X - size) / 2, size, size, null);
+                    g.drawImage(penguinImage, (OVERLAY_SIZE_X - size) / 2, (OVERLAY_SIZE_X - size) / 2, size, size,
+                            null);
                 }
             }
         };

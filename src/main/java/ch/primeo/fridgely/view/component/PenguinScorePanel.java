@@ -48,7 +48,8 @@ public class PenguinScorePanel extends JPanel {
 
     public void updatePenguinImage(int score) {
         try {
-            penguinImageLabel.setIcon(imageLoader.loadScaledImage(PenguinHPState.fromHP(score).getSpritePath(), 200, 200));
+            penguinImageLabel.setIcon(imageLoader.loadScaledImage(PenguinHPState.fromHP(score).getSpritePath(), 200,
+                    200));
         } catch (Exception e) {
             penguinImageLabel.setText("🐧");
         }

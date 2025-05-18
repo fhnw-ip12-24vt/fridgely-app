@@ -1,7 +1,6 @@
 package ch.primeo.fridgely.gamelaunchers;
 
 import ch.primeo.fridgely.Fridgely;
-import ch.primeo.fridgely.factory.DefaultFrameFactory;
 import ch.primeo.fridgely.factory.FrameFactory;
 import ch.primeo.fridgely.util.ImageLoader;
 import ch.primeo.fridgely.view.ScannedItemsView;
@@ -30,14 +29,17 @@ public class MultiplayerGameLauncher {
     private final FrameFactory frameFactory;
 
     /**
-     * Constructs a new multiplayer game launcher.
+     * Constructor for MultiplayerGameLauncher.
      *
-     * @param productRepo  the repository for accessing products
-     * @param recipeRepo   the repository for accessing recipes
-     * @param localization the service for text localization
+     * @param productRepo  the product repository
+     * @param recipeRepo   the recipe repository
+     * @param localization the localization service
+     * @param imageLoader  the image loader
+     * @param frameFactory the frame factory
      */
     public MultiplayerGameLauncher(ProductRepository productRepo, RecipeRepository recipeRepo,
-                                   AppLocalizationService localization, ImageLoader imageLoader, FrameFactory frameFactory) {
+                                   AppLocalizationService localization, ImageLoader imageLoader,
+                                   FrameFactory frameFactory) {
         this.productRepository = productRepo;
         this.recipeRepository = recipeRepo;
         this.localizationService = localization;
