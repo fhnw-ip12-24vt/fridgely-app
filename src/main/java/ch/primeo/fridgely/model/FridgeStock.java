@@ -3,6 +3,8 @@ package ch.primeo.fridgely.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Represents an item in the fridge stock, mapping to the 'FridgeStock' table. Uses the product barcode as the primary
@@ -16,6 +18,8 @@ public class FridgeStock {
      * The barcode of the product in stock. This is the primary key.
      */
     @Id
+    @Getter
+    @Setter
     private String barcode;
 
     /**
@@ -30,18 +34,6 @@ public class FridgeStock {
      * @param code The product barcode.
      */
     public FridgeStock(String code) {
-        this.barcode = code;
-    }
-
-    // --- Getter ---
-
-    public String getBarcode() {
-        return barcode;
-    }
-
-    // --- Setter ---
-
-    public void setBarcode(String code) {
         this.barcode = code;
     }
 
