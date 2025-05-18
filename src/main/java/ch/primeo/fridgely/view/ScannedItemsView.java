@@ -23,12 +23,7 @@ import java.util.List;
  * Player 1 in real-time.
  */
 public class ScannedItemsView extends JPanel implements PropertyChangeListener, LocalizationObserver {
-    // define localization keys
-    //private static final String KEY_SCANNED_ITEMS_HEADER = "scanneditems.header";
-    private static final String KEY_LABEL_BIO = "label.bio";
-    private static final String KEY_LABEL_NON_BIO = "label.non_bio";
-    private static final String KEY_LABEL_LOCAL = "label.local";
-    private static final String KEY_LABEL_NON_LOCAL = "label.non_local";
+
     private final ImageIcon LABEL_NON_LOCAL;
     private final ImageIcon LABEL_LOCAL;
     private final ImageIcon LABEL_NON_BIO;
@@ -239,16 +234,7 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         JLabel localLabel = new JLabel();
         localLabel.setIcon(product.isLocal() ? LABEL_LOCAL : LABEL_NON_LOCAL);
         localLabel.setMaximumSize(new Dimension(cardSize.width / 3, cardSize.height / 3));
-//        JLabel localLabel = new JLabel(product.isLocal()
-//                ? localizationService.get(KEY_LABEL_LOCAL)
-//                : localizationService.get(KEY_LABEL_NON_LOCAL));
-//        localLabel.setOpaque(true);
-//        localLabel.setFont(new Font(nameLabel.getFont().getName(), Font.BOLD, (int)(fontSize*.6)));
-//        localLabel.setForeground(Color.WHITE);
-//        localLabel.setBackground(product.isLocal() ? new Color(52, 152, 219) : new Color(189, 195, 199));
-//        localLabel.setBorder(BorderFactory.createCompoundBorder(
-//                BorderFactory.createLineBorder(product.isLocal() ? new Color(41, 128, 185) : new Color(127, 140, 141),
-//                        1, true), BorderFactory.createEmptyBorder(2, 8, 2, 8)));
+
         tagsPanel.add(localLabel);
         text.add(tagsPanel, BorderLayout.CENTER);
         text.setMaximumSize(new Dimension(cardSize.width, (int) (cardSize.height * .2)));
@@ -288,8 +274,6 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
 
     @Override
     public void onLocaleChanged() {
-        //headerLabel.setText(localizationService.get(KEY_SCANNED_ITEMS_HEADER));
-        // refresh all product cards with updated labels
         updateProductList();
     }
 
