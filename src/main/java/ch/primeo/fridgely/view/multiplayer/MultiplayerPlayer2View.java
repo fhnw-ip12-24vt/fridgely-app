@@ -14,7 +14,6 @@ import ch.primeo.fridgely.view.component.UnifiedRecipePanel;
 import javax.swing.*;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -26,7 +25,6 @@ public class MultiplayerPlayer2View extends JPanel implements PropertyChangeList
 
     // localization keys
     private static final String KEY_FINISH_TURN_BUTTON = "multiplayer.player2.finish_turn_button";
-    private static final String KEY_STATUS_GAME_OVER = "multiplayer.player2.status_game_over";
     private static final String KEY_STATUS_PLAYER2_RECIPE_SELECTED
             = "multiplayer.player2.status_player2_recipe_selected";
 
@@ -73,7 +71,7 @@ public class MultiplayerPlayer2View extends JPanel implements PropertyChangeList
      */
     private void initializeComponents() {
         // Create the unified recipe panel
-        unifiedRecipePanel = new UnifiedRecipePanel(gameController, gameController.getProductRepository(),
+        unifiedRecipePanel = new UnifiedRecipePanel(gameController,
                 imageLoader, localizationService);
 
         // initialize with empty text; will be set in onLocaleChanged()
@@ -160,9 +158,7 @@ public class MultiplayerPlayer2View extends JPanel implements PropertyChangeList
         finishTurnButton.setEnabled(isPlayer2Turn && !isGameOver && hasSelectedRecipe);
 
         // Update status label
-        if (isGameOver) {
-            //statusLabel.setText(localizationService.get(KEY_STATUS_GAME_OVER));
-        } else if (isPlayer2Turn) {
+        if (isPlayer2Turn) {
             if (hasSelectedRecipe) {
                 statusLabel.setText(String.format(localizationService.get(KEY_STATUS_PLAYER2_RECIPE_SELECTED),
                         gameStateModel.getCurrentRound()));
