@@ -6,6 +6,7 @@ import ch.primeo.fridgely.model.Recipe;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
+import lombok.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -163,8 +164,11 @@ public class RecipeRepository {
      * Recipe model for view purposes.
      */
     public static class RecipeDTO {
+        @Getter
         private final int recipeId;
+        @Getter
         private final String name;
+        @Getter
         private final String description;
         private final int availableIngredientCount;
         private final int totalIngredientCount;
@@ -175,19 +179,6 @@ public class RecipeRepository {
             this.description = descriptionE;
             this.availableIngredientCount = availableIngredient;
             this.totalIngredientCount = totalIngredient;
-        }
-
-        // Getters for all fields
-        public int getRecipeId() {
-            return recipeId;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getDescription() {
-            return description;
         }
 
         @Override
