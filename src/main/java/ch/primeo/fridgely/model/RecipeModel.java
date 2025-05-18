@@ -1,6 +1,7 @@
 package ch.primeo.fridgely.model;
 
 import ch.primeo.fridgely.service.RecipeRepository;
+import lombok.*;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -9,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.*;
 import java.util.stream.Collectors;
 
 /**
@@ -18,17 +20,17 @@ import java.util.stream.Collectors;
 public class RecipeModel {
 
     /**
-     * Property name for changes in the available recipes.
-     */
-    public static final String PROP_AVAILABLE_RECIPES = "availableRecipes";
-
-    /**
      * Property name for changes in the selected recipe.
      */
     public static final String PROP_SELECTED_RECIPE = "selectedRecipe";
 
+    private static final Logger LOGGER = Logger.getLogger(RecipeModel.class.getName());
+
     private final List<Recipe> availableRecipes;
+
+    @Getter
     private Recipe selectedRecipe;
+
     private final RecipeRepository recipeRepository;
     private final PropertyChangeSupport propertyChangeSupport;
 
@@ -48,7 +50,6 @@ public class RecipeModel {
      * Loads available recipes from the repository.
      */
     void loadAvailableRecipes() {
-        List<Recipe> oldRecipes = new ArrayList<>(availableRecipes);
         availableRecipes.clear();
 
         try {
@@ -73,8 +74,7 @@ public class RecipeModel {
             }
 
         } catch (Exception e) {
-            System.err.println("Error loading recipes: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error loading recipes", e);
 
             // Fallback: Create some dummy recipes for testing
             Recipe dummyRecipe = new Recipe();
@@ -104,19 +104,9 @@ public class RecipeModel {
      * @return a list of possible recipes
      */
     public List<Recipe> getPossibleRecipes(List<Product> productsInStorage) {
-        List<Recipe> recipesTest = availableRecipes;
         return availableRecipes.stream()
                 .filter(recipe -> canMakeRecipe(recipe, productsInStorage))
                 .toList();
-    }
-
-    /**
-     * Gets the currently selected recipe.
-     *
-     * @return the selected recipe, or null if none is selected
-     */
-    public Recipe getSelectedRecipe() {
-        return selectedRecipe;
     }
 
     /**
@@ -188,7 +178,7 @@ public class RecipeModel {
                 .collect(Collectors.toSet());
 
         // Check if all ingredient barcodes are available
-        return ingredientBarcodes.stream().allMatch(availableBarcodes::contains);
+        return availableBarcodes.containsAll(ingredientBarcodes);
     }
 
     /**
