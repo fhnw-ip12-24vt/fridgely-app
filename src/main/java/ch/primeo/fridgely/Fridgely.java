@@ -37,12 +37,13 @@ public class Fridgely {
 
     public static void main(String[] args) throws InterruptedException {
         detectScreens();
-        UIConfig.setUIFont();
+
 
         // Now start the Spring application context after screen detection is complete
         var context = new SpringApplicationBuilder(Fridgely.class).headless(false).run(args);
 
         var imageLoader = context.getBean(ImageLoader.class);
+        context.getBean(UIConfig.class).setUIFont();
 
         // Preload all images before showing UI
         try {
