@@ -4,9 +4,9 @@ import ch.primeo.fridgely.model.RecipeModel;
 import ch.primeo.fridgely.controller.multiplayer.MultiplayerGameController;
 import ch.primeo.fridgely.model.Product;
 import ch.primeo.fridgely.model.Recipe;
-import ch.primeo.fridgely.service.ProductRepository;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import ch.primeo.fridgely.util.ImageLoader;
+import lombok.*;
 
 import javax.swing.*;
 
@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 /**
  * A unified panel that displays recipes with their ingredients inline. This combines the recipe list and ingredient
@@ -29,16 +28,11 @@ public class UnifiedRecipePanel extends JPanel {
     private final int INGREDIENT_ICON_SIZE = 75; // Size of ingredient icons
     private final MultiplayerGameController gameController;
     private final RecipeModel recipeModel;
-    private final ProductRepository productRepository;
-    private final Color availableColor = new Color(75, 181, 67);  // Green for available ingredients
-    private final Color missingColor = new Color(204, 51, 51);    // Red for missing ingredients
 
     // View components
     private final JPanel recipesViewport;  // Contains the visible recipe cards
     private final JScrollPane scrollPane;  // Main scroll container
 
-    // Recipe data
-    private List<Recipe> possibleRecipes;
     private Recipe selectedRecipe;
 
     // Lazy loading support
@@ -56,14 +50,12 @@ public class UnifiedRecipePanel extends JPanel {
      * Constructs a new unified recipe panel.
      *
      * @param controller  the game controller
-     * @param productRepo the repository for product data
      * @param imageLoader the image loader for loading images
      */
-    public UnifiedRecipePanel(MultiplayerGameController controller, ProductRepository productRepo,
+    public UnifiedRecipePanel(MultiplayerGameController controller,
                               ImageLoader imageLoader, AppLocalizationService localizationService) {
         this.gameController = controller;
         this.recipeModel = gameController.getRecipeModel();
-        this.productRepository = productRepo;
         this.loadedRecipeCards = new HashMap<>();
         this.imageLoader = imageLoader;
         this.localizationService = localizationService;
@@ -123,17 +115,9 @@ public class UnifiedRecipePanel extends JPanel {
         void recipeSelected(Recipe recipe);
     }
 
+    @Setter
     private RecipeSelectionListener recipeSelectionListener;
 
-
-    /**
-     * Sets the listener for recipe selection.
-     *
-     * @param listener the listener to set
-     */
-    public void setRecipeSelectionListener(RecipeSelectionListener listener) {
-        this.recipeSelectionListener = listener;
-    }
 
     /**
      * Updates the recipe list with the current recipes from the model. This clears and reloads the entire list.
@@ -141,7 +125,8 @@ public class UnifiedRecipePanel extends JPanel {
     public void updateRecipeList() {
         // Get fresh recipe data and randomize
         List<Product> productsInStorage = gameController.getFridgeStockModel().getProducts();
-        possibleRecipes = new ArrayList<>(recipeModel.getPossibleRecipes(productsInStorage));
+        // Recipe data
+        List<Recipe> possibleRecipes = new ArrayList<>(recipeModel.getPossibleRecipes(productsInStorage));
         Collections.shuffle(possibleRecipes);  // Randomize recipe order
         updateRecipeList(possibleRecipes);
     }
@@ -374,19 +359,8 @@ public class UnifiedRecipePanel extends JPanel {
      * @param card the card to highlight
      */
     private void highlightSelectedCard(JPanel card) {
-        //card.setBackground(new Color(230, 240, 255));  // Light blue for selection
         card.setBorder(
                 BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(100, 149, 237), 2, true),
-                        // Cornflower blue
-                        BorderFactory.createEmptyBorder(10, 10, 10, 10)));
-    }
-
-    /**
-     * Gets the currently selected recipe.
-     *
-     * @return the selected recipe or null if none is selected
-     */
-    public Recipe getSelectedRecipe() {
-        return selectedRecipe;
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)));
     }
 }
