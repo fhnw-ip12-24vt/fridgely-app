@@ -1,6 +1,7 @@
 package ch.primeo.fridgely.model.multiplayer;
 
 import ch.primeo.fridgely.config.GameConfig;
+import lombok.Getter;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -46,10 +47,19 @@ public class MultiplayerGameStateModel {
      */
     public static final String PROP_GAME_OVER = "gameOver";
 
+    @Getter
     private int currentRound;
+
+    @Getter
     private Player currentPlayer;
+
+    @Getter
     private int score;
+
+    @Getter
     private boolean gameOver;
+
+    @Getter
     private final int totalRounds;
     private final PropertyChangeSupport propertyChangeSupport;
 
@@ -72,51 +82,6 @@ public class MultiplayerGameStateModel {
         this.gameOver = false;
         this.totalRounds = totRounds;
         this.propertyChangeSupport = new PropertyChangeSupport(this);
-    }
-
-    /**
-     * Gets the current round number.
-     *
-     * @return the current round number
-     */
-    public int getCurrentRound() {
-        return currentRound;
-    }
-
-    /**
-     * Gets the total number of rounds in the game.
-     *
-     * @return the total number of rounds
-     */
-    public int getTotalRounds() {
-        return totalRounds;
-    }
-
-    /**
-     * Gets the current player.
-     *
-     * @return the current player
-     */
-    public Player getCurrentPlayer() {
-        return currentPlayer;
-    }
-
-    /**
-     * Gets score.
-     *
-     * @return score
-     */
-    public int getScore() {
-        return score;
-    }
-
-    /**
-     * Checks if the game is over.
-     *
-     * @return true if the game is over, false otherwise
-     */
-    public boolean isGameOver() {
-        return gameOver;
     }
 
     /**
