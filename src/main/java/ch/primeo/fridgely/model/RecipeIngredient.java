@@ -6,12 +6,15 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import lombok.*;
 
 /**
  * Represents the relationship between a Recipe and a Product (ingredient), mapping to the 'RecipeIngredients' join
  * table.
  */
 @Entity
+@Getter
+@Setter
 // No explicit table name, Hibernate will use snake_case: "recipe_ingredient"
 public class RecipeIngredient {
 
@@ -39,34 +42,6 @@ public class RecipeIngredient {
      * Default constructor required by JPA.
      */
     public RecipeIngredient() {
-    }
-
-    // --- Getters ---
-
-    public Long getId() {
-        return id;
-    }
-
-    public Recipe getRecipe() {
-        return recipe;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    // --- Setters ---
-
-    public void setId(Long i) {
-        this.id = i;
-    }
-
-    public void setRecipe(Recipe r) {
-        this.recipe = r;
-    }
-
-    public void setProduct(Product p) {
-        this.product = p;
     }
 
     // toString, equals, hashCode methods can be added if needed
