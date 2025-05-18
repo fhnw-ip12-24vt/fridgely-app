@@ -2,11 +2,14 @@ package ch.primeo.fridgely.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import lombok.*;
 
 /**
  * Represents a product with localized names, descriptions, and attributes. JPA entity for database persistence.
  */
 @Entity
+@Getter
+@Setter
 public class Product {
 
     @Id
@@ -78,44 +81,6 @@ public class Product {
         };
     }
 
-    // Getters and setters
-
-    public String getBarcode() {
-        return barcode;
-    }
-
-    public void setBarcode(String code) {
-        this.barcode = code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String nameE) {
-        this.name = nameE;
-    }
-
-    public String getNameDE() {
-        return nameDE;
-    }
-
-    public void setNameDE(String nameD) {
-        this.nameDE = nameD;
-    }
-
-    public String getNameFR() {
-        return nameFR;
-    }
-
-    public void setNameFR(String nameF) {
-        this.nameFR = nameF;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
     public String getExplanationKey() {
         String key = "product.";
         key += (isBio) ? "bio." : "non_bio.";
@@ -132,60 +97,8 @@ public class Product {
         return key;
     }
 
-    public void setDescription(String descriptionE) {
-        this.description = descriptionE;
-    }
-
-    public String getDescriptionDE() {
-        return descriptionDE;
-    }
-
-    public void setDescriptionDE(String descriptionD) {
-        this.descriptionDE = descriptionD;
-    }
-
-    public String getDescriptionFR() {
-        return descriptionFR;
-    }
-
-    public void setDescriptionFR(String descriptionF) {
-        this.descriptionFR = descriptionF;
-    }
-
-    public boolean isDefaultProduct() {
-        return isDefaultProduct;
-    }
-
     public boolean isNotDefaultProduct() {
         return !isDefaultProduct;
-    }
-
-    public void setDefaultProduct(boolean defaultProduct) {
-        this.isDefaultProduct = defaultProduct;
-    }
-
-    public boolean isBio() {
-        return isBio;
-    }
-
-    public void setBio(boolean bio) {
-        this.isBio = bio;
-    }
-
-    public boolean isLocal() {
-        return isLocal;
-    }
-
-    public void setLocal(boolean local) {
-        this.isLocal = local;
-    }
-
-    public boolean isLowCo2() {
-        return isLowCo2;
-    }
-
-    public void setLowCo2(boolean lowCo2) {
-        isLowCo2 = lowCo2;
     }
 
     public String getProductImagePath() {
