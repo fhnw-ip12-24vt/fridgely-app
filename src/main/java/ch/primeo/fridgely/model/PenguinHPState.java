@@ -1,6 +1,7 @@
 package ch.primeo.fridgely.model;
 
 import ch.primeo.fridgely.config.GameConfig;
+import lombok.Getter;
 
 /**
  * Represents the health state of the penguin, with associated sprite images.
@@ -31,6 +32,7 @@ public enum PenguinHPState {
      */
     DEAD("penguin_unalive.png");
 
+    @Getter
     private final String spritePath;
 
     /**
@@ -40,15 +42,6 @@ public enum PenguinHPState {
      */
     PenguinHPState(String path) {
         this.spritePath = "/ch/primeo/fridgely/sprites/" + path;
-    }
-
-    /**
-     * Returns the sprite path for this HP state.
-     *
-     * @return the sprite image path
-     */
-    public String getSpritePath() {
-        return spritePath;
     }
 
     /**
