@@ -10,10 +10,7 @@ import ch.primeo.fridgely.view.component.FButton;
 import ch.primeo.fridgely.view.component.PenguinScorePanel;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -30,26 +27,14 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
     private final ImageLoader imageLoader;
 
     // Localization keys
-    private static final String KEY_PENGUIN_TITLE = "panel.penguin.title";
-    private static final String KEY_GAME_STATUS_TITLE = "panel.status.title";
-    private static final String KEY_CONTROLS_TITLE = "panel.controls.title";
-    private static final String KEY_NEW_GAME = "button.new_game";
-    private static final String KEY_EXIT = "button.exit";
-    private static final String KEY_HP_LABEL = "label.hp";
     private static final String KEY_ROUND_LABEL = "label.round";
     private static final String KEY_PLAYER_SCORE = "label.player_score";
-    private static final String KEY_GAME_OVER_PLAYER1 = "game.over.player1";
-    private static final String KEY_GAME_OVER_PLAYER2 = "game.over.player2";
-    private static final String KEY_GAME_OVER_TIE = "game.over.tie";
     private static final String KEY_CONFIRM_NEW_GAME = "confirm.new_game.message";
     private static final String KEY_CONFIRM_NEW_GAME_TITLE = "confirm.new_game.title";
     private static final String KEY_CONFIRM_EXIT_GAME = "confirm.exit_game.message";
     private static final String KEY_CONFIRM_EXIT_GAME_TITLE = "confirm.exit_game.title";
-    private static final String KEY_PENGUIN_PLACEHOLDER = "placeholder.penguin";
 
-    private MultiplayerPlayer1View player1View;
     private MultiplayerPlayer2View player2View;
-    private MultiplayerEndGameView endGameView;
 
     private PenguinScorePanel penguinScorePanel;
 
@@ -85,7 +70,7 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
     }
 
     private void initializeComponents() {
-        player1View = new MultiplayerPlayer1View(gameController, localizationService, imageLoader);
+        MultiplayerPlayer1View player1View = new MultiplayerPlayer1View(gameController, localizationService, imageLoader);
         player2View = new MultiplayerPlayer2View(gameController, localizationService, imageLoader);
 
         penguinScorePanel = new PenguinScorePanel(imageLoader);
@@ -160,7 +145,6 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
 
     private void updateGameInfo() {
         MultiplayerGameStateModel gameState = gameController.getGameStateModel();
-        PenguinModel penguinModel = gameController.getPenguinModel();
 
         roundLabel.setText(String.format(localizationService.get(KEY_ROUND_LABEL), gameState.getCurrentRound(),
                 gameState.getTotalRounds()));
