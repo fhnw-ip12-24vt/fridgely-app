@@ -5,7 +5,6 @@ import ch.primeo.fridgely.controller.multiplayer.MultiplayerGameController;
 import ch.primeo.fridgely.controller.multiplayer.MultiplayerPlayer1Controller;
 import ch.primeo.fridgely.model.FridgeStockModel;
 import ch.primeo.fridgely.model.PenguinFacialExpression;
-import ch.primeo.fridgely.model.PenguinHPState;
 import ch.primeo.fridgely.model.Product;
 import ch.primeo.fridgely.model.multiplayer.MultiplayerGameStateModel;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
@@ -36,7 +35,6 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
     private static final String KEY_STATUS_PLAYER1_TURN_SCAN = "status_player1_turn_scan";
     private static final String KEY_MIN_PRODUCTS_INITIAL_FMT = "min_products_initial_fmt";
     private static final String KEY_SCANNING_PRODUCT = "scanning_product";
-    private static final String KEY_REMOVED_FROM_STOCK_FMT = "removed_from_stock_fmt";
     private static final String KEY_ADDED_TO_STOCK_FMT = "added_to_stock_fmt";
     private static final String KEY_PRODUCT_NOT_FOUND_FMT = "product_not_found_fmt";
     private static final String KEY_MIN_PRODUCTS_REMAINING_FMT = "min_products_remaining_fmt";
@@ -148,11 +146,8 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
                     return false;
                 }
 
-                System.out.println(
-                        "[DISPATCHER DEBUG] keyPressed: code=" + e.getKeyCode() + ", char='" + e.getKeyChar() + "'");
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     String barcode = barcodeBuffer.toString().trim();
-                    System.out.println("[DISPATCHER DEBUG] Enter pressed, barcodeBuffer='" + barcode + "'");
                     barcodeBuffer.setLength(0);
                     if (!barcode.isEmpty()) {
                         scanBarcode(barcode);
@@ -161,8 +156,6 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
                     char c = e.getKeyChar();
                     if (!Character.isISOControl(c)) {
                         barcodeBuffer.append(c);
-                        System.out.println(
-                                "[DISPATCHER DEBUG] Appended char: '" + c + "', buffer now: '" + barcodeBuffer + "'");
                     }
                 }
                 return false; // Let other components also process the event
