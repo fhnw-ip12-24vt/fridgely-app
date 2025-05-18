@@ -51,7 +51,6 @@ public class DialogBox extends JPanel {
     private Runnable onCompleteCallback; // Made non-final to be replaced by showDialog
     private final JLabel messageLabel;
     JButton skipButton;
-    private final AppLocalizationService localizationService;
 
     private static final int ARROW_ANIMATION_DELAY = 500; // milliseconds
     private static final int DIALOG_PADDING = 20;
@@ -84,7 +83,7 @@ public class DialogBox extends JPanel {
               ImageLoader imageLoader, JFrame frameInstance) {
 
         this.imageLoader = imageLoader;
-        this.localizationService = FridgelyContext.getBean(AppLocalizationService.class);
+        AppLocalizationService localizationService = FridgelyContext.getBean(AppLocalizationService.class);
         this.frame = frameInstance;
 
         // Configure frame - these calls will go to the mock in tests
@@ -376,9 +375,7 @@ public class DialogBox extends JPanel {
             hpLabel.setBounds(hpX, hpY, scaledWidth, scaledHeight);
             hpLabel.setOpaque(false);
             // Add hpLabel only if glassPane is not null (which it should be if frame is not null)
-            if (glassPane != null) {
-                glassPane.add(hpLabel);
-            }
+            glassPane.add(hpLabel);
         }
 
 
@@ -389,13 +386,9 @@ public class DialogBox extends JPanel {
         final Runnable originalCallbackReference = this.onCompleteCallback;
 
         this.onCompleteCallback = () -> { // Replace instance's callback
-            if (glassPane != null) {
-                glassPane.setVisible(false);
-            }
-            if (frame != null) {
-                frame.setGlassPane(oldGlassPane);
-                frame.dispose();
-            }
+            glassPane.setVisible(false);
+            frame.setGlassPane(oldGlassPane);
+            frame.dispose();
             if (originalCallbackReference != null) {
                 SwingUtilities.invokeLater(originalCallbackReference);
             }
