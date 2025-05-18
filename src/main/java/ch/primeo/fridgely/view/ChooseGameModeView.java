@@ -6,6 +6,7 @@ import ch.primeo.fridgely.util.ImageLoader;
 import ch.primeo.fridgely.view.component.LanguageSwitchButton;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import ch.primeo.fridgely.service.localization.LocalizationObserver;
+import lombok.*;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -35,6 +36,7 @@ public class ChooseGameModeView implements LocalizationObserver {
     private static final String KEY_SINGLE_PLAYER_TOOLTIP = "gamemode.singleplayer.tooltip";
     private static final String KEY_MULTIPLAYER_TOOLTIP = "gamemode.multiplayer.tooltip";
 
+    @Getter
     private final JFrame frame = new JFrame();
 
     private final AppLocalizationService localizationService;
@@ -44,7 +46,11 @@ public class ChooseGameModeView implements LocalizationObserver {
     private JPanel gameModePanel;
     private JPanel singlePlayerPanel;
     private JPanel multiplayerPanel;
+
+    @Getter
     private JLabel singlePlayerImageLabel;
+
+    @Getter
     private JLabel multiplayerImageLabel;
     private JLabel singlePlayerTextLabel;
     private JLabel multiplayerTextLabel;
@@ -173,60 +179,6 @@ public class ChooseGameModeView implements LocalizationObserver {
         return label;
     }
 
-    /**
-     * Returns the title label.
-     *
-     * @return the JLabel for the title
-     */
-    public JLabel getTitleLabel() {
-        return titleLabel;
-    }
-
-    /**
-     * Returns the label for the single player text.
-     *
-     * @return the JLabel for single player text
-     */
-    public JLabel getSinglePlayerTextLabel() {
-        return singlePlayerTextLabel;
-    }
-
-    /**
-     * Returns the label for the multiplayer text.
-     *
-     * @return the JLabel for multiplayer text
-     */
-    public JLabel getMultiplayerTextLabel() {
-        return multiplayerTextLabel;
-    }
-
-    /**
-     * Returns the label for single player image.
-     *
-     * @return the JLabel for single player image
-     */
-    public JLabel getSinglePlayerImageLabel() {
-        return singlePlayerImageLabel;
-    }
-
-    /**
-     * Returns the label for multiplayer image.
-     *
-     * @return the JLabel for multiplayer image
-     */
-    public JLabel getMultiplayerImageLabel() {
-        return multiplayerImageLabel;
-    }
-
-    /**
-     * Returns the language switch button.
-     *
-     * @return the LanguageSwitchButton
-     */
-    public JButton getLangButton() {
-        return langButton;
-    }
-
     @Override
     public void onLocaleChanged() {
         titleLabel.setText(localizationService.get(KEY_TITLE));
@@ -235,10 +187,6 @@ public class ChooseGameModeView implements LocalizationObserver {
         singlePlayerImageLabel.setToolTipText(localizationService.get(KEY_SINGLE_PLAYER_TOOLTIP));
         multiplayerImageLabel.setToolTipText(localizationService.get(KEY_MULTIPLAYER_TOOLTIP));
         langButton.setText(localizationService.get(KEY_LANG_BUTTON));
-    }
-
-    public JFrame getFrame() {
-        return frame;
     }
 
     public void setVisible(boolean visible) {
