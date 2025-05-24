@@ -51,6 +51,7 @@ VALUES ('001', 'Tomato', 'Tomate', 'Tomate', 'Local organic tomato', 'Lokale Bio
        ('EEE', 'Olive Oil', 'Olivenöl', 'Huile d''Olive', 'Premium organic extra virgin olive oil',
         'Premium Bio-Olivenöl Extra Vergine', 'Huile d''olive bio extra vierge de qualité supérieure', 1, 1, 0, 1);
 
+
 INSERT INTO recipe (name, nameDE, nameFR, description, descriptionDE, descriptionFR)
 VALUES
     -- (1) Scrambled Eggs
@@ -75,10 +76,10 @@ VALUES
     ('Strawberry Banana Smoothie', 'Erdbeer-Bananen-Smoothie', 'Smoothie Fraise-Banane',
      'Smoothie with strawberries, bananas and milk.', 'Smoothie mit Erdbeeren, Bananen und Milch.',
      'Smoothie aux fraises, bananes et lait.'),
-    -- (8) Oatmeal with Apple & Honey
-    ('Oatmeal with Apple & Honey', 'Haferbrei mit Apfel und Honig', 'Flocons d''Avoine Pomme & Miel',
-     'Warm oats topped with apple and honey.', 'Warmer Haferbrei mit Apfel und Honig.',
-     'Flocons chauds au miel et à la pomme.'),
+    -- (8) Fruit Breakfast & Honey
+    ('Fruit Breakfast & Honey', 'Obst-Frühtstück und Honig', 'Petit-Déjeuner aux Fruits et Miel',
+     'A breakfast with fruits and honey.', 'eine Obst-Frühstück mit Honig.',
+     'Un petit déjeuner avec des fruits et du miel.'),
     -- (9) Garlic Bread
     ('Garlic Bread', 'Knoblauchbrot', 'Pain à l''Ail',
      'Toasted garlic bread.', 'Geröstetes Knoblauchbrot.', 'Pain à l''ail grillé.'),
@@ -132,29 +133,29 @@ VALUES
     -- (25) Egg Fried Rice
     ('Egg Fried Rice', 'Eier gebratener Reis', 'Riz Frit aux Œufs',
      'Rice stir-fried with egg and spinach.', 'Gebratener Reis mit Ei und Spinat.', 'Riz frit avec œuf et épinards.'),
-    -- (26) Pasta Aglio e Olio (2 Zutaten)
+    -- (26) Pasta Aglio e Olio
     ('Pasta Aglio e Olio', 'Pasta Aglio e Olio', 'Pâtes Aglio e Olio',
      'Pasta with garlic and olive oil.', 'Nudeln mit Knoblauch und Olivenöl.', 'Pâtes à l''ail et huile d''olive.'),
-    -- (27) Banana Toast (2 Zutaten)
+    -- (27) Banana Toast
     ('Banana Toast', 'Bananen-Toast', 'Toast à la Banane',
      'Toast topped with banana slices.', 'Toast mit Bananenscheiben.', 'Toast aux tranches de banane.'),
-    -- (28) Carrot & Butter (2 Zutaten)
+    -- (28) Carrot & Butter
     ('Carrot & Butter', 'Karotte und Butter', 'Carotte et Beurre',
      'Steamed carrots with butter.', 'Gedünstete Karotten mit Butter.', 'Carottes vapeur au beurre.'),
-    -- (29) Spinach & Cheese (2 Zutaten)
+    -- (29) Spinach & Cheese
     ('Spinach & Cheese', 'Spinat und Käse', 'Épinards et Fromage',
      'Spinach topped with melted cheese.', 'Spinat mit geschmolzenem Käse.', 'Épinards gratinés au fromage.'),
     -- (30) Tofu Stir Fry
     ('Tofu Stir Fry', 'Tofu-Pfanne', 'Sauté de Tofu',
      'Tofu with spinach, garlic and olive oil.', 'Tofu mit Spinat, Knoblauch und Olivenöl.',
      'Tofu aux épinards, ail et huile d''olive.'),
-    -- (31) Carrot & Peanut Butter (2 Zutaten)*
-    ('Carrot & Peanut Butter', 'Karotte mit Erdnussbutter', 'Carotte au Beurre de Cacahuète',
-     'Raw carrot sticks with peanut butter.', 'Rohkost-Karotten mit Erdnussbutter.',
-     'Bâtonnets de carotte au beurre de cacahuète.'),
-    -- (32) Honey Yogurt (2 Zutaten)
-    ('Honey Yogurt', 'Honig-Joghurt', 'Yaourt au Miel',
-     'Yogurt drizzled with honey.', 'Joghurt mit Honig.', 'Yaourt au miel.'),
+    -- (31) Guacamole & Toastx
+    ('Guacamole & toast', 'Guacamole und Toast', 'Guacamole et pain grillé',
+     'Toast with guacamole ontop.', 'Toastbrot mit Guacamole-aufstrich .',
+     'Toast avec guacamole.'),
+    -- (32) Cheeseburger
+    ('Cheeseburger', 'Cheeseburger', 'Cheeseburger',
+     'A classic cheeseburger.', 'einen klassischen Cheeseburger.', 'un cheeseburger classique.'),
     -- (33) Cheese Rice Bake
     ('Cheese Rice Bake', 'Käse-Reis-Auflauf', 'Gratin de Riz au Fromage',
      'Baked rice with cheese and milk.', 'Überbackener Reis mit Käse und Milch.', 'Gratin de riz au fromage et lait.'),
@@ -171,15 +172,16 @@ VALUES
     -- (37) Egg & Cheese Toast
     ('Egg & Cheese Toast', 'Ei-Käse-Toast', 'Toast Œuf et Fromage',
      'Toast topped with egg and cheese.', 'Toast mit Ei und Käse.', 'Toast œuf et fromage.'),
-    -- (38) Lemon Water (2 Zutaten)
-    ('Lemon Water', 'Zitronenwasser', 'Eau Citronnée',
-     'Water with fresh lemon.', 'Wasser mit frischer Zitrone.', 'Eau avec citron frais.'),
+    -- (38) Scrambled eggs with fruits and Toast.
+    ('Scrambled eggs with fruits and toast', 'Rührei mit Früchten und Toast', 'Œufs brouillés avec fruits et toasts',
+     'A simple breakfast with eggs,fruits and toast.', 'ein einfaches Frühstück mit Eiern, Obst und Toast.',
+     'un petit déjeuner simple avec des œufs, des fruits et du pain grillé.'),
     -- (39) Potato & Garlic (2 Zutaten)
     ('Potato & Garlic', 'Kartoffel und Knoblauch', 'Pomme de Terre et Ail',
      'Roasted potatoes with garlic.', 'Geröstete Kartoffeln mit Knoblauch.', 'Pommes de terre rôties à l''ail.'),
-    -- (40) Pepper & Tomato (2 Zutaten)
-    ('Pepper & Tomato', 'Paprika und Tomate', 'Poivron et Tomate',
-     'Sliced pepper & tomato.', 'Paprika- und Tomatenscheiben.', 'Poivron et tomate en tranches.'),
+    -- (40) Mexican Rice (5 Zutaten)
+    ('Mexican Rice', 'Mexikanischer Reis', 'Riz Mexicain',
+     'Rice with Vegetables and beans.', 'Reis mit Gemüse und Bohnen.', 'Riz avec légumes et haricots.'),
     -- (41) Beans on Toast (2 Zutaten)
     ('Beans on Toast', 'Bohnen-Toast', 'Toast aux Haricots',
      'Toast with canned beans.', 'Toast mit Dosenbohnen.', 'Toast aux haricots en conserve.'),
@@ -192,9 +194,119 @@ VALUES
     -- (44) Rice Porridge (2 Zutaten)
     ('Rice Porridge', 'Reisbrei', 'Bouillie de Riz',
      'Rice cooked in milk.', 'Reis in Milch gekocht.', 'Riz cuit au lait.'),
-    -- (45) Honey Banana (2 Zutaten)
-    ('Honey Banana', 'Honig-Banane', 'Banane au Miel',
-     'Banana drizzled with honey.', 'Banane mit Honig.', 'Banane au miel.');
+    -- (45) Hardboiled Eggs wih avocado and toast.
+    ('Hardboiled Eggs with Avocado and Toast', 'Hartgekochte Eier mit Avocado und Toast',
+     'Œufs durs avec avocat et pain grillé',
+     'A simple breakfast with hardboiled eggs, avocado and toast.', 'ein einfaches Frühstück mit hartgekochten Eiern, Avocado und Toast.',
+     'un petit déjeuner simple avec des œufs durs, de l''avocat et du pain grillé.'),
+    -- (46) Raclette with potatoes and bread.
+    ('Raclette with Potatoes and Bread', 'Raclette mit Kartoffeln und Brot',
+     'Raclette avec Pommes de Terre et Pain',
+     'A simple raclette with potatoes and bread.', 'eine einfache Raclette mit Kartoffeln und Brot.',
+     'une raclette simple avec des pommes de terre et du pain.'),
+    -- (47) Steak with carrots.
+    ('Steak with Carrots', 'Steak mit Karotten', 'Steak avec Carottes',
+     'Steak seasoned with butter and served with carrots.', 'Steak gewürzt mit Butter und serviert mit Karotten.',
+     'Steak assaisonné de beurre et servi avec des carottes.'),
+    -- (48) Meat Platter with Bread and Cheese
+    ('Meat Platter with Bread and Cheese', 'Fleischplatte mit Brot und Käse', 'Plateau de viande avec pain et fromage',
+     'A meat platter with Bread and Cheese.', 'Eine Fleischplatte mit Brot und Käse.','Un plateau de viande avec pain et fromage.'),
+    -- (49) Steak with fries and garlic bread
+    ('Steak with Fries and Garlic Bread', 'Steak mit Pommes und Knoblauchbrot', 'Steak avec Frites et Pain à l''Ail',
+     'A steak served with fries and garlic bread.', 'Ein Steak serviert mit Pommes und Knoblauchbrot.',
+     'Un steak servi avec des frites et du pain à l''ail.'),
+    -- (50) Apple and Banana Smoothie
+    ('Apple and Banana Smoothie', 'Apfel-Bananen-Smoothie', 'Smoothie Pomme-Banane',
+     'A smoothie made with apples and bananas.', 'Ein Smoothie aus Äpfeln und Bananen.',
+     'Un smoothie à base de pommes et de bananes.'),
+    -- (51) Orange and lemon smoothie
+    ('Orange and Lemon Smoothie', 'Orangen-Zitronen-Smoothie', 'Smoothie Orange et Citron',
+     'A refreshing smoothie made with oranges and lemons.', 'Ein erfrischender Smoothie aus Orangen und Zitronen.',
+     'Un smoothie rafraîchissant à base d''oranges et de citrons.'),
+    -- (52) Appletart with Strawberries
+    ('Appletart with Strawberries', 'Apfeltarte mit Erdbeeren', 'Tarte aux Pommes et Fraises',
+     'A delicious appletart topped with strawberries.', 'Eine köstliche Apfeltarte mit Erdbeeren.',
+     'Une délicieuse tarte aux pommes garnie de fraises.'),
+    -- (53) candied Apples with homemade orange ice cream
+    ('Candied Apples with Homemade orange ice-cream', 'Kandierte Äpfel mit hausgemachtem Orangen-eis',
+     'Pommes confites avec glace à l orange maison',
+     'A dessert of candied apples served with homemade ice cream.', 'Ein Dessert aus kandierten Äpfeln mit hausgemachtem Eis.',
+     'Un dessert de pommes caramélisées servi avec de la glace maison de orange.'),
+    -- (54) Chicken and Rice mexican style
+    ('Chicken and Rice Mexican Style', 'Hühnchen und Reis im mexikanischen Stil', 'Poulet et Riz à la Mexicaine',
+     'A dish of chicken and rice with Mexican spices.', 'Ein Gericht aus Hühnchen und Reis mit mexikanischen Gewürzen.',
+     'Un plat de poulet et de riz aux épices mexicaines.'),
+    -- (55) Egg salad with lettuce and tomatoes
+    ('Egg Salad with Lettuce and Tomatoes', 'Eiersalat mit Salat und Tomaten', 'Salade d''Œufs avec Laitue et Tomates',
+     'A refreshing egg salad served on a bed of lettuce with tomatoes.', 'Ein erfrischender Eiersalat auf einem Bett aus Salat mit Tomaten.',
+     'Une salade d''œufs rafraîchissante servie sur un lit de laitue avec des tomates.'),
+    -- (56) Chicken salad Wrap
+    ('Chicken Salad Wrap', 'Hühnchen-Salat-Wrap', 'Wrap de Salade de Poulet',
+     'A Lettuce Wrap filled with Chicken.', 'Ein Wrap aus Kopfsallat gefüllt mit Hünchen.', 'Wrap de laitue fourré au poulet.'),
+    -- (57) Fried Tofu with rice and vegetables
+    ('Fried Tofu with Rice and Vegetables', 'Gebratener Tofu mit Reis und Gemüse', 'Tofu Frit avec Riz et Légumes',
+     'A dish of fried tofu served with rice and vegetables.', 'Ein Gericht aus gebratenem Tofu mit Reis und Gemüse.',
+     'Un plat de tofu frit servi avec du riz et des légumes.'),
+    -- (58) Steamed Tofu with Spinach and Garlic
+    ('Steamed Tofu with Spinach and Garlic', 'Gedämpfter Tofu mit Spinat und Knoblauch',
+     'Tofu Vapeur avec Épinards et Ail',
+     'A dish of steamed tofu served with spinach and garlic.', 'Ein Gericht aus gedämpftem Tofu mit Spinat und Knoblauch.',
+     'Un plat de tofu vapeur servi avec des épinards et de l''ail.'),
+    -- (59) Enchilada Power Bowl
+    ('Enchilada Power Bowl', 'Enchilada Power Bowl', 'Bol de Pouvoir Enchilada',
+     'A bowl of rice, beans, and vegetables with enchilada sauce.', 'Eine Schüssel Reis, Bohnen und Gemüse mit Enchilada-Sauce.',
+     'Un bol de riz, haricots et légumes avec sauce enchilada.'),
+    -- (60) Homemade Ice Cream from Fruits
+    ('Homemade Ice Cream from Fruits', 'Hausgemachtes Eis aus Früchten', 'Glace Maison aux Fruits',
+     'A refreshing homemade ice cream made from fruits.', 'Ein erfrischendes hausgemachtes Eis aus Früchten.',
+     'Une glace maison rafraîchissante à base de fruits.'),
+    -- (61) Tuna Seasoned with Lemon and Orange
+    ('Tuna Seasoned with Lemon and Orange', 'Thunfisch gewürzt mit Zitrone und Orange',
+     'Thon assaisonné de Citron et Orange',
+     'A dish of tuna seasoned with lemon and orange.', 'Ein Gericht aus Thunfisch gewürzt mit Zitrone und Orange.',
+     'Un plat de thon assaisonné de citron et d''orange.'),
+    -- (62) Mega Veggie Bowl
+    ('Mega Veggie Bowl', 'Mega Gemüse-Schüssel', 'Bol de Légumes Méga',
+     'A bowl of mixed vegetables with a tangy dressing.', 'Eine Schüssel mit gemischtem Gemüse und einer würzigen Sauce.',
+     'Un bol de légumes mélangés avec une vinaigrette acidulée.'),
+    -- (63) Avocado and Tomato Salad
+    ('Avocado and Tomato Salad', 'Avocado und Tomatensalat', 'Salade d''Avocat et Tomate',
+     'A refreshing salad of avocado and tomato.', 'Ein erfrischender Salat aus Avocado und Tomate.',
+     'Une salade rafraîchissante à l''avocat et à la tomate.'),
+    -- (64) Stuffed Bell Peppers
+    ('Stuffed Bell Peppers', 'Gefüllte Paprika', 'Poivrons Farcis',
+     'Bell peppers stuffed with rice and vegetables.', 'Paprikaschoten gefüllt mit Reis und Gemüse.',
+     'Poivrons farcis de riz et de légumes.'),
+    -- (65) Fish and Chips
+    ('Fish and Chips', 'Fisch und Pommes', 'Poisson et Frites',
+     'A classic dish of fish and chips.', 'Ein klassisches Gericht aus Fisch und Pommes.',
+     'Un plat classique de poisson et frites.'),
+    -- (66) Tuna salad with Rice
+    ('Tuna Salad with Rice', 'Thunfischsalat mit Reis', 'Salade de Thon avec Riz',
+     'A refreshing tuna salad served with rice.', 'Ein erfrischender Thunfischsalat mit Reis serviert.',
+     'Une salade de thon rafraîchissante servie avec du riz.'),
+    -- (67) Sushi Rolls
+    ('Sushi Rolls', 'Sushi-Rollen', 'Rouleaux de Sushi',
+     'A dish of sushi rolls with various fillings.', 'Ein Gericht aus Sushi-Rollen mit verschiedenen Füllungen.',
+     'Un plat de rouleaux de sushi avec différentes garnitures.'),
+    -- (68) Sphaghetti Bolognese
+    ('Spaghetti Bolognese', 'Spaghetti Bolognese', 'Spaghetti Bolognaise',
+     'A classic dish of spaghetti with Bolognese sauce.', 'Ein klassisches Gericht aus Spaghetti mit Bolognese-Sauce.',
+     'Un plat classique de spaghetti à la sauce bolognaise.'),
+    -- (69) Ground Beef rice bowl
+    ('Ground Beef Rice Bowl', 'Hackfleisch-Reisschüssel', 'Bol de Riz au Viande Hachée',
+     'A bowl of rice topped with ground beef and vegetables.', 'Eine Schüssel Reis mit Hackfleisch und Gemüse.',
+     'Un bol de riz garni de viande hachée et de légumes.'),
+    -- (70) Corn salad with cheese
+    ('Corn Salad with Cheese', 'Mais-Salat mit Käse', 'Salade de Maïs avec Fromage',
+     'A refreshing corn salad topped with cheese.', 'Ein erfrischender Maissalat mit Käse.', 'Une salade de maïs rafraîchissante garnie de fromage.'),
+    -- (71) Steak with Corn and Rice
+    ('Steak with Corn and Rice', 'Steak mit Mais und Reis', 'Steak avec Maïs et Riz',
+     'A dish of steak served with corn and rice.', 'Ein Gericht aus Steak mit Mais und Reis serviert.',
+     'Un plat de steak servi avec du maïs et du riz.');
+
+
+
 
 -- Zuordnung Zutaten
 INSERT INTO recipe_ingredient (id, recipe_recipe_id, product_barcode)
@@ -211,157 +323,318 @@ VALUES
     (7, 3, 'CCC'),
     (8, 3, '001'),
     (9, 3, 'EEE'),
+    (10, 3, '003'),
+    (11, 3, '017'),
     -- 4
-    (10, 4, '012'),
-    (11, 4, 'BBB'),
-    (12, 4, '017'),
+    (12, 4, '012'),
+    (13, 4, 'BBB'),
+    (14, 4, '017'),
+    (15, 4, '005'),
     -- 5
-    (13, 5, '004'),
-    (14, 5, '011'),
-    (15, 5, '017'),
+    (16, 5, '004'),
+    (17, 5, '011'),
+    (18, 5, '017'),
     -- 6
-    (16, 6, '010'),
-    (17, 6, '019'),
-    (18, 6, '016'),
-    (120, 6, '021'),
+    (19, 6, '010'),
+    (20, 6, '019'),
+    (21, 6, '016'),
+    (22, 6, '021'),
     -- 7
-    (19, 7, '016'),
-    (20, 7, '019'),
-    (21, 7, '007'),
+    (23, 7, '016'),
+    (24, 7, '019'),
+    (25, 7, '007'),
     -- 8
-    (22, 8, '013'),
-    (23, 8, '010'),
-    (24, 8, '007'),
+    (26, 8, 'DDD'),
+    (27, 8, '010'),
+    (28, 8, '007'),
     -- 9
-    (25, 9, 'AAA'),
-    (26, 9, '017'),
-    (27, 9, '005'),
+    (29, 9, 'AAA'),
+    (30, 9, '017'),
+    (31, 9, '005'),
     -- 10
-    (28, 10, 'CCC'),
-    (29, 10, '008'),
-    (30, 10, '003'),
-    (31, 10, '007'),
+    (32, 10, 'CCC'),
+    (33, 10, '008'),
+    (34, 10, '003'),
+    (35, 10, '005'),
     -- 11
-    (32, 11, '006'),
-    (33, 11, '004'),
-    (34, 11, '011'),
+    (36, 11, '006'),
+    (37, 11, '004'),
+    (38, 11, '011'),
     -- 12
-    (35, 12, '026'),
-    (36, 12, '001'),
-    (37, 12, 'EEE'),
+    (39, 12, '026'),
+    (40, 12, '001'),
+    (41, 12, 'EEE'),
     -- 13
-    (38, 13, 'AAA'),
-    (39, 13, '005'),
-    (40, 13, '007'),
+    (42, 13, 'AAA'),
+    (43, 13, '005'),
+    (44, 13, '007'),
     -- 14
-    (41, 14, '002'),
-    (42, 14, '003'),
-    (43, 14, 'EEE'),
+    (45, 14, '002'),
+    (46, 14, '003'),
+    (47, 14, 'EEE'),
     -- 15
-    (44, 15, '004'),
-    (45, 15, '008'),
-    (46, 15, '017'),
+    (48, 15, '004'),
+    (49, 15, '008'),
+    (50, 15, '017'),
     -- 16
-    (47, 16, '012'),
-    (48, 16, '004'),
-    (49, 16, '008'),
+    (51, 16, '012'),
+    (52, 16, '004'),
+    (53, 16, '008'),
     -- 17
-    (50, 17, '011'),
-    (51, 17, 'EEE'),
-    (52, 17, '017'),
+    (54, 17, '011'),
+    (55, 17, 'EEE'),
+    (56, 17, '017'),
     -- 18
-    (53, 18, 'AAA'),
-    (54, 18, '024'),
-    (55, 18, '022'),
+    (57, 18, 'AAA'),
+    (58, 18, '024'),
+    (59, 18, '022'),
     -- 19
-    (56, 19, '002'),
-    (57, 19, '001'),
-    (58, 19, 'AAA'),
+    (60, 19, '002'),
+    (61, 19, '001'),
+    (62, 19, 'AAA'),
     -- 20
-    (59, 20, '002'),
-    (60, 20, '003'),
-    (61, 20, '005'),
-    (62, 20, '007'),
-    (121, 20, 'AAA'),
+    (63, 20, '002'),
+    (64, 20, '003'),
+    (65, 20, '005'),
+    (66, 20, '007'),
+    (67, 20, 'AAA'),
     -- 21
-    (63, 21, 'AAA'),
-    (64, 21, '010'),
+    (68, 21, 'AAA'),
+    (69, 21, '010'),
     -- 22
-    (65, 22, 'AAA'),
-    (66, 22, '013'),
+    (70, 22, 'AAA'),
+    (71, 22, '013'),
     -- 23
-    (67, 23, 'BBB'),
-    (68, 23, '028'),
+    (72, 23, 'BBB'),
+    (73, 23, '028'),
     -- 24
-    (69, 24, '003'),
-    (70, 24, '029'),
+    (74, 24, '003'),
+    (75, 24, '029'),
     -- 25
-    (71, 25, 'BBB'),
-    (72, 25, '002'),
-    (73, 25, '008'),
+    (76, 25, 'BBB'),
+    (77, 25, '002'),
+    (78, 25, '008'),
     -- 26
-    (74, 26, 'CCC'),
-    (75, 26, '017'),
-    (119, 26, 'EEE'),
+    (79, 26, 'CCC'),
+    (80, 26, '017'),
+    (81, 26, 'EEE'),
     -- 27
-    (76, 27, 'AAA'),
-    (77, 27, '019'),
+    (82, 27, 'AAA'),
+    (83, 27, '019'),
     -- 28
-    (78, 28, '004'),
-    (79, 28, '005'),
+    (84, 28, '004'),
+    (85, 28, '005'),
     -- 29
-    (80, 29, '008'),
-    (81, 29, '003'),
+    (86, 29, '008'),
+    (87, 29, '003'),
     -- 30
-    (82, 30, '020'),
-    (83, 30, '008'),
-    (84, 30, '017'),
-    (85, 30, 'EEE'),
-    -- 31*
-    (86, 31, '004'),
-    (87, 31, 'EEE'),
+    (88, 30, '020'),
+    (89, 30, '008'),
+    (90, 30, '017'),
+    (91, 30, 'EEE'),
+    -- 31
+    (92, 31, '001'),
+    (93, 31, 'EEE'),
+    (94, 31, '024'),
+    (95, 31, '023'),
     -- 32
-    (88, 32, '007'),
-    (89, 32, '013'),
+    (96, 32, '018'),
+    (97, 32, '002'),
+    (98, 32, '003'),
+    (99, 32, '027'),
+    (100, 32, '001'),
+    (101, 32, 'AAA'),
     -- 33
-    (90, 33, 'BBB'),
-    (91, 33, '003'),
-    (92, 33, '007'),
+    (102, 33, 'BBB'),
+    (103, 33, '003'),
+    (104, 33, '007'),
     -- 34
-    (93, 34, '008'),
-    (94, 34, '001'),
-    (95, 34, '022'),
+    (105, 34, '008'),
+    (106, 34, '001'),
+    (107, 34, '018'),
     -- 35
-    (96, 35, '029'),
-    (97, 35, '005'),
+    (108, 35, '029'),
+    (109, 35, '005'),
     -- 36
-    (98, 36, 'BBB'),
-    (99, 36, '005'),
+    (110, 36, 'BBB'),
+    (111, 36, '005'),
     -- 37
-    (100, 37, 'AAA'),
-    (101, 37, '002'),
-    (102, 37, '003'),
+    (112, 37, 'AAA'),
+    (113, 37, '002'),
+    (114, 37, '003'),
     -- 38
-    (103, 38, '022'),
-    (104, 38, 'EEE'),
+    (115, 38, '002'),
+    (116, 38, 'AAA'),
+    (117, 38, '016'),
+    (118, 38, '019'),
     -- 39
-    (105, 39, '011'),
-    (106, 39, '017'),
+    (119, 39, '011'),
+    (120, 39, '017'),
     -- 40
-    (107, 40, '025'),
-    (108, 40, '001'),
+    (121, 40, '025'),
+    (122, 40, '001'),
+    (123, 40, '023'),
+    (124, 40, '028'),
+    (125, 40, 'BBB'),
     -- 41
-    (109, 41, 'AAA'),
-    (110, 41, '028'),
+    (126, 41, 'AAA'),
+    (127, 41, '028'),
     -- 42
-    (111, 42, '002'),
-    (112, 42, '005'),
+    (128, 42, '002'),
+    (129, 42, '005'),
     -- 43
-    (113, 43, 'CCC'),
-    (114, 43, '003'),
+    (130, 43, 'CCC'),
+    (131, 43, '003'),
     -- 44
-    (115, 44, 'BBB'),
-    (116, 44, '007'),
+    (132, 44, 'BBB'),
+    (133, 44, '007'),
     -- 45
-    (117, 45, '019'),
-    (118, 45, '013');
+    (134, 45, '002'),
+    (135, 45, '024'),
+    (136, 45, '001'),
+    (137, 45, 'AAA'),
+    -- 46
+    (138, 46, '003'),
+    (139, 46, '011'),
+    (140, 46, '023'),
+    (141, 46, 'AAA'),
+    -- 47
+    (142, 47, '006'),
+    (143, 47, '004'),
+    (144, 47, '005'),
+    (145, 47, '017'),
+    -- 48
+    (146, 48, '006'),
+    (147, 48, '003'),
+    (148, 48, '005'),
+    (149, 48, '012'),
+    (150, 48, 'AAA'),
+    -- 49
+    (151, 49, '006'),
+    (152, 49, '011'),
+    (153, 49, '017'),
+    (154, 49, 'AAA'),
+    (155, 49, 'EEE'),
+    -- 50
+    (156, 50, '010'),
+    (157, 50, '019'),
+    (158, 50, '016'),
+    (159, 50, '007'),
+    -- 51
+    (160, 51, '016'),
+    (161, 51, '021'),
+    (162, 51, '022'),
+    (163, 51, '007'),
+    -- 52
+    (164, 52, '011'),
+    (165, 52, '016'),
+    (166, 52, 'DDD'),
+    (167, 52, '022'),
+    -- 53
+    (168, 53, '010'),
+    (169, 53, 'DDD'),
+    (170, 53, '007'),
+    (171, 53, '021'),
+    -- 54
+    (172, 54, '012'),
+    (173, 54, 'BBB'),
+    (174, 54, '028'),
+    (175, 54, '025'),
+    (176, 54, 'EEE'),
+    -- 55
+    (177, 55, '002'),
+    (178, 55, '018'),
+    (179, 55, '001'),
+    (180, 55, '022'),
+    (181, 55, 'AAA'),
+    -- 56
+    (182, 56, '001'),
+    (183, 56, '012'),
+    (184, 56, '018'),
+    (185, 56, '025'),
+    -- 57
+    (186, 57, '020'),
+    (187, 57, '025'),
+    (188, 57, '023'),
+    (189, 57, 'BBB'),
+    -- 58
+    (190, 58, '020'),
+    (191, 58, '008'),
+    (192, 58, '017'),
+    -- 59
+    (193, 59, '024'),
+    (194, 59, '028'),
+    (195, 59, '020'),
+    (196, 59, '022'),
+    -- 60
+    (197, 60, '007'),
+    (198, 60, '016'),
+    (199, 60, '021'),
+    (200, 60, '022'),
+    -- 61
+    (201, 61, '026'),
+    (202, 61, '021'),
+    (203, 61, '022'),
+    (204, 61, 'EEE'),
+    -- 62
+    (205, 62, '020'),
+    (206, 62, '023'),
+    (207, 62, '029'),
+    (208, 62, '001'),
+    (209, 62, '018'),
+    -- 63
+    (210, 63, '001'),
+    (211, 63, '018'),
+    (212, 63, '024'),
+    (213, 63, '029'),
+    -- 64
+    (214, 64, '025'),
+    (215, 64, '003'),
+    (216, 64, '027'),
+    (217, 64, 'EEE'),
+    -- 65
+    (218, 65, '022'),
+    (219, 65, '011'),
+    (220, 65, '026'),
+    (221, 65, 'EEE'),
+    -- 66
+    (222, 66, '026'),
+    (223, 66, 'BBB'),
+    (224, 66, '022'),
+    (225, 66, '018'),
+    -- 67
+    (226, 67, '017'),
+    (227, 67, '001'),
+    (228, 67, 'EEE'),
+    (229, 67, '022'),
+    -- 68
+    (230, 68, 'CCC'),
+    (231, 68, 'EEE'),
+    (232, 68, '027'),
+    (233, 68, '001'),
+    (234, 68, '003'),
+    -- 69
+    (235, 69, 'BBB'),
+    (236, 69, '025'),
+    (237, 69, '027'),
+    (238, 69, '028'),
+    -- 70
+    (239, 70, '029'),
+    (240, 70, '003'),
+    (241, 70, '001'),
+    -- 71
+    (242, 71, '006'),
+    (243, 71, '029'),
+    (244, 72, 'EEE');
+
+
+
+
+
+
+
+
+
+
+
+
