@@ -14,10 +14,13 @@ import ch.primeo.fridgely.view.PenguinReactionOverlay;
 import ch.primeo.fridgely.view.component.ControlButton;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.SwingConstants;
@@ -42,6 +45,9 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
     private static final String KEY_GAME_OVER = "game_over";
     private static final String KEY_ROUND_P1_SCAN_FMT = "round_player1_scan_fmt";
     private static final String KEY_ROUND_P2_SELECT_FMT = "round_player2_select_fmt";
+    private static final String KEY_WARNING_NO_RECIPES_TITLE = "warning.no_recipes.title";
+    private static final String KEY_WARNING_NO_RECIPES_MESSAGE = "warning.no_recipes.message";
+    private static final String KEY_WARNING_NO_RECIPES_BUTTON = "warning.no_recipes.button";
 
     private final MultiplayerGameController gameController;
     private final MultiplayerPlayer1Controller player1Controller;
@@ -56,6 +62,7 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
     private JButton finishTurnButton;
     private JLabel statusLabel;
     private JLabel minProductsLabel;
+    private boolean hasShownNoRecipesWarning = false;
 
     /**
      * Constructs a new Player 1 view.
@@ -217,9 +224,90 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
      * Finishes Player 1's turn.
      */
     private void finishTurn() {
-        player1Controller.finishTurn();
-        overlay.dispose();
+        // Try to finish the turn
+        boolean turnFinished = player1Controller.finishTurn();
+
+        // If turn couldn't be finished due to no available recipes, show warning
+        if (!turnFinished && player1Controller.hasAvailableRecipes() == false) {
+            showNoRecipesWarning();
+        } else if (turnFinished) {
+            overlay.dispose();
+        }
         updateComponentStates();
+    }
+
+    /**
+     * Shows a custom undecorated warning dialog when no recipes are available with current ingredients.
+     */
+    private void showNoRecipesWarning() {
+        createCustomWarningDialog();
+    }
+
+    /**
+     * Creates a custom undecorated warning dialog with disappointed penguin sprite.
+     */
+    private void createCustomWarningDialog() {
+        JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), true);
+        dialog.setUndecorated(true);
+        dialog.setSize(600, 300);
+        dialog.setLocationRelativeTo(this);
+
+        // Create main panel with background
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBackground(new Color(240, 240, 240));
+        mainPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createRaisedBevelBorder(),
+            BorderFactory.createEmptyBorder(20, 20, 20, 20)
+        ));
+
+        // Create content panel
+        JPanel contentPanel = new JPanel(new BorderLayout());
+        contentPanel.setOpaque(false);
+
+        // Load and display disappointed penguin image
+        BufferedImage penguinImage = imageLoader.loadBufferedImage(PenguinFacialExpression.DISAPPOINTED.getSprite());
+        if (penguinImage != null) {
+            // Scale the image to appropriate size
+            Image scaledImage = penguinImage.getScaledInstance(120, 120, Image.SCALE_SMOOTH);
+            JLabel penguinLabel = new JLabel(new ImageIcon(scaledImage));
+            penguinLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            contentPanel.add(penguinLabel, BorderLayout.WEST);
+        }
+
+        // Create text panel
+        JPanel textPanel = new JPanel(new BorderLayout());
+        textPanel.setOpaque(false);
+        textPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 10));
+
+        // Title label
+        JLabel titleLabel = new JLabel(localizationService.get(KEY_WARNING_NO_RECIPES_TITLE));
+        titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD, 18f));
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        textPanel.add(titleLabel, BorderLayout.NORTH);
+
+        // Message label
+        JLabel messageLabel = new JLabel("<html><div style='text-align: center; width: 320px;'>" +
+            localizationService.get(KEY_WARNING_NO_RECIPES_MESSAGE) + "</div></html>");
+        messageLabel.setFont(messageLabel.getFont().deriveFont(14f));
+        messageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        messageLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
+        textPanel.add(messageLabel, BorderLayout.CENTER);
+
+        // OK button
+        JButton okButton = new JButton(localizationService.get(KEY_WARNING_NO_RECIPES_BUTTON));
+        okButton.setPreferredSize(new Dimension(100, 35));
+        okButton.addActionListener(e -> dialog.dispose());
+
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        buttonPanel.setOpaque(false);
+        buttonPanel.add(okButton);
+        textPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+        contentPanel.add(textPanel, BorderLayout.CENTER);
+        mainPanel.add(contentPanel, BorderLayout.CENTER);
+
+        dialog.setContentPane(mainPanel);
+        dialog.setVisible(true);
     }
 
     /**
@@ -232,8 +320,21 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
         boolean isPlayer1Turn = gameStateModel.getCurrentPlayer() == MultiplayerGameStateModel.Player.PLAYER1;
         boolean isGameOver = gameStateModel.isGameOver();
         boolean hasEnoughProducts = fridgeStockModel.getFridgeProducts().size() >= GameConfig.MIN_PRODUCTS_PER_ROUND;
+        boolean hasAvailableRecipes = hasEnoughProducts && player1Controller.hasAvailableRecipes();
 
-        finishTurnButton.setEnabled(isPlayer1Turn && !isGameOver && hasEnoughProducts);
+        finishTurnButton.setEnabled(isPlayer1Turn && !isGameOver && hasEnoughProducts && hasAvailableRecipes);
+
+        // Show warning if minimum products reached but no recipes available
+        if (isPlayer1Turn && !isGameOver && hasEnoughProducts && !hasAvailableRecipes && !hasShownNoRecipesWarning) {
+            hasShownNoRecipesWarning = true;
+            // Use SwingUtilities.invokeLater to show dialog after current UI update completes
+            SwingUtilities.invokeLater(this::showNoRecipesWarning);
+        }
+
+        // Reset warning flag when conditions change
+        if (!isPlayer1Turn || isGameOver || !hasEnoughProducts || hasAvailableRecipes) {
+            hasShownNoRecipesWarning = false;
+        }
 
         // Animated scan prompt label logic
         //scanPromptLabel.setVisible(isPlayer1Turn && !isGameOver && !hasEnoughProducts);
