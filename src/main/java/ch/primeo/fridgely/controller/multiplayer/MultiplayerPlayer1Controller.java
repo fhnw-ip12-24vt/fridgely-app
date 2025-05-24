@@ -4,8 +4,12 @@ import ch.primeo.fridgely.config.GameConfig;
 import ch.primeo.fridgely.model.FridgeStockModel;
 import ch.primeo.fridgely.model.PenguinModel;
 import ch.primeo.fridgely.model.Product;
+import ch.primeo.fridgely.model.Recipe;
+import ch.primeo.fridgely.model.RecipeModel;
 import ch.primeo.fridgely.model.multiplayer.MultiplayerGameStateModel;
 import ch.primeo.fridgely.service.ProductRepository;
+
+import java.util.List;
 
 /**
  * Controller for Player 1 (Scanner) in the multiplayer game mode. Handles scanning products and updating the fridge
@@ -17,6 +21,7 @@ public class MultiplayerPlayer1Controller {
     private final MultiplayerGameStateModel gameStateModel;
     private final PenguinModel penguinModel;
     private final ProductRepository productRepository;
+    private final RecipeModel recipeModel;
 
     private int roundScannedItems;
     private int roundScore;
@@ -28,13 +33,15 @@ public class MultiplayerPlayer1Controller {
      * @param stateModel   the model for the game state
      * @param penguinModel the model for the penguin HP
      * @param productRepo  the repository for accessing products
+     * @param recipeModel  the model for recipes
      */
     public MultiplayerPlayer1Controller(FridgeStockModel stockModel, MultiplayerGameStateModel stateModel,
-                                        PenguinModel penguinModel, ProductRepository productRepo) {
+                                        PenguinModel penguinModel, ProductRepository productRepo, RecipeModel recipeModel) {
         this.fridgeStockModel = stockModel;
         this.gameStateModel = stateModel;
         this.penguinModel = penguinModel;
         this.productRepository = productRepo;
+        this.recipeModel = recipeModel;
         roundScannedItems = 0;
         roundScore = 0;
     }
@@ -132,17 +139,36 @@ public class MultiplayerPlayer1Controller {
     }
 
     /**
-     * Finishes Player 1's turn if enough products have been scanned.
+     * Checks if any recipes can be made with the current products in the fridge.
+     *
+     * @return true if at least one recipe can be made, false otherwise
      */
-    public void finishTurn() {
+    public boolean hasAvailableRecipes() {
+        List<Product> productsInStorage = fridgeStockModel.getProducts();
+        List<Recipe> possibleRecipes = recipeModel.getPossibleRecipes(productsInStorage);
+        return !possibleRecipes.isEmpty();
+    }
+
+    /**
+     * Finishes Player 1's turn if enough products have been scanned and recipes are available.
+     * If no recipes are available, the turn cannot be finished to prevent soft lock.
+     *
+     * @return true if the turn was successfully finished, false if it cannot be finished
+     */
+    public boolean finishTurn() {
         // Check if it's player 1's turn
         if (gameStateModel.getCurrentPlayer() != MultiplayerGameStateModel.Player.PLAYER1) {
-            return;
+            return false;
         }
 
         // Ensure minimum number of products are in the fridge
         if (fridgeStockModel.getFridgeProducts().size() < GameConfig.MIN_PRODUCTS_PER_ROUND) {
-            return;
+            return false;
+        }
+
+        // Check if any recipes can be made with current products
+        if (!hasAvailableRecipes()) {
+            return false; // Cannot finish turn if no recipes are available
         }
 
         // Switch to player 2's turn and add the score of player 1 round
@@ -152,5 +178,6 @@ public class MultiplayerPlayer1Controller {
         //reset for next round
         roundScore = 0;
         roundScannedItems = 0;
+        return true;
     }
 }
