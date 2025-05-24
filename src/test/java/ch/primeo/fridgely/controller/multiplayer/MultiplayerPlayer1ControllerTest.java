@@ -4,6 +4,7 @@ import ch.primeo.fridgely.config.GameConfig;
 import ch.primeo.fridgely.model.FridgeStockModel;
 import ch.primeo.fridgely.model.PenguinModel;
 import ch.primeo.fridgely.model.Product;
+import ch.primeo.fridgely.model.Recipe;
 import ch.primeo.fridgely.model.RecipeModel;
 import ch.primeo.fridgely.model.multiplayer.MultiplayerGameStateModel;
 import ch.primeo.fridgely.service.ProductRepository;
@@ -41,7 +42,7 @@ class MultiplayerPlayer1ControllerTest {
         recipeModel = mock(RecipeModel.class);
         productRepository = mock(ProductRepository.class);
 
-        controller = new MultiplayerPlayer1Controller(fridgeStockModel, gameStateModel, penguinModel, productRepository);
+        controller = new MultiplayerPlayer1Controller(fridgeStockModel, gameStateModel, penguinModel, productRepository, recipeModel);
     }
 
     @Test
@@ -189,11 +190,14 @@ class MultiplayerPlayer1ControllerTest {
             products.add(mock(Product.class));
         }
         when(fridgeStockModel.getFridgeProducts()).thenReturn(products);
+        when(fridgeStockModel.getProducts()).thenReturn(products);
+        when(recipeModel.getPossibleRecipes(products)).thenReturn(List.of(mock(Recipe.class)));
 
         // Act
-        controller.finishTurn();
+        boolean result = controller.finishTurn();
 
         // Assert
+        assertTrue(result);
         verify(gameStateModel).addScore(anyInt());
         verify(gameStateModel).nextPlayer();
     }
@@ -276,17 +280,20 @@ class MultiplayerPlayer1ControllerTest {
             products.add(mock(Product.class));
         }
         when(fridgeStockModel.getFridgeProducts()).thenReturn(products);
+        when(fridgeStockModel.getProducts()).thenReturn(products);
+        when(recipeModel.getPossibleRecipes(products)).thenReturn(List.of(mock(Recipe.class)));
 
         // We need to ensure roundScannedItems is 0
         // This is a bit tricky since it's a private field
         // We'll use a fresh controller instance
         MultiplayerPlayer1Controller freshController =
-            new MultiplayerPlayer1Controller(fridgeStockModel, gameStateModel, penguinModel, productRepository);
+            new MultiplayerPlayer1Controller(fridgeStockModel, gameStateModel, penguinModel, productRepository, recipeModel);
 
         // Act
-        freshController.finishTurn();
+        boolean result = freshController.finishTurn();
 
         // Assert
+        assertTrue(result);
         // With 0 scanned items, the score should be 0
         verify(gameStateModel).addScore(0);
         verify(gameStateModel).nextPlayer();
@@ -303,6 +310,8 @@ class MultiplayerPlayer1ControllerTest {
         // Ensure finishTurn can proceed by having enough products in the fridge mock
         // This mock will be used by all controller instances via fridgeStockModel
         when(fridgeStockModel.getFridgeProducts()).thenReturn(minProductsForTurn);
+        when(fridgeStockModel.getProducts()).thenReturn(minProductsForTurn);
+        when(recipeModel.getPossibleRecipes(minProductsForTurn)).thenReturn(List.of(mock(Recipe.class)));
 
         int maxPossibleProductScore = GameConfig.SCORE_BIO + GameConfig.SCORE_LOCAL + GameConfig.SCORE_LOW_CO2;
         int minPossibleProductScore = GameConfig.SCORE_NON_BIO + GameConfig.SCORE_NON_LOCAL + GameConfig.SCORE_HIGH_CO2;
@@ -312,7 +321,7 @@ class MultiplayerPlayer1ControllerTest {
         when(gameStateModel.getCurrentPlayer()).thenReturn(MultiplayerGameStateModel.Player.PLAYER1);
 
         MultiplayerPlayer1Controller positiveScoreController =
-            new MultiplayerPlayer1Controller(fridgeStockModel, gameStateModel, penguinModel, productRepository);
+            new MultiplayerPlayer1Controller(fridgeStockModel, gameStateModel, penguinModel, productRepository, recipeModel);
 
         String barcode1 = "good123";
         Product goodProduct = mock(Product.class);
@@ -324,13 +333,19 @@ class MultiplayerPlayer1ControllerTest {
         when(fridgeStockModel.addProduct(goodProduct)).thenReturn(true);
 
         positiveScoreController.scanProduct(barcode1); // This sets internal roundScore and roundScannedItems
+
+        // Mock recipe availability for finishTurn
+        List<Product> productsAfterScan = List.of(goodProduct);
+        when(fridgeStockModel.getProducts()).thenReturn(productsAfterScan);
+        when(recipeModel.getPossibleRecipes(productsAfterScan)).thenReturn(List.of(mock(Recipe.class)));
+
         positiveScoreController.finishTurn();
 
         // Expected score calculation for positive case (1 item)
         int goodProductRawScore = GameConfig.SCORE_BIO + GameConfig.SCORE_LOCAL + GameConfig.SCORE_LOW_CO2;
         double rhPositive = goodProductRawScore < 0 ? -0.5 : 0.5;
         int avgGoodProductScoreRounded = (int) (((double) goodProductRawScore / 1) + rhPositive);
-        
+
         int expectedPositiveScore;
         // Note: Controller's maxScore/minScore are denominators for scaling the avgProductScoreRounded.
         // These are max/min possible *average* product scores, which for 1 item is the product score itself.
@@ -350,7 +365,7 @@ class MultiplayerPlayer1ControllerTest {
         when(gameStateModel.getCurrentPlayer()).thenReturn(MultiplayerGameStateModel.Player.PLAYER1);
 
         MultiplayerPlayer1Controller negativeScoreController =
-            new MultiplayerPlayer1Controller(fridgeStockModel, gameStateModel, penguinModel, productRepository);
+            new MultiplayerPlayer1Controller(fridgeStockModel, gameStateModel, penguinModel, productRepository, recipeModel);
 
         String barcode2 = "bad123";
         Product badProduct = mock(Product.class);
@@ -362,6 +377,12 @@ class MultiplayerPlayer1ControllerTest {
         when(fridgeStockModel.addProduct(badProduct)).thenReturn(true);
 
         negativeScoreController.scanProduct(barcode2);
+
+        // Mock recipe availability for finishTurn
+        List<Product> productsAfterScan2 = List.of(badProduct);
+        when(fridgeStockModel.getProducts()).thenReturn(productsAfterScan2);
+        when(recipeModel.getPossibleRecipes(productsAfterScan2)).thenReturn(List.of(mock(Recipe.class)));
+
         negativeScoreController.finishTurn();
 
         int badProductRawScore = GameConfig.SCORE_NON_BIO + GameConfig.SCORE_NON_LOCAL + GameConfig.SCORE_HIGH_CO2;
@@ -382,9 +403,9 @@ class MultiplayerPlayer1ControllerTest {
         // --- Test case 3: Mixed score path ---
         clearInvocations(gameStateModel, penguinModel, fridgeStockModel, productRepository);
         when(gameStateModel.getCurrentPlayer()).thenReturn(MultiplayerGameStateModel.Player.PLAYER1);
-        
+
         MultiplayerPlayer1Controller mixedScoreController =
-            new MultiplayerPlayer1Controller(fridgeStockModel, gameStateModel, penguinModel, productRepository);
+            new MultiplayerPlayer1Controller(fridgeStockModel, gameStateModel, penguinModel, productRepository, recipeModel);
 
         String barcode3 = "mixed123";
         Product mixedProduct = mock(Product.class);
@@ -396,12 +417,18 @@ class MultiplayerPlayer1ControllerTest {
         when(fridgeStockModel.addProduct(mixedProduct)).thenReturn(true);
 
         mixedScoreController.scanProduct(barcode3);
+
+        // Mock recipe availability for finishTurn
+        List<Product> productsAfterScan3 = List.of(mixedProduct);
+        when(fridgeStockModel.getProducts()).thenReturn(productsAfterScan3);
+        when(recipeModel.getPossibleRecipes(productsAfterScan3)).thenReturn(List.of(mock(Recipe.class)));
+
         mixedScoreController.finishTurn();
 
         int mixedProductRawScore = GameConfig.SCORE_BIO + GameConfig.SCORE_NON_LOCAL + GameConfig.SCORE_HIGH_CO2;
         double rhMixed = mixedProductRawScore < 0 ? -0.5 : 0.5;
         int avgMixedProductScoreRounded = (int) (((double) mixedProductRawScore / 1) + rhMixed);
-        
+
         int expectedMixedScore;
         if (avgMixedProductScoreRounded < 0) {
              // Handle potential division by zero if minPossibleProductScore could be 0
@@ -432,6 +459,9 @@ class MultiplayerPlayer1ControllerTest {
         }
         // This mock simulates the state of the fridge *after* the product is added and its size is checked.
         when(fridgeStockModel.getFridgeProducts()).thenReturn(fridgeAtMaxCapacity);
+        // Also mock getProducts() for recipe checking
+        when(fridgeStockModel.getProducts()).thenReturn(fridgeAtMaxCapacity);
+        when(recipeModel.getPossibleRecipes(fridgeAtMaxCapacity)).thenReturn(List.of(mock(Recipe.class)));
 
         // Act
         controller.scanProduct("barcode_max_trigger");
@@ -483,6 +513,55 @@ class MultiplayerPlayer1ControllerTest {
         // Assert
         // Verify that finishTurn() was not called, so no change in player or score addition from it.
         verify(gameStateModel, never()).addScore(anyInt()); // Check specifically score by finishTurn
+        verify(gameStateModel, never()).nextPlayer();
+    }
+
+    @Test
+    void testHasAvailableRecipes_WithRecipes() {
+        // Arrange
+        List<Product> products = List.of(mock(Product.class));
+        when(fridgeStockModel.getProducts()).thenReturn(products);
+        when(recipeModel.getPossibleRecipes(products)).thenReturn(List.of(mock(Recipe.class)));
+
+        // Act
+        boolean result = controller.hasAvailableRecipes();
+
+        // Assert
+        assertTrue(result);
+    }
+
+    @Test
+    void testHasAvailableRecipes_WithoutRecipes() {
+        // Arrange
+        List<Product> products = List.of(mock(Product.class));
+        when(fridgeStockModel.getProducts()).thenReturn(products);
+        when(recipeModel.getPossibleRecipes(products)).thenReturn(List.of());
+
+        // Act
+        boolean result = controller.hasAvailableRecipes();
+
+        // Assert
+        assertFalse(result);
+    }
+
+    @Test
+    void testFinishTurnWithNoAvailableRecipes() {
+        // Arrange
+        when(gameStateModel.getCurrentPlayer()).thenReturn(MultiplayerGameStateModel.Player.PLAYER1);
+        List<Product> products = new ArrayList<>();
+        for (int i = 0; i < GameConfig.MIN_PRODUCTS_PER_ROUND; i++) {
+            products.add(mock(Product.class));
+        }
+        when(fridgeStockModel.getFridgeProducts()).thenReturn(products);
+        when(fridgeStockModel.getProducts()).thenReturn(products);
+        when(recipeModel.getPossibleRecipes(products)).thenReturn(List.of()); // No recipes available
+
+        // Act
+        boolean result = controller.finishTurn();
+
+        // Assert
+        assertFalse(result);
+        verify(gameStateModel, never()).addScore(anyInt());
         verify(gameStateModel, never()).nextPlayer();
     }
 }
