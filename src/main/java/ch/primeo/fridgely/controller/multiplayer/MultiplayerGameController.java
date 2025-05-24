@@ -41,7 +41,7 @@ public class MultiplayerGameController {
 
         // Initialize controllers
         this.player1Controller = new MultiplayerPlayer1Controller(
-                fridgeStockModel, gameStateModel, penguinModel, productRepository);
+                fridgeStockModel, gameStateModel, penguinModel, productRepository, recipeModel);
         this.player2Controller = new MultiplayerPlayer2Controller(
                 fridgeStockModel, gameStateModel, penguinModel, recipeModel);
     }
