@@ -259,4 +259,77 @@ class MultiplayerGameLauncherTest {
             verify(scannedItemsFrame).dispose();
         }
     }
+
+    @Test
+    void initGame_initializesFramesAndComponents_dualDisplay() {
+        // Arrange
+        when(multiplayerGameLauncher.createFrame("Fridgely - Multiplayer Game")).thenReturn(gameFrame);
+        when(multiplayerGameLauncher.createFrame("Fridgely - Scanned Items")).thenReturn(scannedItemsFrame);
+
+        // Mock JFrame behaviors
+        doNothing().when(gameFrame).setDefaultCloseOperation(anyInt());
+        doNothing().when(gameFrame).setUndecorated(true);
+        doNothing().when(gameFrame).addWindowListener(any());
+        doNothing().when(gameFrame).setContentPane(any());
+        doNothing().when(gameFrame).setBounds(any());
+        doNothing().when(gameFrame).setExtendedState(anyInt());
+        doNothing().when(gameFrame).setVisible(true);
+        when(gameFrame.getRootPane()).thenReturn(mock(JRootPane.class, RETURNS_DEEP_STUBS));
+
+        doNothing().when(scannedItemsFrame).setDefaultCloseOperation(anyInt());
+        doNothing().when(scannedItemsFrame).setUndecorated(true);
+        doNothing().when(scannedItemsFrame).setContentPane(any());
+        doNothing().when(scannedItemsFrame).setBounds(any());
+        doNothing().when(scannedItemsFrame).setExtendedState(anyInt());
+        doNothing().when(scannedItemsFrame).setVisible(true);
+        doNothing().when(scannedItemsFrame).dispose();
+
+        JRootPane mockRootPane = gameFrame.getRootPane();
+        InputMap mockInputMap = mockRootPane.getInputMap();
+        ActionMap mockActionMap = mockRootPane.getActionMap();
+
+        Rectangle mainScreenBounds = new Rectangle(0, 0, 1920, 1080);
+        Rectangle secondaryScreenBounds = new Rectangle(1920, 0, 1920, 1080);
+
+        // Mock static Fridgely
+        try (var ignored = mockStatic(Fridgely.class); var ignored2 = mockConstruction(MultiplayerGameView.class);
+             var ignored3 = mockConstruction(ScannedItemsView.class)) {
+
+            when(Fridgely.isSingleDisplay()).thenReturn(false);
+            when(Fridgely.getMainAppScreen()).thenReturn(mainAppScreenDevice);
+            when(Fridgely.getScannedItemsScreen()).thenReturn(scannedItemsScreenDevice);
+
+            when(mainAppScreenDevice.getDefaultConfiguration()).thenReturn(graphicsConfiguration);
+            when(scannedItemsScreenDevice.getDefaultConfiguration()).thenReturn(mock(GraphicsConfiguration.class));
+            when(graphicsConfiguration.getBounds()).thenReturn(mainScreenBounds);
+            when(scannedItemsScreenDevice.getDefaultConfiguration().getBounds()).thenReturn(secondaryScreenBounds);
+
+            // Act
+            multiplayerGameLauncher.initGame();
+
+            // Assert
+            verify(gameFrame).setExtendedState(JFrame.MAXIMIZED_BOTH);
+            verify(scannedItemsFrame).setExtendedState(JFrame.MAXIMIZED_BOTH);
+            verify(gameFrame).setBounds(mainScreenBounds);
+            verify(scannedItemsFrame).setBounds(secondaryScreenBounds);
+            verify(gameFrame).setVisible(true);
+            verify(scannedItemsFrame).setVisible(true);
+            verify(gameFrame).setContentPane(any(MultiplayerGameView.class));
+            verify(scannedItemsFrame).setContentPane(any(ScannedItemsView.class));
+            verify(mockInputMap).put(eq(KeyStroke.getKeyStroke("ESCAPE")), eq("escape"));
+            verify(mockActionMap).put(eq("escape"), any(AbstractAction.class));
+
+            // Simulate ESC key press
+            ArgumentCaptor<AbstractAction> escapeActionCaptor = ArgumentCaptor.forClass(AbstractAction.class);
+            verify(mockActionMap).put(eq("escape"), escapeActionCaptor.capture());
+            escapeActionCaptor.getValue().actionPerformed(null);
+            verify(gameFrame).dispose();
+
+            // Simulate game window closing
+            ArgumentCaptor<WindowListener> windowListenerCaptor = ArgumentCaptor.forClass(WindowListener.class);
+            verify(gameFrame).addWindowListener(windowListenerCaptor.capture());
+            windowListenerCaptor.getValue().windowClosed(new WindowEvent(gameFrame, WindowEvent.WINDOW_CLOSED));
+            verify(scannedItemsFrame).dispose();
+        }
+    }
 }
