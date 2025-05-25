@@ -115,8 +115,17 @@ public class MultiplayerGameLauncher {
 
         if (!Fridgely.isSingleDisplay()) {
             // Position and display frames on their respective screens
-            Fridgely.getMainAppScreen().setFullScreenWindow(gameFrame);
-            Fridgely.getScannedItemsScreen().setFullScreenWindow(scannedItemsFrame);
+            var mainScreenBounds = Fridgely.getMainAppScreen().getDefaultConfiguration().getBounds();
+            var secondaryScreenBounds = Fridgely.getScannedItemsScreen().getDefaultConfiguration().getBounds();
+
+            gameFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            scannedItemsFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+
+            gameFrame.setBounds(mainScreenBounds);
+            scannedItemsFrame.setBounds(secondaryScreenBounds);
+
+            gameFrame.setVisible(true);
+            scannedItemsFrame.setVisible(true);
         } else {
             var screenBounds = Fridgely.getMainAppScreen().getDefaultConfiguration().getBounds();
 

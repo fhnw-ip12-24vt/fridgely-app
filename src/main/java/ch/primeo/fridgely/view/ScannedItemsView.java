@@ -1,5 +1,6 @@
 package ch.primeo.fridgely.view;
 
+import ch.primeo.fridgely.*;
 import ch.primeo.fridgely.controller.multiplayer.MultiplayerGameController;
 import ch.primeo.fridgely.model.FridgeStockModel;
 import ch.primeo.fridgely.model.Product;
@@ -87,14 +88,14 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         onLocaleChanged();
         frame.setContentPane(this);
 
-        // Handle multi-monitor setup for the second display
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice[] screens = ge.getScreenDevices();
-
         // If there's more than one screen, display on the second screen
-        if (screens.length > 1) {
+        if (!Fridgely.isSingleDisplay()) {
             // Use the second screen for this frame
-            screens[1].setFullScreenWindow(frame);
+            var screenBounds = Fridgely.getScannedItemsScreen().getDefaultConfiguration().getBounds();
+
+            frame.setUndecorated(true);
+            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            frame.setBounds(screenBounds);
         }
 
         frame.setVisible(true);

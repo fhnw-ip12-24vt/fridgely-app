@@ -89,8 +89,13 @@ public class DialogBox extends JPanel {
         // Configure frame - these calls will go to the mock in tests
         this.frame.setUndecorated(true);
         if (Fridgely.getMainAppScreen() != null) {
-            Fridgely.getMainAppScreen().setFullScreenWindow(this.frame);
+            var screenBounds = Fridgely.getMainAppScreen().getDefaultConfiguration().getBounds();
+
+            frame.setUndecorated(true);
+            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            frame.setBounds(screenBounds);
         }
+
         this.frame.setVisible(true);
         // For tests with mock JFrame, ensure a default size if needed by other logic.
         // This might be better handled by stubbing frame.getSize() in the test itself.
