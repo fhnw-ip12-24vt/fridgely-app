@@ -93,9 +93,6 @@ public class ChooseGameModeController implements BaseController {
             }
         });
 
-        setupClickableBehavior(view.getSinglePlayerImageLabel(), "gamemode.singleplayer.tooltip",
-                () -> selectGameMode(GameMode.SinglePlayer));
-
         setupClickableBehavior(view.getMultiplayerImageLabel(), "gamemode.multiplayer.tooltip",
                 () -> selectGameMode(GameMode.Multiplayer));
 
@@ -169,10 +166,6 @@ public class ChooseGameModeController implements BaseController {
             // Show tutorial dialog first, then start multiplayer game
             dispose();
             showMultiplayerTutorial();
-        } else if (mode == GameMode.SinglePlayer) {
-            // For single player, we can optionally show a tutorial as well
-            dispose();
-            showSinglePlayerTutorial();
         }
     }
 
@@ -198,34 +191,6 @@ public class ChooseGameModeController implements BaseController {
      */
     void startMultiplayerGame() {
         multiplayerGameLauncher.launchGame();
-    }
-
-
-    /**
-     * Shows the single player tutorial dialog.
-     */
-    void showSinglePlayerTutorial() {
-        // Tutorial messages explaining single player game rules using localization
-        List<String> tutorialMessages = Arrays.asList(localizationService.get("tutorial.welcome"),
-                localizationService.get("tutorial.singleplayer.explanation"),
-                localizationService.get("tutorial.singleplayer.recipe"),
-                localizationService.get("tutorial.singleplayer.score"));
-
-        // Important: Create the dialog before any game initialization
-        // and block until it's explicitly completed by the user
-        // Start game after dialog completion
-        createDialogBox(tutorialMessages, PenguinFacialExpression.HAPPY, PenguinHPState.OKAY,
-                this::startSinglePlayerGame, imageLoader).showDialog();
-    }
-
-    /**
-     * Starts the single player game after the tutorial.
-     * This is a placeholder that will be implemented in a future version.
-     * Currently just a stub for testing purposes.
-     */
-    void startSinglePlayerGame() {
-        // This will be implemented in a future version
-        // For now, it's just a stub that can be tested
     }
 
     /**
