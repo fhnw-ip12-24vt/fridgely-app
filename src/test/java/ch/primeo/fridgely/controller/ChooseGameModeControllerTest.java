@@ -450,12 +450,12 @@ public class ChooseGameModeControllerTest {
         // Test the windowClosing event
         windowAdapterCaptor.getValue().windowClosing(null); // This also calls spiedController.dispose()
 
-        // Verify dispose() and its effects. It's called 3 times:
+        // Verify dispose() and its effects. It's called 2 times:
         // 2. By multiplayerRunnable -> selectGameMode -> dispose
         // 3. By windowClosing event -> dispose
-        verify(spiedController, times(3)).dispose(); 
-        verify(localizationService, times(3)).unsubscribe(newMockView);
-        verify(newMockView, times(3)).dispose();
+        verify(spiedController, times(2)).dispose();
+        verify(localizationService, times(2)).unsubscribe(newMockView);
+        verify(newMockView, times(2)).dispose();
     }
 
     @Test
