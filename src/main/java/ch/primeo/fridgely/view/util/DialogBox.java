@@ -50,7 +50,7 @@ public class DialogBox extends JPanel {
     private final Timer arrowAnimationTimer;
     private Runnable onCompleteCallback; // Made non-final to be replaced by showDialog
     private final JLabel messageLabel;
-    JButton skipButton;
+    private final JButton skipButton;
 
     private static final int ARROW_ANIMATION_DELAY = 500; // milliseconds
     private static final int DIALOG_PADDING = 20;
