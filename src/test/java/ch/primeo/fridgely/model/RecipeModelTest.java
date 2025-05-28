@@ -12,11 +12,8 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -371,7 +368,7 @@ class RecipeModelTest {
 
         // Assert
         assertEquals(1, availableRecipes.size());
-        assertEquals("Recipe From Entities", availableRecipes.get(0).getName());
+        assertEquals("Recipe From Entities", availableRecipes.getFirst().getName());
         verify(freshMock).getAllRecipes();
         verify(freshMock).getAllRecipesEntities();
     }
@@ -384,9 +381,7 @@ class RecipeModelTest {
         when(freshMock.getAllRecipesEntities()).thenReturn(null); // entities also null
 
         // Act & Assert
-        assertThrows(NullPointerException.class, () -> {
-            new RecipeModel(freshMock);
-        }, "Constructor should throw NullPointerException when DTOs and Entities are null.");
+        assertThrows(NullPointerException.class, () -> new RecipeModel(freshMock), "Constructor should throw NullPointerException when DTOs and Entities are null.");
 
         // Verify that both methods were called
         verify(freshMock).getAllRecipes();
@@ -402,9 +397,7 @@ class RecipeModelTest {
         when(freshMock.getAllRecipesEntities()).thenThrow(new RuntimeException(expectedErrorMessage));
 
         // Act & Assert
-        RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
-            new RecipeModel(freshMock);
-        }, "Constructor should propagate RuntimeException from getAllRecipesEntities.");
+        RuntimeException thrown = assertThrows(RuntimeException.class, () -> new RecipeModel(freshMock), "Constructor should propagate RuntimeException from getAllRecipesEntities.");
         assertEquals(expectedErrorMessage, thrown.getMessage(), "The exception message should match.");
 
         // Verify that both methods were called
@@ -572,7 +565,7 @@ class RecipeModelTest {
         // Assert
         List<Recipe> availableRecipes = model.getAvailableRecipes();
         assertEquals(1, availableRecipes.size());
-        assertEquals("Recipe 1", availableRecipes.get(0).getName());
+        assertEquals("Recipe 1", availableRecipes.getFirst().getName());
 
         // Verify that getAllRecipesEntities was called as a fallback
         verify(freshMock).getAllRecipesEntities();
@@ -598,7 +591,7 @@ class RecipeModelTest {
         // Assert
         List<Recipe> availableRecipes = model.getAvailableRecipes();
         assertEquals(1, availableRecipes.size());
-        assertEquals("Recipe 1", availableRecipes.get(0).getName());
+        assertEquals("Recipe 1", availableRecipes.getFirst().getName());
 
         // Verify that getAllRecipesEntities was called as a fallback
         verify(freshMock).getAllRecipesEntities();
