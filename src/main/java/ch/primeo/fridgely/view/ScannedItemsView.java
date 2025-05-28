@@ -7,13 +7,13 @@ import ch.primeo.fridgely.model.Product;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import ch.primeo.fridgely.service.localization.LocalizationObserver;
 import ch.primeo.fridgely.util.ImageLoader;
+import ch.primeo.fridgely.view.util.*;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingConstants;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -89,7 +89,7 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         frame.setContentPane(this);
 
         // If there's more than one screen, display on the second screen
-        if (!Fridgely.isSingleDisplay()) {
+        if (!Fridgely.isSingleDisplay() && !frame.isDisplayable()) {
             // Use the second screen for this frame
             var screenBounds = Fridgely.getScannedItemsScreen().getDefaultConfiguration().getBounds();
 
@@ -112,10 +112,6 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         defaultProductCardsPanel = new JPanel();
         defaultProductCardsPanel.setLayout(new FlowLayout(FlowLayout.LEFT, gapSizeH, gapSizeV));
         defaultProductCardsPanel.setOpaque(false);
-
-        // placeholder; actual text set in onLocaleChanged()
-        //headerLabel = new JLabel();
-        //headerLabel.setFont(new Font(headerLabel.getFont().getName(), Font.BOLD, 18));
     }
 
     /**
@@ -130,10 +126,6 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         productCardsPanel.setBorder(BorderFactory.createEmptyBorder(45, 0, 0, 0));
         defaultProductCardsPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
 
-        //JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        //headerPanel.setOpaque(false);
-        //headerPanel.add(headerLabel);
-        //add(headerPanel, BorderLayout.NORTH);
         add(productCardsPanel, BorderLayout.CENTER);
         add(defaultProductCardsPanel, BorderLayout.SOUTH);
     }
@@ -201,21 +193,12 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         String name = product.getName(localizationService.getLanguage());
         JLabel nameLabel = new JLabel(name);
         nameLabel.setFont(new Font(nameLabel.getFont().getName(), Font.BOLD, fontSize));
-        nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        text.add(nameLabel, BorderLayout.NORTH);
-        // Product image in the bottom
+
         ImageIcon icon = imageLoader.loadScaledImage(product.getProductImagePath(), imageSize, imageSize);
-        JLabel imageLabel = new JLabel();
+        ImageIcon fallbackIcon = imageLoader.loadScaledImage(Product.PRODUCT_IMAGE_NOT_FOUND_PATH, imageSize, imageSize);
 
-        if (icon != null) {
-            imageLabel.setIcon(icon);
-        } else {
-            imageLabel.setIcon(imageLoader.loadScaledImage(Product.PRODUCT_IMAGE_NOT_FOUND_PATH, imageSize, imageSize));
-        }
+        ProductCardUtils.buildProductCard(card, nameLabel, text, icon, fallbackIcon, imageSize);
 
-        imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        imageLabel.setPreferredSize(new Dimension(imageSize, imageSize));
-        card.add(imageLabel, BorderLayout.CENTER);
         // Labels at the bottom
         JPanel tagsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 6, 0));
         tagsPanel.setOpaque(false);
@@ -223,13 +206,7 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         JLabel bioLabel = new JLabel();
         bioLabel.setIcon(product.isBio() ? LABEL_BIO : LABEL_NON_BIO);
         bioLabel.setMaximumSize(new Dimension(cardSize.width / 3, cardSize.height / 3));
-//        bioLabel.setOpaque(true);
-//        bioLabel.setFont(new Font(nameLabel.getFont().getName(), Font.BOLD, (int)(fontSize*.6)));
-//        bioLabel.setForeground(Color.WHITE);
-//        bioLabel.setBackground(product.isBio() ? new Color(46, 204, 113) : new Color(189, 195, 199));
-//        bioLabel.setBorder(BorderFactory.createCompoundBorder(
-//                BorderFactory.createLineBorder(product.isBio() ? new Color(39, 174, 96) : new Color(127, 140, 141), 1,
-//                        true), BorderFactory.createEmptyBorder(2, 8, 2, 8)));
+
         tagsPanel.add(bioLabel);
         // local tag
         JLabel localLabel = new JLabel();
@@ -255,21 +232,12 @@ public class ScannedItemsView extends JPanel implements PropertyChangeListener, 
         // Title at the top
         JLabel nameLabel = new JLabel(product.getName(localizationService.getLanguage()));
         nameLabel.setFont(new Font(nameLabel.getFont().getName(), Font.PLAIN, fontSize));
-        nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        card.add(nameLabel, BorderLayout.NORTH);
-        // Product image in the center
+
         ImageIcon icon = imageLoader.loadScaledImage(product.getProductImagePath(), imageSize, imageSize);
-        JLabel imageLabel = new JLabel();
+        ImageIcon fallbackIcon = imageLoader.loadScaledImage(Product.PRODUCT_IMAGE_NOT_FOUND_PATH, imageSize, imageSize);
 
-        if (icon != null) {
-            imageLabel.setIcon(icon);
-        } else {
-            imageLabel.setIcon(imageLoader.loadScaledImage(Product.PRODUCT_IMAGE_NOT_FOUND_PATH, imageSize, imageSize));
-        }
+        ProductCardUtils.buildProductCard(card, nameLabel, null, icon, fallbackIcon, imageSize);
 
-        imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        imageLabel.setPreferredSize(new Dimension(imageSize, imageSize));
-        card.add(imageLabel, BorderLayout.CENTER);
         return card;
     }
 
