@@ -1,7 +1,5 @@
 package ch.primeo.fridgely.model;
 
-import ch.primeo.fridgely.service.ProductJpaRepository;
-import ch.primeo.fridgely.service.ProductRepository;
 import lombok.Getter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
