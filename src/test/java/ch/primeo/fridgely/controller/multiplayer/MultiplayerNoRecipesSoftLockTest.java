@@ -25,17 +25,15 @@ class MultiplayerNoRecipesSoftLockTest {
     private MultiplayerPlayer1Controller controller;
     private FridgeStockModel fridgeStockModel;
     private MultiplayerGameStateModel gameStateModel;
-    private PenguinModel penguinModel;
     private RecipeModel recipeModel;
-    private ProductRepository productRepository;
 
     @BeforeEach
     void setUp() {
         fridgeStockModel = mock(FridgeStockModel.class);
         gameStateModel = mock(MultiplayerGameStateModel.class);
-        penguinModel = mock(PenguinModel.class);
+        PenguinModel penguinModel = mock(PenguinModel.class);
         recipeModel = mock(RecipeModel.class);
-        productRepository = mock(ProductRepository.class);
+        ProductRepository productRepository = mock(ProductRepository.class);
 
         controller = new MultiplayerPlayer1Controller(fridgeStockModel, gameStateModel, penguinModel, productRepository, recipeModel);
     }
