@@ -138,6 +138,7 @@ class ProductTest {
         assertTrue(product.isDefaultProduct());
         assertTrue(product.isBio());
         assertTrue(product.isLocal());
+        assertFalse(product.isLowCo2()); // Added assertion for isLowCO2 based on constructor params
     }
 
     @Test
@@ -290,7 +291,8 @@ class ProductTest {
         product.setBarcode("123456789");
 
         // Act & Assert
-        assertNotEquals(null, product);
+        // assertNotEquals(null, product); // Original line
+        assertFalse(product.equals(null)); // Ensures product.equals(null) is called
     }
 
     @Test
@@ -301,7 +303,8 @@ class ProductTest {
         String notAProduct = "123456789";
 
         // Act & Assert
-        assertNotEquals(notAProduct, product);
+        // assertNotEquals(notAProduct, product); // Original line, calls String.equals(Product)
+        assertFalse(product.equals(notAProduct)); // Ensures product.equals(String) is called
     }
 
     @Test
@@ -548,6 +551,7 @@ class ProductTest {
         Product product = new Product();
         product.setBarcode("123456789");
 
-        assertNotEquals(null, product);
+        // assertNotEquals(null, product); // Original line
+        assertFalse(product.equals(null)); // Ensures product.equals(null) is called
     }
 }
