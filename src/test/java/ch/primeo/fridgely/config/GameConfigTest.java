@@ -9,7 +9,7 @@ class GameConfigTest {
 
     @Test
     void testThrowsOnInstantiation() {
-        assertThrows(UnsupportedOperationException.class, () -> new GameConfig());
+        assertThrows(UnsupportedOperationException.class, GameConfig::new);
     }
 
     @Test
