@@ -43,7 +43,6 @@ public class Fridgely {
         var context = new SpringApplicationBuilder(Fridgely.class).headless(false).run(args);
 
         var imageLoader = context.getBean(ImageLoader.class);
-        context.getBean(UIConfig.class).setUIFont();
 
         // Preload all images before showing UI
         try {

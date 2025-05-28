@@ -4,6 +4,7 @@ import org.springframework.context.annotation.*;
 import org.springframework.core.io.*;
 import org.springframework.stereotype.*;
 
+import javax.annotation.PostConstruct;
 import javax.swing.UIManager;
 import javax.swing.plaf.*;
 import java.awt.Color;
@@ -60,14 +61,18 @@ public class UIConfig {
     }
 
     // Refactored method to accept ResourceLoader
+    @PostConstruct
     public void setUIFont() {
+        LOGGER.info("UIConfig.setUIFont() called on thread: " + Thread.currentThread().getName());
         try {
             Resource resource = resourceLoader.getResource("classpath:ch/primeo/fridgely/fonts/bangers_regular.ttf");
             InputStream fontStream = resource.getInputStream();
             Font font = Font.createFont(Font.TRUETYPE_FONT, fontStream).deriveFont(Font.PLAIN, FONT_SIZE);
+            LOGGER.info("Custom font created: " + font.toString());
             setUIFont(new FontUIResource(font));
+            LOGGER.info("UIConfig.setUIFont() finished on thread: " + Thread.currentThread().getName());
         } catch (Exception e) {
-            LOGGER.warning(e.getMessage());
+            LOGGER.warning("Error in UIConfig.setUIFont(): " + e.getMessage());
         }
     }
 }
