@@ -3,9 +3,7 @@ package ch.primeo.fridgely.model;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for the FridgeStock entity.
@@ -102,22 +100,22 @@ public class FridgeStockTest {
     public void testEqualsMethod() {
         // Same object
         FridgeStock stock1 = new FridgeStock("12345");
-        assertTrue(stock1.equals(stock1), "An object should be equal to itself");
+        assertEquals(stock1, stock1, "An object should be equal to itself");
 
         // Equal barcodes
         FridgeStock stock2 = new FridgeStock("12345");
-        assertTrue(stock1.equals(stock2), "Objects with same barcode should be equal");
+        assertEquals(stock1, stock2, "Objects with same barcode should be equal");
 
         // Different barcodes
         FridgeStock stock3 = new FridgeStock("99999");
-        assertFalse(stock1.equals(stock3), "Objects with different barcodes should not be equal");
+        assertNotEquals(stock1, stock3, "Objects with different barcodes should not be equal");
 
         // Null comparison
-        assertFalse(stock1.equals(null), "Object should not be equal to null");
+        assertNotEquals(null, stock1, "Object should not be equal to null");
 
         // Different class
         Object notStock = new Object();  // or any non-FridgeStock class
-        assertFalse(stock1.equals(notStock), "Object should not be equal to an instance of a different class");
+        assertNotEquals(stock1, notStock, "Object should not be equal to an instance of a different class");
     }
 
     @Test
