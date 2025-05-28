@@ -83,7 +83,17 @@ class RecipeRepositoryTest {
         when(tuple3.get(qRecipeIngredient.recipe.recipeId)).thenReturn(2);
         when(tuple3.get(qRecipeIngredient.product.barcode)).thenReturn("barcode3");
 
-        when(ingredientsQueryMock.fetch()).thenReturn(Arrays.asList(tuple1, tuple2, tuple3));
+        // New tuples for testing null branches
+        Tuple tupleRecipeIdNull = mock(Tuple.class);
+        when(tupleRecipeIdNull.get(qRecipeIngredient.recipe.recipeId)).thenReturn(null);
+        when(tupleRecipeIdNull.get(qRecipeIngredient.product.barcode)).thenReturn("barcode4");
+
+        Tuple tupleBarcodeNull = mock(Tuple.class);
+        when(tupleBarcodeNull.get(qRecipeIngredient.recipe.recipeId)).thenReturn(3);
+        when(tupleBarcodeNull.get(qRecipeIngredient.product.barcode)).thenReturn(null);
+
+
+        when(ingredientsQueryMock.fetch()).thenReturn(Arrays.asList(tuple1, tuple2, tuple3, tupleRecipeIdNull, tupleBarcodeNull));
 
         // Mock localization and fridge stock
         when(localizationService.getLanguage()).thenReturn("en");
