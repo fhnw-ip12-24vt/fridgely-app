@@ -14,8 +14,8 @@ public class GameModeTest {
     public void testGameModeValues() {
         // Verify the GameMode enum contains exactly the expected values
         GameMode[] modes = GameMode.values();
-        assertEquals(2, modes.length);
-        assertEquals(GameMode.Multiplayer, modes[1]);
+        assertEquals(1, modes.length);
+        assertEquals(GameMode.Multiplayer, modes[0]);
     }
 
     @Test
