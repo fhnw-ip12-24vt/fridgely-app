@@ -79,6 +79,24 @@ public class MultiplayerPlayer2Controller {
         }
 
         // Products used by the recipe
+        int score = calculateScore(recipe);
+
+        gameStateModel.addScore(score);
+
+        // Switch to next player/round
+        gameStateModel.nextPlayer();
+
+        // Reset for new round if the game isn't over
+        if (!gameStateModel.isGameOver()) {
+            recipeModel.selectRecipe(null);
+
+            // Clear the fridge stock for the next round
+            fridgeStockModel.clear();
+        }
+
+    }
+
+    private int calculateScore(Recipe recipe) {
         int totalFridgeProductsUsed = recipe.getFridgeProducts().size();
         // Products in the fridge (stored)
         int totalFridgeProductsStored = fridgeStockModel.getFridgeProducts().size();
@@ -94,19 +112,6 @@ public class MultiplayerPlayer2Controller {
         } else if (totalWastedProducts > 2) {
             score = 2 * GameConfig.SCORE_PLAYER2_DECREASE;
         }
-
-        gameStateModel.addScore(score);
-
-        // Switch to next player/round
-        gameStateModel.nextPlayer();
-
-        // Reset for new round if the game isn't over
-        if (!gameStateModel.isGameOver()) {
-            recipeModel.selectRecipe(null);
-
-            // Clear the fridge stock for the next round
-            fridgeStockModel.clear();
-        }
-
+        return score;
     }
 }
