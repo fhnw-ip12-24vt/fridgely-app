@@ -548,6 +548,6 @@ class ProductTest {
         Product product = new Product();
         product.setBarcode("123456789");
 
-        assertNotEquals(product, null);
+        assertNotEquals(null, product);
     }
 }
