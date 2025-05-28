@@ -156,9 +156,9 @@ public class ImageLoader {
         preloadScaledImages(productSprites, 48, 48);
 
         String[] uiElements = {
-                "/ch/primeo/fridgely/vectors/dialog_arrow_up.png",
-                "/ch/primeo/fridgely/vectors/dialog_arrow_down.png",
-                "/ch/primeo/fridgely/sprites/fridge_interior.png"
+            "/ch/primeo/fridgely/vectors/dialog_arrow_up.png",
+            "/ch/primeo/fridgely/vectors/dialog_arrow_down.png",
+            "/ch/primeo/fridgely/sprites/fridge_interior.png"
         };
 
         preloadImages(uiElements);
