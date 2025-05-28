@@ -181,7 +181,7 @@ public class ChooseGameModeControllerTest {
 
             assertNotNull(result, "Resulting view should not be null");
             assertEquals(1, mockedViewConstruction.constructed().size(), "ChooseGameModeView should have been constructed once");
-            assertSame(result, mockedViewConstruction.constructed().get(0), "Returned view is not the constructed instance");
+            assertSame(result, mockedViewConstruction.constructed().getFirst(), "Returned view is not the constructed instance");
         }
     }
 
@@ -205,7 +205,7 @@ public class ChooseGameModeControllerTest {
 
             assertNotNull(result, "Resulting view should not be null");
             assertEquals(1, mockedViewConstruction.constructed().size(), "ChooseGameModeView should have been constructed once");
-            assertSame(result, mockedViewConstruction.constructed().get(0), "Returned view is not the constructed instance");
+            assertSame(result, mockedViewConstruction.constructed().getFirst(), "Returned view is not the constructed instance");
         }
     }
 
@@ -237,7 +237,7 @@ public class ChooseGameModeControllerTest {
 
             assertNotNull(result, "Resulting dialog box should not be null");
             assertEquals(1, mockedDialogConstruction.constructed().size(), "DialogBox should have been constructed once");
-            assertSame(result, mockedDialogConstruction.constructed().get(0), "Returned dialog is not the constructed instance");
+            assertSame(result, mockedDialogConstruction.constructed().getFirst(), "Returned dialog is not the constructed instance");
         }
     }
 
@@ -355,22 +355,6 @@ public class ChooseGameModeControllerTest {
     }
 
     @Test
-    void testSelectGameMode_withSinglePlayerMode_shouldShowTutorial() {
-        // Create a spy controller
-        ChooseGameModeController spyController = spy(controller);
-
-        // Mock the tutorial method to avoid UI components
-        doNothing().when(spyController).showSinglePlayerTutorial();
-
-        // Call the method
-        spyController.selectGameMode(GameMode.SinglePlayer);
-
-        // Verify dispose and tutorial methods were called
-        verify(spyController).dispose();
-        verify(spyController).showSinglePlayerTutorial();
-    }
-
-    @Test
     void testSelectGameMode_withNullMode_shouldDoNothing() {
         // Create a spy controller
         ChooseGameModeController spyController = spy(controller);
@@ -380,7 +364,6 @@ public class ChooseGameModeControllerTest {
 
         // Verify neither tutorial method was called
         verify(spyController, never()).showMultiplayerTutorial();
-        verify(spyController, never()).showSinglePlayerTutorial();
         verify(spyController, never()).dispose();
     }
 
@@ -411,46 +394,13 @@ public class ChooseGameModeControllerTest {
     }
 
     @Test
-    void testShowSinglePlayerTutorial_shouldCreateDialogWithCorrectParameters() {
-        // Call the method
-        controller.showSinglePlayerTutorial();
-
-        // Verify dialog was shown
-        verify(mockDialogBox).showDialog();
-
-        // Verify localization keys were requested
-        verify(localizationService).get("tutorial.welcome");
-        verify(localizationService).get("tutorial.singleplayer.explanation");
-        verify(localizationService).get("tutorial.singleplayer.recipe");
-        verify(localizationService).get("tutorial.singleplayer.score");
-    }
-
-    @Test
-    void testStartSinglePlayerGame_shouldBeImplemented() {
-        // Create a spy controller
-        ChooseGameModeController spyController = spy(controller);
-
-        // Call the method
-        spyController.startSinglePlayerGame();
-
-        // Verify the method was called (currently it's a stub)
-        verify(spyController).startSinglePlayerGame();
-
-        // Note: This test is minimal because the method is currently a stub
-        // When the method is implemented, this test should be updated to verify
-        // that the single player game is actually started
-    }
-
-    @Test
     void testShowChooseGameModeView_createsAndSetsUpNewView() {
         // 1. Prepare a new mock view and its components for this specific test
         ChooseGameModeView newMockView = mock(ChooseGameModeView.class);
         JFrame mockFrameForNewView = mock(JFrame.class);
-        JLabel mockSinglePlayerLabel = mock(JLabel.class);
         JLabel mockMultiPlayerLabel = mock(JLabel.class);
 
         when(newMockView.getFrame()).thenReturn(mockFrameForNewView);
-        when(newMockView.getSinglePlayerImageLabel()).thenReturn(mockSinglePlayerLabel);
         when(newMockView.getMultiplayerImageLabel()).thenReturn(mockMultiPlayerLabel);
 
         // 2. Spy the controller instance from setUp.
@@ -479,13 +429,9 @@ public class ChooseGameModeControllerTest {
         ArgumentCaptor<WindowAdapter> windowAdapterCaptor = ArgumentCaptor.forClass(WindowAdapter.class);
         verify(mockFrameForNewView).addWindowListener(windowAdapterCaptor.capture());
 
-        verify(newMockView).getSinglePlayerImageLabel();
         verify(newMockView).getMultiplayerImageLabel();
 
         // Capture Runnables passed to setupClickableBehavior
-        ArgumentCaptor<Runnable> singlePlayerRunnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(spiedController).setupClickableBehavior(eq(mockSinglePlayerLabel), eq("gamemode.singleplayer.tooltip"), singlePlayerRunnableCaptor.capture());
-
         ArgumentCaptor<Runnable> multiplayerRunnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(spiedController).setupClickableBehavior(eq(mockMultiPlayerLabel), eq("gamemode.multiplayer.tooltip"), multiplayerRunnableCaptor.capture());
 
@@ -497,8 +443,6 @@ public class ChooseGameModeControllerTest {
 
         // Execute captured Runnables and verify selectGameMode calls
         // These calls to selectGameMode will also call spiedController.dispose()
-        singlePlayerRunnableCaptor.getValue().run();
-        verify(spiedController).selectGameMode(GameMode.SinglePlayer);
 
         multiplayerRunnableCaptor.getValue().run();
         verify(spiedController).selectGameMode(GameMode.Multiplayer);
@@ -507,7 +451,6 @@ public class ChooseGameModeControllerTest {
         windowAdapterCaptor.getValue().windowClosing(null); // This also calls spiedController.dispose()
 
         // Verify dispose() and its effects. It's called 3 times:
-        // 1. By singlePlayerRunnable -> selectGameMode -> dispose
         // 2. By multiplayerRunnable -> selectGameMode -> dispose
         // 3. By windowClosing event -> dispose
         verify(spiedController, times(3)).dispose(); 
