@@ -1,6 +1,7 @@
 package ch.primeo.fridgely.view.component;
 
 import ch.primeo.fridgely.config.UIConfig;
+import ch.primeo.fridgely.view.util.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,23 +33,7 @@ public class ControlButton extends JButton {
         setFocusPainted(false);
         setBorderPainted(false);
 
-        // Set visual properties
-        //setFont(new Font("SansSerif", Font.BOLD, 24));
-
-        // Fix sizing issues
-        Dimension buttonSize = new Dimension(getPreferredSize().width, BUTTON_HEIGHT);
-        setPreferredSize(buttonSize);
-        setMinimumSize(buttonSize);
-
-        // Ensure button expands horizontally but maintains height
-        setMaximumSize(new Dimension(Short.MAX_VALUE, BUTTON_HEIGHT));
-
-        // Critical for proper rendering
-        setOpaque(true);
-        setHorizontalAlignment(SwingConstants.CENTER);
-
-        // Override layout hints for parent containers
-        putClientProperty("JComponent.sizeVariant", "large");
+        ButtonUtils.styleLargeButton(this, BUTTON_HEIGHT);
     }
 
     /**
