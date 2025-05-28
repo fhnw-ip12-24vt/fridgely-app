@@ -1,11 +1,11 @@
 package ch.primeo.fridgely.view.component;
 
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
+import ch.primeo.fridgely.view.util.*;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.swing.JButton;
-import javax.swing.SwingConstants;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -53,20 +53,7 @@ public class LanguageSwitchButton extends JButton {
         setBackground(BUTTON_COLOR);
         setForeground(Color.WHITE);
 
-        // Fix sizing issues
-        Dimension buttonSize = new Dimension(getPreferredSize().width, BUTTON_HEIGHT);
-        setPreferredSize(buttonSize);
-        setMinimumSize(buttonSize);
-
-        // Ensure button expands horizontally but maintains height
-        setMaximumSize(new Dimension(Short.MAX_VALUE, BUTTON_HEIGHT));
-
-        // Critical for proper rendering
-        setOpaque(true);
-        setHorizontalAlignment(SwingConstants.CENTER);
-
-        // Override layout hints for parent containers
-        putClientProperty("JComponent.sizeVariant", "large");
+        ButtonUtils.styleLargeButton(this, BUTTON_HEIGHT);
     }
 
     /**
