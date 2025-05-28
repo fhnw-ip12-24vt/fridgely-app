@@ -208,7 +208,7 @@ class ProductRepositoryTest {
 
         // Assert
         assertEquals(1, result.size());
-        assertEquals(product1, result.get(0));
+        assertEquals(product1, result.getFirst());
     }
 
     @Test
