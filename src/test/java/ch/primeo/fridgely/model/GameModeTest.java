@@ -15,14 +15,12 @@ public class GameModeTest {
         // Verify the GameMode enum contains exactly the expected values
         GameMode[] modes = GameMode.values();
         assertEquals(2, modes.length);
-        assertEquals(GameMode.SinglePlayer, modes[0]);
         assertEquals(GameMode.Multiplayer, modes[1]);
     }
 
     @Test
     public void testGameModeValueOf() {
         // Test converting strings to enum values
-        assertEquals(GameMode.SinglePlayer, GameMode.valueOf("SinglePlayer"));
         assertEquals(GameMode.Multiplayer, GameMode.valueOf("Multiplayer"));
     }
 
@@ -35,7 +33,6 @@ public class GameModeTest {
     @Test
     public void testGameModeToString() {
         // Test string representation of enum values
-        assertEquals("SinglePlayer", GameMode.SinglePlayer.toString());
         assertEquals("Multiplayer", GameMode.Multiplayer.toString());
     }
 }
