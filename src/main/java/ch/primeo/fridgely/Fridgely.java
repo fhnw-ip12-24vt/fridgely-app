@@ -34,7 +34,7 @@ public class Fridgely {
     @Getter
     private static boolean isSingleDisplay = false;
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         detectScreens();
 
 
@@ -64,17 +64,18 @@ public class Fridgely {
                 // Assign screens based on new requirement:
                 if (bounds.width == 600 && bounds.height == 1024) {
                     mainAppScreen = screen;
-                    LOGGER.info("Identified main app screen (1024x600): " + screen.getIDstring());
+                    LOGGER.info("Identified main app screen (1024x600): {}", screen.getIDstring());
                 } else if (bounds.width == 1080 && bounds.height == 1920) {
                     scannedItemsScreen = screen;
-                    LOGGER.info("Identified scanned items screen (1920x1080): " + screen.getIDstring());
+                    LOGGER.info("Identified scanned items screen (1920x1080): {}", screen.getIDstring());
                 }
             }
 
             // Fallback logic
             if (mainAppScreen == null) {
                 mainAppScreen = ge.getDefaultScreenDevice();
-                LOGGER.warn("Target main app screen (1024x600) not found. Using default: {}", mainAppScreen.getIDstring());
+                LOGGER.warn("Target main app screen (1024x600) not found. Using default: {}",
+                        mainAppScreen.getIDstring());
             }
             if (scannedItemsScreen == null) {
                 if (screens.length > 1) {
