@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Test class for the FridgeStock entity.
@@ -111,11 +112,11 @@ public class FridgeStockTest {
         assertNotEquals(stock1, stock3, "Objects with different barcodes should not be equal");
 
         // Null comparison
-        assertNotEquals(null, stock1, "Object should not be equal to null");
+        assertFalse(stock1.equals(null), "Object should not be equal to null");
 
         // Different class
         Object notStock = new Object();  // or any non-FridgeStock class
-        assertNotEquals(stock1, notStock, "Object should not be equal to an instance of a different class");
+        assertFalse(stock1.equals(notStock), "Object should not be equal to an instance of a different class");
     }
 
     @Test
