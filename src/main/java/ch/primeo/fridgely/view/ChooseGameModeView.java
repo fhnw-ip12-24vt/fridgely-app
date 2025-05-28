@@ -30,10 +30,8 @@ public class ChooseGameModeView implements LocalizationObserver {
 
     // localization keys
     private static final String KEY_TITLE = "choose_mode_title";
-    private static final String KEY_SINGLE_PLAYER = "single_player_mode";
     private static final String KEY_MULTIPLAYER = "multiplayer_mode";
     private static final String KEY_LANG_BUTTON = "button_language";
-    private static final String KEY_SINGLE_PLAYER_TOOLTIP = "gamemode.singleplayer.tooltip";
     private static final String KEY_MULTIPLAYER_TOOLTIP = "gamemode.multiplayer.tooltip";
 
     @Getter
@@ -44,18 +42,12 @@ public class ChooseGameModeView implements LocalizationObserver {
     private JPanel mainPanel;
     private JLabel titleLabel;
     private JPanel gameModePanel;
-    private JPanel singlePlayerPanel;
     private JPanel multiplayerPanel;
 
     @Getter
-    private JLabel singlePlayerImageLabel;
-
-    @Getter
     private JLabel multiplayerImageLabel;
-    private JLabel singlePlayerTextLabel;
     private JLabel multiplayerTextLabel;
 
-    private static final String SINGLE_PLAYER_IMAGE = "/ch/primeo/fridgely/sprites/single_player.png";
     private static final String MULTIPLAYER_IMAGE = "/ch/primeo/fridgely/sprites/multi_player.png";
 
     private final ImageLoader imageLoader;
@@ -91,12 +83,8 @@ public class ChooseGameModeView implements LocalizationObserver {
         titleLabel = new JLabel();
         gameModePanel = new JPanel();
 
-        singlePlayerPanel = new JPanel();
-        singlePlayerImageLabel = createImageLabel(SINGLE_PLAYER_IMAGE, 200, 200);
-        singlePlayerTextLabel = new JLabel();
-
         multiplayerPanel = new JPanel();
-        multiplayerImageLabel = createImageLabel(MULTIPLAYER_IMAGE, 250, 200);
+        multiplayerImageLabel = createMultiplayerImageLabel();
         multiplayerTextLabel = new JLabel();
     }
 
@@ -121,10 +109,8 @@ public class ChooseGameModeView implements LocalizationObserver {
         gameModePanel.setBackground(UIConfig.BACKGROUND_COLOR);
         gameModePanel.add(Box.createHorizontalGlue());
 
-        setupGameModePanel(singlePlayerPanel, singlePlayerImageLabel, singlePlayerTextLabel);
         setupGameModePanel(multiplayerPanel, multiplayerImageLabel, multiplayerTextLabel);
 
-        gameModePanel.add(singlePlayerPanel);
         gameModePanel.add(Box.createRigidArea(new Dimension(50, 0)));
         gameModePanel.add(multiplayerPanel);
         gameModePanel.add(Box.createHorizontalGlue());
@@ -159,18 +145,17 @@ public class ChooseGameModeView implements LocalizationObserver {
     /**
      * Creates a JLabel with an image icon.
      *
-     * @param resourcePath the path to the image resource
      * @return the JLabel with the image icon
      */
-    private JLabel createImageLabel(String resourcePath, int width, int height) {
+    private JLabel createMultiplayerImageLabel() {
         JLabel label = new JLabel();
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
-        ImageIcon scaledIcon = imageLoader.loadScaledImage(resourcePath, width, height);
+        ImageIcon scaledIcon = imageLoader.loadScaledImage(ChooseGameModeView.MULTIPLAYER_IMAGE, 250, 200);
 
         if (scaledIcon != null) {
             label.setIcon(scaledIcon);
         } else {
-            label.setText("Image not found: " + resourcePath);
+            label.setText("Image not found: " + ChooseGameModeView.MULTIPLAYER_IMAGE);
         }
 
         return label;
@@ -179,9 +164,7 @@ public class ChooseGameModeView implements LocalizationObserver {
     @Override
     public void onLocaleChanged() {
         titleLabel.setText(localizationService.get(KEY_TITLE));
-        singlePlayerTextLabel.setText(localizationService.get(KEY_SINGLE_PLAYER));
         multiplayerTextLabel.setText(localizationService.get(KEY_MULTIPLAYER));
-        singlePlayerImageLabel.setToolTipText(localizationService.get(KEY_SINGLE_PLAYER_TOOLTIP));
         multiplayerImageLabel.setToolTipText(localizationService.get(KEY_MULTIPLAYER_TOOLTIP));
         langButton.setText(localizationService.get(KEY_LANG_BUTTON));
     }
