@@ -1,5 +1,6 @@
 package ch.primeo.fridgely.model;
 
+import ch.primeo.fridgely.service.localization.*;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.*;
@@ -74,11 +75,7 @@ public class Product {
      * @return the product name in the specified language or default if not found
      */
     public String getName(String language) {
-        return switch (language != null ? language.toLowerCase() : "") {
-            case "de" -> nameDE != null ? nameDE : name;
-            case "fr" -> nameFR != null ? nameFR : name;
-            default -> name;
-        };
+        return AppLocalizationService.getLocalizedString(language, name, nameDE, nameFR);
     }
 
     public String getExplanationKey() {
