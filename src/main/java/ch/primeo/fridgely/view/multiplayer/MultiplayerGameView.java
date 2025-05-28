@@ -11,12 +11,16 @@ import ch.primeo.fridgely.view.component.PenguinScorePanel;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.GridLayout;
+import java.awt.Window;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -169,11 +173,24 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
     }
 
     private void exitGame() {
-        int confirm = JOptionPane.showConfirmDialog(this, localizationService.get(KEY_CONFIRM_EXIT_GAME),
-                localizationService.get(KEY_CONFIRM_EXIT_GAME_TITLE), JOptionPane.YES_NO_OPTION);
-
-        if (confirm == JOptionPane.YES_OPTION) {
-            Window window = SwingUtilities.getWindowAncestor(this);
+        // Create the JOptionPane but don't show it yet
+        JOptionPane optionPane = new JOptionPane(
+            localizationService.get(KEY_CONFIRM_EXIT_GAME),
+            JOptionPane.QUESTION_MESSAGE,
+            JOptionPane.YES_NO_OPTION
+        );
+        
+        // Create a dialog using the JOptionPane
+        Window window = SwingUtilities.getWindowAncestor(this);
+        JDialog dialog = optionPane.createDialog(window, localizationService.get(KEY_CONFIRM_EXIT_GAME_TITLE));
+        
+        // Ensure it's positioned relative to the parent window
+        dialog.setLocationRelativeTo(window);
+        dialog.setVisible(true);
+        
+        // Handle the result
+        Object value = optionPane.getValue();
+        if (value != null && value instanceof Integer && (Integer)value == JOptionPane.YES_OPTION) {
             if (window instanceof JFrame) {
                 window.dispose();
             }
