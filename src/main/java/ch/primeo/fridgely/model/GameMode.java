@@ -5,10 +5,6 @@ package ch.primeo.fridgely.model;
  */
 public enum GameMode {
     /**
-     * Single player game mode.
-     */
-    SinglePlayer,
-    /**
      * Multiplayer game mode.
      */
     Multiplayer,
