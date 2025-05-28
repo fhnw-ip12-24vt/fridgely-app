@@ -190,7 +190,7 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
         
         // Handle the result
         Object value = optionPane.getValue();
-        if (value != null && value instanceof Integer && (Integer)value == JOptionPane.YES_OPTION) {
+        if (value instanceof Integer && (Integer) value == JOptionPane.YES_OPTION) {
             if (window instanceof JFrame) {
                 window.dispose();
             }
@@ -211,11 +211,6 @@ public class MultiplayerGameView extends JPanel implements PropertyChangeListene
 
     @Override
     public void onLocaleChanged() {
-//        penguinPanel.setBorder(BorderFactory.createTitledBorder(localizationService.get(KEY_PENGUIN_TITLE)));
-//        scorePanel.setBorder(BorderFactory.createTitledBorder(localizationService.get(KEY_GAME_STATUS_TITLE)));
-//        controlPanel.setBorder(BorderFactory.createTitledBorder(localizationService.get(KEY_CONTROLS_TITLE)));
-
-
-        updateGameInfo(); // Re-apply localized labels and scores
+        updateGameInfo();
     }
 }
