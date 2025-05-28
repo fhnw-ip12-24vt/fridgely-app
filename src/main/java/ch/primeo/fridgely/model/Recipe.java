@@ -1,5 +1,6 @@
 package ch.primeo.fridgely.model;
 
+import ch.primeo.fridgely.service.localization.*;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -86,11 +87,7 @@ public class Recipe {
     // --- Getters ---
 
     public String getName(String language) {
-        return switch (language != null ? language.toLowerCase() : "") {
-            case "de" -> nameDE != null ? nameDE : name;
-            case "fr" -> nameFR != null ? nameFR : name;
-            default -> name;
-        };
+        return AppLocalizationService.getLocalizedString(language, name, nameDE, nameFR);
     }
 
     public List<Product> getProducts() {
