@@ -6,6 +6,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.context.ApplicationContext;
 
+import java.lang.reflect.Field;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -23,6 +25,7 @@ class FridgelyContextTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         fridgelyContext = new FridgelyContext();
+        FridgelyContext.context = null;
     }
 
     @Test
@@ -51,5 +54,15 @@ class FridgelyContextTest {
         // Assert
         assertEquals(42, result);
         verify(mockApplicationContext).getBean(Integer.class);
+    }
+
+    @Test
+    void getBean_whenContextIsNull_shouldThrowNullPointerException() {
+        // Arrange: FridgelyContext.context is null due to setUp()
+
+        // Act & Assert
+        assertThrows(NullPointerException.class, () -> {
+            FridgelyContext.getBean(String.class); // Call static method
+        }, "getBean should throw NullPointerException when context is null");
     }
 }

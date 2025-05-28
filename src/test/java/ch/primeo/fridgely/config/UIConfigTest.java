@@ -1,6 +1,11 @@
 package ch.primeo.fridgely.config;
 
-import lombok.*;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.core.io.DefaultResourceLoader;
@@ -13,17 +18,39 @@ import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
-
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class UIConfigTest {
+
+    private UIConfig uiConfig;
+    private ResourceLoader mockResourceLoader;
+    private Resource mockResource;
+    private ListAppender<ILoggingEvent> listAppender;
+    private Logger uiConfigLogger;
+
+    @BeforeEach
+    void setUp() {
+        mockResourceLoader = Mockito.mock(ResourceLoader.class);
+        mockResource = Mockito.mock(Resource.class);
+        uiConfig = new UIConfig(mockResourceLoader);
+
+        // Setup Logback ListAppender
+        uiConfigLogger = (Logger) org.slf4j.LoggerFactory.getLogger(UIConfig.class);
+        listAppender = new ListAppender<>();
+        listAppender.start();
+        uiConfigLogger.addAppender(listAppender);
+    }
+
+    @AfterEach
+    void tearDown() {
+        // Detach and stop the appender to avoid interference between tests and memory leaks
+        if (uiConfigLogger != null && listAppender != null) {
+            uiConfigLogger.detachAppender(listAppender);
+            listAppender.stop();
+        }
+    }
 
     @Test
     void testBackgroundColor() {
@@ -78,69 +105,22 @@ class UIConfigTest {
         Mockito.verify(mockResource).getInputStream();
     }
 
-    // Helper class to capture log records
-    @Getter
-    private static class ListLogHandler extends Handler {
-        private final List<LogRecord> records = new ArrayList<>();
-
-        @Override
-        public void publish(LogRecord record) {
-            records.add(record);
-        }
-
-        @Override
-        public void flush() {
-        }
-
-        @Override
-        public void close() throws SecurityException {
-        }
-
-    }
-
     @Test
     void testSetUIFontLogsWarningOnException() throws IOException {
-        Logger uiConfigLogger = UIConfig.LOGGER; 
-        ListLogHandler listLogHandler = new ListLogHandler();
-
-        // Backup original handlers and settings
-        Handler[] originalHandlers = uiConfigLogger.getHandlers();
-        for (Handler handler : originalHandlers) {
-            uiConfigLogger.removeHandler(handler);
-        }
-        boolean originalUseParentHandlers = uiConfigLogger.getUseParentHandlers();
-        uiConfigLogger.setUseParentHandlers(false); 
-        uiConfigLogger.addHandler(listLogHandler);
-
-        ResourceLoader mockResourceLoader = Mockito.mock(ResourceLoader.class);
-        Resource mockResource = Mockito.mock(Resource.class);
         String expectedExceptionMessage = "Simulated IOException for testing font loading";
 
         Mockito.when(mockResourceLoader.getResource(Mockito.anyString())).thenReturn(mockResource);
         Mockito.when(mockResource.getInputStream()).thenThrow(new IOException(expectedExceptionMessage));
 
-        UIConfig uiConfig = new UIConfig(mockResourceLoader); // Instantiate with the mock loader
+        uiConfig.setUIFont(); // Call the instance method
 
-        try {
-            uiConfig.setUIFont(); // Call the instance method
+        List<ILoggingEvent> logsList = listAppender.list;
+        assertEquals(1, logsList.size(), "Expected one log record.");
 
-            List<LogRecord> loggedRecords = listLogHandler.getRecords();
-            assertEquals(1, loggedRecords.size(), "Expected one log record.");
-
-            LogRecord logRecord = loggedRecords.getFirst();
-            assertEquals(Level.WARNING, logRecord.getLevel(), "Log level should be WARNING.");
-            // The message logged by UIConfig might be just e.getMessage(), so we check for that.
-            // If UIConfig prefixes the message, this assertion would need adjustment.
-            assertTrue(logRecord.getMessage().contains(expectedExceptionMessage), 
-                       "Logged message should contain the exception message. Logged: " + logRecord.getMessage());
-        } finally {
-            // Restore original logger state
-            uiConfigLogger.removeHandler(listLogHandler);
-            for (Handler handler : originalHandlers) {
-                uiConfigLogger.addHandler(handler);
-            }
-            uiConfigLogger.setUseParentHandlers(originalUseParentHandlers);
-        }
+        ILoggingEvent logEvent = logsList.getFirst();
+        assertEquals(Level.WARN, logEvent.getLevel(), "Log level should be WARNING.");
+        assertTrue(logEvent.getFormattedMessage().contains(expectedExceptionMessage),
+                   "Logged message should contain the exception message. Logged: " + logEvent.getFormattedMessage());
     }
 
     @Test

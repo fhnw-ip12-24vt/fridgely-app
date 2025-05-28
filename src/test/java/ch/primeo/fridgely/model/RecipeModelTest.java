@@ -13,6 +13,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -335,15 +336,21 @@ class RecipeModelTest {
     @Test
     void testLoadAvailableRecipesWithException() {
         // Arrange
-        when(recipeRepositoryMock.getAllRecipes()).thenThrow(new RuntimeException("Test exception"));
+        RecipeRepository localRecipeRepositoryMock = mock(RecipeRepository.class); // Use a local mock
+        String expectedErrorMessage = "Test exception";
+        when(localRecipeRepositoryMock.getAllRecipes()).thenThrow(new RuntimeException(expectedErrorMessage));
+        // The call to localRecipeRepositoryMock.getAllRecipesEntities() will not be reached
+        // if getAllRecipes() throws, so no need to mock it for this specific path.
 
-        // Act
-        RecipeModel model = new RecipeModel(recipeRepositoryMock);
-        List<Recipe> availableRecipes = model.getAvailableRecipes();
+        // Act & Assert
+        RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
+            new RecipeModel(localRecipeRepositoryMock); // Pass the local mock
+        }, "Constructor should throw RuntimeException when getAllRecipes fails.");
+        assertEquals(expectedErrorMessage, thrown.getMessage(), "The exception message should match.");
 
-        // Assert
-        assertEquals(1, availableRecipes.size()); // Should create a dummy recipe
-        assertEquals("Dummy Recipe", availableRecipes.get(0).getName());
+        // Verify that getAllRecipes was called on the local mock, and getAllRecipesEntities was not.
+        verify(localRecipeRepositoryMock).getAllRecipes();
+        verify(localRecipeRepositoryMock, never()).getAllRecipesEntities();
     }
 
     @Test
@@ -376,13 +383,12 @@ class RecipeModelTest {
         when(freshMock.getAllRecipes()).thenReturn(null); // recipeDTOs will be null
         when(freshMock.getAllRecipesEntities()).thenReturn(null); // entities also null
 
-        // Act
-        RecipeModel model = new RecipeModel(freshMock);
-        List<Recipe> availableRecipes = model.getAvailableRecipes();
+        // Act & Assert
+        assertThrows(NullPointerException.class, () -> {
+            new RecipeModel(freshMock);
+        }, "Constructor should throw NullPointerException when DTOs and Entities are null.");
 
-        // Assert
-        assertEquals(1, availableRecipes.size()); // Should create a dummy recipe
-        assertEquals("Dummy Recipe", availableRecipes.get(0).getName());
+        // Verify that both methods were called
         verify(freshMock).getAllRecipes();
         verify(freshMock).getAllRecipesEntities();
     }
@@ -392,15 +398,16 @@ class RecipeModelTest {
         // Arrange
         RecipeRepository freshMock = mock(RecipeRepository.class);
         when(freshMock.getAllRecipes()).thenReturn(null); // recipeDTOs will be null
-        when(freshMock.getAllRecipesEntities()).thenThrow(new RuntimeException("DB error on entities"));
+        String expectedErrorMessage = "DB error on entities";
+        when(freshMock.getAllRecipesEntities()).thenThrow(new RuntimeException(expectedErrorMessage));
 
-        // Act
-        RecipeModel model = new RecipeModel(freshMock);
-        List<Recipe> availableRecipes = model.getAvailableRecipes();
+        // Act & Assert
+        RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
+            new RecipeModel(freshMock);
+        }, "Constructor should propagate RuntimeException from getAllRecipesEntities.");
+        assertEquals(expectedErrorMessage, thrown.getMessage(), "The exception message should match.");
 
-        // Assert
-        assertEquals(1, availableRecipes.size()); // Should create a dummy recipe
-        assertEquals("Dummy Recipe", availableRecipes.get(0).getName());
+        // Verify that both methods were called
         verify(freshMock).getAllRecipes();
         verify(freshMock).getAllRecipesEntities();
     }

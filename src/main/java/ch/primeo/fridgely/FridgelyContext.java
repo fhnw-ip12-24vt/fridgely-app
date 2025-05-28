@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class FridgelyContext implements ApplicationContextAware {
 
-    private static ApplicationContext context;
+    static ApplicationContext context;
 
     @Override
     public void setApplicationContext(@NotNull ApplicationContext applicationContext) {
