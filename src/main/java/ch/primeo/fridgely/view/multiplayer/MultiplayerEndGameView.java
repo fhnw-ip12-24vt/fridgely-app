@@ -2,15 +2,13 @@ package ch.primeo.fridgely.view.multiplayer;
 
 import ch.primeo.fridgely.controller.multiplayer.MultiplayerGameController;
 import ch.primeo.fridgely.model.PenguinHPState;
-import ch.primeo.fridgely.service.localization.AppLocalizationService;
-import ch.primeo.fridgely.service.localization.LocalizationObserver;
+import ch.primeo.fridgely.service.localization.*;
 import ch.primeo.fridgely.util.ImageLoader;
 import ch.primeo.fridgely.view.component.ControlButton;
 
 import javax.swing.*;
 import java.awt.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.beans.*;
 
 public class MultiplayerEndGameView extends JPanel implements PropertyChangeListener, LocalizationObserver {
 

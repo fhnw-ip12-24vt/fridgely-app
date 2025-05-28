@@ -1,15 +1,15 @@
 package ch.primeo.fridgely.config;
 
+
 import org.slf4j.*;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.*;
-import org.springframework.stereotype.*;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.swing.UIManager;
-import javax.swing.plaf.*;
-import java.awt.Color;
-import java.awt.Font;
+import javax.swing.plaf.FontUIResource;
+import java.awt.*;
 import java.io.InputStream;
 import java.util.Enumeration;
 

@@ -1,15 +1,12 @@
 package ch.primeo.fridgely.service;
 
-import ch.primeo.fridgely.model.Product;
-import ch.primeo.fridgely.model.QProduct; // Import the generated Q-class
+import ch.primeo.fridgely.model.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**

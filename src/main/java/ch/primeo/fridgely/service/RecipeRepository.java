@@ -1,12 +1,10 @@
 package ch.primeo.fridgely.service;
 
-import ch.primeo.fridgely.model.QRecipe;
-import ch.primeo.fridgely.model.QRecipeIngredient;
-import ch.primeo.fridgely.model.Recipe;
+import ch.primeo.fridgely.model.*;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
-import lombok.*;
+import lombok.Getter;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

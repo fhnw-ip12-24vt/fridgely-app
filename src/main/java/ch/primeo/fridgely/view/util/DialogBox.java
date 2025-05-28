@@ -1,33 +1,17 @@
 package ch.primeo.fridgely.view.util;
 
-import ch.primeo.fridgely.Fridgely;
-import ch.primeo.fridgely.FridgelyContext;
-import ch.primeo.fridgely.model.PenguinFacialExpression;
-import ch.primeo.fridgely.model.PenguinHPState;
+import ch.primeo.fridgely.*;
+import ch.primeo.fridgely.model.*;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import ch.primeo.fridgely.util.ImageLoader;
 import ch.primeo.fridgely.view.component.ControlButton;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.Timer;
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.*;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
 /**

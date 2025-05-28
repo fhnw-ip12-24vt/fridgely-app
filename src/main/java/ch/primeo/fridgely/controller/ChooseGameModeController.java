@@ -1,9 +1,8 @@
 package ch.primeo.fridgely.controller;
 
+
 import ch.primeo.fridgely.gamelaunchers.MultiplayerGameLauncher;
-import ch.primeo.fridgely.model.GameMode;
-import ch.primeo.fridgely.model.PenguinFacialExpression;
-import ch.primeo.fridgely.model.PenguinHPState;
+import ch.primeo.fridgely.model.*;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import ch.primeo.fridgely.util.ImageLoader;
 import ch.primeo.fridgely.view.ChooseGameModeView;
@@ -15,12 +14,8 @@ import org.springframework.stereotype.Component;
 
 import javax.swing.JLabel;
 import java.awt.Cursor;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.Arrays;
-import java.util.List;
+import java.awt.event.*;
+import java.util.*;
 
 /**
  * Controller for the game mode selection screen.

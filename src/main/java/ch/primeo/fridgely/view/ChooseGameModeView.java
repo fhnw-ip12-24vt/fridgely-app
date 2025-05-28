@@ -2,25 +2,13 @@ package ch.primeo.fridgely.view;
 
 import ch.primeo.fridgely.Fridgely;
 import ch.primeo.fridgely.config.UIConfig;
+import ch.primeo.fridgely.service.localization.*;
 import ch.primeo.fridgely.util.ImageLoader;
 import ch.primeo.fridgely.view.component.LanguageSwitchButton;
-import ch.primeo.fridgely.service.localization.AppLocalizationService;
-import ch.primeo.fridgely.service.localization.LocalizationObserver;
-import lombok.*;
+import lombok.Getter;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridBagLayout;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * View for choosing the game mode: single player or multiplayer. Displays options for single player and multiplayer

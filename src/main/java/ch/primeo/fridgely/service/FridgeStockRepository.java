@@ -1,13 +1,12 @@
 package ch.primeo.fridgely.service;
 
-import ch.primeo.fridgely.model.QFridgeStock; // Import generated Q-class
+import ch.primeo.fridgely.model.QFridgeStock;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
-import org.springframework.stereotype.Service; // Change from @Component to @Service for consistency
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Repository to manage the fridge stock using Spring Data JPA and QueryDSL.

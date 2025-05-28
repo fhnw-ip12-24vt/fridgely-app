@@ -1,10 +1,10 @@
 package ch.primeo.fridgely.model.multiplayer;
 
+
 import ch.primeo.fridgely.config.GameConfig;
 import lombok.Getter;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
+import java.beans.*;
 
 /**
  * Model for tracking the overall game state in the multiplayer game mode. Manages round number, current player, and

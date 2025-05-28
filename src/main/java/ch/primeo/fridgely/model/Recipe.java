@@ -1,17 +1,10 @@
 package ch.primeo.fridgely.model;
 
-import ch.primeo.fridgely.service.localization.*;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Transient;
-import lombok.Getter;
-import lombok.Setter;
+import ch.primeo.fridgely.service.localization.AppLocalizationService;
+import jakarta.persistence.*;
+import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Represents a recipe entity mapping to the 'Recipes' table.

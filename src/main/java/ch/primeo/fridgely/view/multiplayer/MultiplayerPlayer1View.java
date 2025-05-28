@@ -1,31 +1,19 @@
 package ch.primeo.fridgely.view.multiplayer;
 
 import ch.primeo.fridgely.config.GameConfig;
-import ch.primeo.fridgely.controller.multiplayer.MultiplayerGameController;
-import ch.primeo.fridgely.controller.multiplayer.MultiplayerPlayer1Controller;
-import ch.primeo.fridgely.model.FridgeStockModel;
-import ch.primeo.fridgely.model.PenguinFacialExpression;
-import ch.primeo.fridgely.model.Product;
+import ch.primeo.fridgely.controller.multiplayer.*;
+import ch.primeo.fridgely.model.*;
 import ch.primeo.fridgely.model.multiplayer.MultiplayerGameStateModel;
-import ch.primeo.fridgely.service.localization.AppLocalizationService;
-import ch.primeo.fridgely.service.localization.LocalizationObserver;
+import ch.primeo.fridgely.service.localization.*;
 import ch.primeo.fridgely.util.ImageLoader;
 import ch.primeo.fridgely.view.PenguinReactionOverlay;
 import ch.primeo.fridgely.view.component.ControlButton;
 
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.beans.*;
 
 /**
  * View for Player 1 (Scanner) in the multiplayer game mode. Shows the barcode scanning interface. The scanned items are

@@ -1,23 +1,16 @@
 package ch.primeo.fridgely.view.component;
 
-import ch.primeo.fridgely.model.RecipeModel;
+
 import ch.primeo.fridgely.controller.multiplayer.MultiplayerGameController;
-import ch.primeo.fridgely.model.Product;
-import ch.primeo.fridgely.model.Recipe;
+import ch.primeo.fridgely.model.*;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import ch.primeo.fridgely.util.ImageLoader;
-import lombok.*;
+import lombok.Setter;
 
 import javax.swing.*;
-
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * A unified panel that displays recipes with their ingredients inline. This combines the recipe list and ingredient

@@ -1,8 +1,7 @@
 package ch.primeo.fridgely.model;
 
-import ch.primeo.fridgely.service.localization.*;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import ch.primeo.fridgely.service.localization.AppLocalizationService;
+import jakarta.persistence.*;
 import lombok.*;
 
 /**

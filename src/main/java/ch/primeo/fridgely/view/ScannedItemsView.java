@@ -1,22 +1,15 @@
 package ch.primeo.fridgely.view;
 
-import ch.primeo.fridgely.*;
+import ch.primeo.fridgely.Fridgely;
 import ch.primeo.fridgely.controller.multiplayer.MultiplayerGameController;
-import ch.primeo.fridgely.model.FridgeStockModel;
-import ch.primeo.fridgely.model.Product;
-import ch.primeo.fridgely.service.localization.AppLocalizationService;
-import ch.primeo.fridgely.service.localization.LocalizationObserver;
+import ch.primeo.fridgely.model.*;
+import ch.primeo.fridgely.service.localization.*;
 import ch.primeo.fridgely.util.ImageLoader;
-import ch.primeo.fridgely.view.util.*;
+import ch.primeo.fridgely.view.util.ProductCardUtils;
 
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
 import java.awt.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.beans.*;
 import java.util.List;
 
 /**

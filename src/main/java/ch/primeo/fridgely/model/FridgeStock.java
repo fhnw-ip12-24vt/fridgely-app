@@ -1,10 +1,8 @@
 package ch.primeo.fridgely.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
+
+import jakarta.persistence.*;
+import lombok.*;
 
 /**
  * Represents an item in the fridge stock, mapping to the 'FridgeStock' table. Uses the product barcode as the primary

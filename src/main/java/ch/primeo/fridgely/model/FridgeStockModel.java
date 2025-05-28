@@ -1,9 +1,7 @@
 package ch.primeo.fridgely.model;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-import java.util.ArrayList;
-import java.util.List;
+import java.beans.*;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**

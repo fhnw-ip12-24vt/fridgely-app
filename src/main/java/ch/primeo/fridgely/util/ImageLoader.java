@@ -1,10 +1,8 @@
 package ch.primeo.fridgely.util;
 
 import ch.primeo.fridgely.model.PenguinFacialExpression;
-
 import org.springframework.context.annotation.Scope;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
+import org.springframework.core.io.*;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
 
@@ -14,8 +12,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.*;
 
 /**
  * Utility class for loading and caching images to improve performance. Provides methods for loading images as

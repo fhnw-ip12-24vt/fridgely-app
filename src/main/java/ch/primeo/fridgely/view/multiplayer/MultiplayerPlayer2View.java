@@ -1,21 +1,15 @@
 package ch.primeo.fridgely.view.multiplayer;
 
-import ch.primeo.fridgely.controller.multiplayer.MultiplayerGameController;
-import ch.primeo.fridgely.controller.multiplayer.MultiplayerPlayer2Controller;
-import ch.primeo.fridgely.model.RecipeModel;
+import ch.primeo.fridgely.controller.multiplayer.*;
+import ch.primeo.fridgely.model.*;
 import ch.primeo.fridgely.model.multiplayer.MultiplayerGameStateModel;
-import ch.primeo.fridgely.model.Recipe;
-import ch.primeo.fridgely.service.localization.AppLocalizationService;
-import ch.primeo.fridgely.service.localization.LocalizationObserver;
+import ch.primeo.fridgely.service.localization.*;
 import ch.primeo.fridgely.util.ImageLoader;
-import ch.primeo.fridgely.view.component.ControlButton;
-import ch.primeo.fridgely.view.component.UnifiedRecipePanel;
+import ch.primeo.fridgely.view.component.*;
 
 import javax.swing.*;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.awt.*;
+import java.beans.*;
 
 /**
  * View for Player 2 (Chef) in the multiplayer game mode. Shows available recipes with their ingredients in a unified

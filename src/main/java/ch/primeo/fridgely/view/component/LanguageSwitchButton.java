@@ -1,16 +1,13 @@
 package ch.primeo.fridgely.view.component;
 
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
-import ch.primeo.fridgely.view.util.*;
+import ch.primeo.fridgely.view.util.ButtonUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.swing.JButton;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.*;
+import java.awt.event.*;
 
 /**
  * A button for switching the application language.

@@ -2,16 +2,12 @@ package ch.primeo.fridgely;
 
 import ch.primeo.fridgely.controller.ChooseGameModeController;
 import ch.primeo.fridgely.util.ImageLoader;
+import lombok.Getter;
 import org.slf4j.*;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Rectangle;
-
-import lombok.Getter;
-
+import java.awt.*;
 
 @SpringBootApplication
 public class Fridgely {

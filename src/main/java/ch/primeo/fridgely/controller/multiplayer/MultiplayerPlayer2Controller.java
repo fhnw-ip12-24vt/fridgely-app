@@ -1,11 +1,8 @@
 package ch.primeo.fridgely.controller.multiplayer;
 
 import ch.primeo.fridgely.config.GameConfig;
-import ch.primeo.fridgely.model.FridgeStockModel;
-import ch.primeo.fridgely.model.PenguinModel;
-import ch.primeo.fridgely.model.RecipeModel;
+import ch.primeo.fridgely.model.*;
 import ch.primeo.fridgely.model.multiplayer.MultiplayerGameStateModel;
-import ch.primeo.fridgely.model.Recipe;
 
 /**
  * Controller for Player 2 (Chef) in the multiplayer game mode. Handles recipe selection and validation.

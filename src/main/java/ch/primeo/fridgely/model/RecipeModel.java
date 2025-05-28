@@ -1,15 +1,10 @@
 package ch.primeo.fridgely.model;
 
 import ch.primeo.fridgely.service.RecipeRepository;
-import lombok.*;
+import lombok.Getter;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.beans.*;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**

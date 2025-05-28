@@ -1,14 +1,11 @@
 package ch.primeo.fridgely.service.localization;
 
-import ch.primeo.fridgely.config.AppConfig;
 import ch.primeo.fridgely.Fridgely;
+import ch.primeo.fridgely.config.AppConfig;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Component

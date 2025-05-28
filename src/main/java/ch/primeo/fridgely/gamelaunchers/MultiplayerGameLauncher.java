@@ -1,14 +1,14 @@
 package ch.primeo.fridgely.gamelaunchers;
 
+
 import ch.primeo.fridgely.Fridgely;
+import ch.primeo.fridgely.controller.multiplayer.MultiplayerGameController;
 import ch.primeo.fridgely.factory.FrameFactory;
+import ch.primeo.fridgely.service.*;
+import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import ch.primeo.fridgely.util.ImageLoader;
 import ch.primeo.fridgely.view.ScannedItemsView;
 import ch.primeo.fridgely.view.multiplayer.MultiplayerGameView;
-import ch.primeo.fridgely.controller.multiplayer.MultiplayerGameController;
-import ch.primeo.fridgely.service.ProductRepository;
-import ch.primeo.fridgely.service.RecipeRepository;
-import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 

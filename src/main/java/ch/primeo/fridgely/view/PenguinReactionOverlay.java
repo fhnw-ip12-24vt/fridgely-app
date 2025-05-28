@@ -1,7 +1,6 @@
 package ch.primeo.fridgely.view;
 
-import ch.primeo.fridgely.model.PenguinFacialExpression;
-import ch.primeo.fridgely.model.Product;
+import ch.primeo.fridgely.model.*;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import ch.primeo.fridgely.util.ImageLoader;
 import ch.primeo.fridgely.view.component.ControlButton;

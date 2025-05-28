@@ -2,8 +2,7 @@ package ch.primeo.fridgely.model;
 
 import ch.primeo.fridgely.config.GameConfig;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
+import java.beans.*;
 
 /**
  * Model for the penguin health points in the multiplayer game mode. Tracks the HP of the penguin and notifies listeners
