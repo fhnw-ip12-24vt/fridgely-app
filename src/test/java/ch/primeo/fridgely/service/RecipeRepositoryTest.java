@@ -61,12 +61,12 @@ class RecipeRepositoryTest {
         List<Recipe> recipes = getRecipes();
 
         // Mock recipes query
-        JPAQuery<Recipe> recipeQueryMock = mock(JPAQuery.class);
+        JPAQuery<Recipe> recipeQueryMock = mockJPAQuery();
         when(mockQueryFactory.selectFrom(qRecipe)).thenReturn(recipeQueryMock);
         when(recipeQueryMock.fetch()).thenReturn(recipes);
 
         // Mock ingredients query
-        JPAQuery<Tuple> ingredientsQueryMock = mock(JPAQuery.class);
+        JPAQuery<Tuple> ingredientsQueryMock = mockJPAQuery();
         when(mockQueryFactory.select(qRecipeIngredient.recipe.recipeId, qRecipeIngredient.product.barcode)).thenReturn(
                 ingredientsQueryMock);
         when(ingredientsQueryMock.from(qRecipeIngredient)).thenReturn(ingredientsQueryMock);
@@ -130,8 +130,7 @@ class RecipeRepositoryTest {
         recipe2.setName("Recipe2_en");
         recipe2.setDescription("Desc2_en");
 
-        List<Recipe> recipes = Arrays.asList(recipe1, recipe2);
-        return recipes;
+        return Arrays.asList(recipe1, recipe2);
     }
 
     @Test
@@ -162,9 +161,9 @@ class RecipeRepositoryTest {
         List<String> expectedBarcodes = Arrays.asList("barcode1", "barcode2");
 
         // Setup complete query chain
-        JPAQuery<String> queryMock = mock(JPAQuery.class);
-        JPAQuery<String> fromQueryMock = mock(JPAQuery.class);
-        JPAQuery<String> whereQueryMock = mock(JPAQuery.class);
+        JPAQuery<String> queryMock = mockJPAQuery();
+        JPAQuery<String> fromQueryMock = mockJPAQuery();
+        JPAQuery<String> whereQueryMock = mockJPAQuery();
 
         when(queryFactory.select(qRecipeIngredient.product.barcode)).thenReturn(queryMock);
         when(queryMock.from(qRecipeIngredient)).thenReturn(fromQueryMock);
@@ -339,5 +338,10 @@ class RecipeRepositoryTest {
 
         // Assert
         assertTrue(result.isEmpty());
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> JPAQuery<T> mockJPAQuery() {
+        return (JPAQuery<T>) mock(JPAQuery.class);
     }
 }
