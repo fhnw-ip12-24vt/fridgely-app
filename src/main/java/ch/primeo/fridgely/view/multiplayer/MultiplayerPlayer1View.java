@@ -228,7 +228,7 @@ public class MultiplayerPlayer1View extends JPanel implements PropertyChangeList
         boolean turnFinished = player1Controller.finishTurn();
 
         // If turn couldn't be finished due to no available recipes, show warning
-        if (!turnFinished && player1Controller.hasAvailableRecipes() == false) {
+        if (!turnFinished && !player1Controller.hasAvailableRecipes()) {
             showNoRecipesWarning();
         } else if (turnFinished) {
             overlay.dispose();
