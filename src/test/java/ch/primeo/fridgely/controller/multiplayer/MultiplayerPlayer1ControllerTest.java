@@ -343,20 +343,15 @@ class MultiplayerPlayer1ControllerTest {
 
         // Expected score calculation for positive case (1 item)
         int goodProductRawScore = GameConfig.SCORE_BIO + GameConfig.SCORE_LOCAL + GameConfig.SCORE_LOW_CO2;
-        double rhPositive = goodProductRawScore < 0 ? -0.5 : 0.5;
-        int avgGoodProductScoreRounded = (int) (((double) goodProductRawScore / 1) + rhPositive);
+        double rhPositive = 0.5;
+        int avgGoodProductScoreRounded = (int) (((double) goodProductRawScore) + rhPositive);
 
         int expectedPositiveScore;
         // Note: Controller's maxScore/minScore are denominators for scaling the avgProductScoreRounded.
         // These are max/min possible *average* product scores, which for 1 item is the product score itself.
         // However, the controller uses the sum of GameConfig constants as denominators.
-        if (avgGoodProductScoreRounded < 0) {
-            double scaledScore = (double) avgGoodProductScoreRounded / minPossibleProductScore * GameConfig.SCORE_PLAYER1_DECREASE;
-            expectedPositiveScore = (int) (scaledScore + rhPositive);
-        } else {
-            double scaledScore = (double) avgGoodProductScoreRounded / maxPossibleProductScore * GameConfig.SCORE_PLAYER1_INCREASE;
-            expectedPositiveScore = (int) (scaledScore + rhPositive);
-        }
+        double scaledScore = (double) avgGoodProductScoreRounded / maxPossibleProductScore * GameConfig.SCORE_PLAYER1_INCREASE;
+        expectedPositiveScore = (int) (scaledScore + rhPositive);
         verify(gameStateModel).addScore(expectedPositiveScore);
 
 
@@ -386,17 +381,12 @@ class MultiplayerPlayer1ControllerTest {
         negativeScoreController.finishTurn();
 
         int badProductRawScore = GameConfig.SCORE_NON_BIO + GameConfig.SCORE_NON_LOCAL + GameConfig.SCORE_HIGH_CO2;
-        double rhNegative = badProductRawScore < 0 ? -0.5 : 0.5;
-        int avgBadProductScoreRounded = (int) (((double) badProductRawScore / 1) + rhNegative);
+        double rhNegative = -0.5;
+        int avgBadProductScoreRounded = (int) (((double) badProductRawScore) + rhNegative);
 
         int expectedNegativeScore;
-        if (avgBadProductScoreRounded < 0) {
-            double scaledScore = (double) avgBadProductScoreRounded / minPossibleProductScore * GameConfig.SCORE_PLAYER1_DECREASE;
-            expectedNegativeScore = (int) (scaledScore + rhNegative);
-        } else {
-            double scaledScore = (double) avgBadProductScoreRounded / maxPossibleProductScore * GameConfig.SCORE_PLAYER1_INCREASE;
-            expectedNegativeScore = (int) (scaledScore + rhNegative);
-        }
+        scaledScore = (double) avgBadProductScoreRounded / minPossibleProductScore * GameConfig.SCORE_PLAYER1_DECREASE;
+        expectedNegativeScore = (int) (scaledScore + rhNegative);
         verify(gameStateModel).addScore(expectedNegativeScore);
 
 
@@ -426,21 +416,14 @@ class MultiplayerPlayer1ControllerTest {
         mixedScoreController.finishTurn();
 
         int mixedProductRawScore = GameConfig.SCORE_BIO + GameConfig.SCORE_NON_LOCAL + GameConfig.SCORE_HIGH_CO2;
-        double rhMixed = mixedProductRawScore < 0 ? -0.5 : 0.5;
-        int avgMixedProductScoreRounded = (int) (((double) mixedProductRawScore / 1) + rhMixed);
+        double rhMixed = -0.5;
+        int avgMixedProductScoreRounded = (int) (((double) mixedProductRawScore) + rhMixed);
 
         int expectedMixedScore;
-        if (avgMixedProductScoreRounded < 0) {
-             // Handle potential division by zero if minPossibleProductScore could be 0
-            double denominator = minPossibleProductScore == 0 ? -1.0 : minPossibleProductScore; // Avoid div by zero, maintain sign if applicable
-            double scaledScore = (double) avgMixedProductScoreRounded / denominator * GameConfig.SCORE_PLAYER1_DECREASE;
-            expectedMixedScore = (int) (scaledScore + rhMixed);
-        } else {
-            // Handle potential division by zero if maxPossibleProductScore could be 0
-            double denominator = maxPossibleProductScore == 0 ? 1.0 : maxPossibleProductScore; // Avoid div by zero
-            double scaledScore = (double) avgMixedProductScoreRounded / denominator * GameConfig.SCORE_PLAYER1_INCREASE;
-            expectedMixedScore = (int) (scaledScore + rhMixed);
-        }
+        // Handle potential division by zero if minPossibleProductScore could be 0
+        // Avoid div by zero, maintain sign if applicable
+        scaledScore = (double) avgMixedProductScoreRounded / (double) minPossibleProductScore * GameConfig.SCORE_PLAYER1_DECREASE;
+        expectedMixedScore = (int) (scaledScore + rhMixed);
         verify(gameStateModel).addScore(expectedMixedScore);
     }
 
@@ -469,21 +452,8 @@ class MultiplayerPlayer1ControllerTest {
         // Assert
         // Verify that finishTurn() was called and executed its main logic.
         // This assumes GameConfig.MAX_PRODUCTS >= GameConfig.MIN_PRODUCTS_PER_ROUND for finishTurn to proceed.
-        if (GameConfig.MAX_PRODUCTS >= GameConfig.MIN_PRODUCTS_PER_ROUND) {
-            verify(gameStateModel).addScore(anyInt());
-            verify(gameStateModel).nextPlayer();
-        } else {
-            // If MAX_PRODUCTS < MIN_PRODUCTS_PER_ROUND, finishTurn is called but returns early.
-            // To verify the call itself in this specific edge case, a spy on controller would be needed.
-            // For this test, we focus on the outcome when finishTurn can fully execute.
-            // If this configuration is common, specific tests for it might be warranted.
-            // For now, we assume the typical case where MAX_PRODUCTS allows for a valid round completion.
-            // If finishTurn returns early, neither addScore nor nextPlayer would be called by it.
-            // This part of the assertion might need refinement based on how GameConfig can be set.
-            // Sticking to the primary success path:
-            verify(gameStateModel).addScore(anyInt()); // Will fail if the else condition above is true and MIN_PRODUCTS_PER_ROUND is not met
-            verify(gameStateModel).nextPlayer(); // Will fail if the else condition above is true
-        }
+        verify(gameStateModel).addScore(anyInt());
+        verify(gameStateModel).nextPlayer();
     }
 
     @Test
