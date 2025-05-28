@@ -109,7 +109,7 @@ public class MultiplayerGameStateModel {
         if (currentRound > totalRounds) {
             boolean oldGameOver = gameOver;
             gameOver = true;
-            propertyChangeSupport.firePropertyChange(PROP_GAME_OVER, oldGameOver, gameOver);
+            propertyChangeSupport.firePropertyChange(PROP_GAME_OVER, oldGameOver, true);
         }
     }
 
