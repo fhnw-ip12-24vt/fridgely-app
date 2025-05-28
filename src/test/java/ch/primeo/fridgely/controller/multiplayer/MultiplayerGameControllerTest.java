@@ -3,19 +3,12 @@ package ch.primeo.fridgely.controller.multiplayer;
 import ch.primeo.fridgely.FridgelyContext;
 import ch.primeo.fridgely.controller.ChooseGameModeController;
 import ch.primeo.fridgely.model.multiplayer.MultiplayerGameStateModel;
-import ch.primeo.fridgely.service.ProductRepository;
-import ch.primeo.fridgely.service.RecipeRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
+import ch.primeo.fridgely.service.*;
+import org.junit.jupiter.api.*;
+import org.mockito.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class MultiplayerGameControllerTest {
 

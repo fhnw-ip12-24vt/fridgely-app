@@ -1,55 +1,24 @@
 package ch.primeo.fridgely.gamelaunchers;
 
 import ch.primeo.fridgely.Fridgely;
-import ch.primeo.fridgely.factory.DefaultFrameFactory;
-import ch.primeo.fridgely.factory.FrameFactory;
-import ch.primeo.fridgely.service.ProductRepository;
-import ch.primeo.fridgely.service.RecipeRepository;
+import ch.primeo.fridgely.factory.*;
+import ch.primeo.fridgely.service.*;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import ch.primeo.fridgely.util.ImageLoader;
 import ch.primeo.fridgely.view.ScannedItemsView;
 import ch.primeo.fridgely.view.multiplayer.MultiplayerGameView;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
-import javax.swing.JFrame;
-import javax.swing.JRootPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Rectangle;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockConstruction;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class MultiplayerGameLauncherTest {

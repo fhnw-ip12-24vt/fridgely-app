@@ -1,48 +1,25 @@
 package ch.primeo.fridgely.controller;
 
 import ch.primeo.fridgely.gamelaunchers.MultiplayerGameLauncher;
-import ch.primeo.fridgely.model.GameMode;
-import ch.primeo.fridgely.model.PenguinFacialExpression;
-import ch.primeo.fridgely.model.PenguinHPState;
+import ch.primeo.fridgely.model.*;
 import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import ch.primeo.fridgely.util.ImageLoader;
 import ch.primeo.fridgely.view.ChooseGameModeView;
 import ch.primeo.fridgely.view.component.LanguageSwitchButton;
 import ch.primeo.fridgely.view.util.DialogBox;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.MockedConstruction;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.swing.JFrame;
-import javax.swing.JLabel;
+import javax.swing.*;
 import java.awt.Cursor;
-import java.awt.event.MouseAdapter;
-import java.awt.event.WindowAdapter;
+import java.awt.event.*;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.clearInvocations;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Improved test class for ChooseGameModeController with full code coverage.

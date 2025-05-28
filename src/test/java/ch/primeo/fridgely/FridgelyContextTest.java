@@ -1,9 +1,7 @@
 package ch.primeo.fridgely;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.junit.jupiter.api.*;
+import org.mockito.*;
 import org.springframework.context.ApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.*;

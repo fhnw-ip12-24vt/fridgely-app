@@ -1,18 +1,12 @@
 package ch.primeo.fridgely.controller.multiplayer;
 
 import ch.primeo.fridgely.config.GameConfig;
-import ch.primeo.fridgely.model.FridgeStockModel;
-import ch.primeo.fridgely.model.PenguinModel;
-import ch.primeo.fridgely.model.Product;
-import ch.primeo.fridgely.model.Recipe;
-import ch.primeo.fridgely.model.RecipeModel;
+import ch.primeo.fridgely.model.*;
 import ch.primeo.fridgely.model.multiplayer.MultiplayerGameStateModel;
 import ch.primeo.fridgely.service.ProductRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
