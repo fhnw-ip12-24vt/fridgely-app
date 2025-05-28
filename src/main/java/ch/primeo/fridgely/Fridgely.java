@@ -1,22 +1,21 @@
 package ch.primeo.fridgely;
 
-import ch.primeo.fridgely.config.UIConfig;
 import ch.primeo.fridgely.controller.ChooseGameModeController;
 import ch.primeo.fridgely.util.ImageLoader;
+import org.slf4j.*;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
-import java.util.logging.Logger;
 
 import lombok.Getter;
 
 
 @SpringBootApplication
 public class Fridgely {
-    private static final Logger LOGGER = Logger.getLogger(Fridgely.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(Fridgely.class.getName());
     /**
      * Main application screen (1024x600)
      */
@@ -48,7 +47,7 @@ public class Fridgely {
         try {
             imageLoader.preloadAllImages();
         } catch (Exception e) {
-            LOGGER.severe("Error preloading images: " + e.getMessage());
+            LOGGER.error("Error preloading images: {}", e.getMessage());
             System.exit(1);
         }
 
@@ -75,16 +74,14 @@ public class Fridgely {
             // Fallback logic
             if (mainAppScreen == null) {
                 mainAppScreen = ge.getDefaultScreenDevice();
-                LOGGER.warning("Target main app screen (1024x600) not found. Using default: "
-                        + mainAppScreen.getIDstring());
+                LOGGER.warn("Target main app screen (1024x600) not found. Using default: {}", mainAppScreen.getIDstring());
             }
             if (scannedItemsScreen == null) {
                 if (screens.length > 1) {
                     for (GraphicsDevice screen : screens) {
                         if (screen != mainAppScreen) {
                             scannedItemsScreen = screen;
-                            LOGGER.warning("Target scanned items screen (1920x1080) not found. Using a different "
-                                    + "screen: " + scannedItemsScreen.getIDstring());
+                            LOGGER.warn("Target scanned items screen (1920x1080) not found. Using a different screen: {}", scannedItemsScreen.getIDstring());
                             break;
                         }
                     }
@@ -92,11 +89,11 @@ public class Fridgely {
                 if (scannedItemsScreen == null) {
                     scannedItemsScreen = mainAppScreen;
                     isSingleDisplay = true;
-                    LOGGER.warning("Scanned items screen will use the main app screen as target.");
+                    LOGGER.warn("Scanned items screen will use the main app screen as target.");
                 }
             }
         } catch (Exception e) {
-            LOGGER.severe("Error during screen detection: " + e.getMessage());
+            LOGGER.error("Error during screen detection: {}", e.getMessage());
         }
     }
 }

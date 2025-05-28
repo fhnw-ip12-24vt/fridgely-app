@@ -7,6 +7,7 @@ import ch.primeo.fridgely.service.localization.AppLocalizationService;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.*;
+import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @Service
 public class RecipeRepository {
 
-    private static final Logger LOGGER = Logger.getLogger(RecipeRepository.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(RecipeRepository.class.getName());
 
     private final AppLocalizationService localizationService;
     private final FridgeStockRepository fridgeStockRepository;
@@ -87,7 +87,7 @@ public class RecipeRepository {
             }).collect(Collectors.toList());
 
         } catch (Exception e) {
-            LOGGER.severe("Error fetching all recipes: " + e.getMessage());
+            LOGGER.error("Error fetching all recipes: {}", e.getMessage());
             return List.of();
         }
     }
@@ -104,7 +104,7 @@ public class RecipeRepository {
             return queryFactory.select(qRecipeIngredient.product.barcode).from(qRecipeIngredient)
                     .where(qRecipeIngredient.recipe.recipeId.eq(recipeId)).fetch();
         } catch (Exception e) {
-            LOGGER.severe("Error fetching ingredients for recipe ID " + recipeId + ": " + e.getMessage());
+            LOGGER.error("Error fetching ingredients for recipe ID {}: {}", recipeId, e.getMessage());
             return List.of();
         }
     }
@@ -120,7 +120,7 @@ public class RecipeRepository {
         try {
             return recipeJpaRepository.findById(recipeId);
         } catch (Exception e) {
-            LOGGER.severe("Error finding recipe by ID " + recipeId + ": " + e.getMessage());
+            LOGGER.error("Error finding recipe by ID {}: {}", recipeId, e.getMessage());
             return Optional.empty();
         }
     }
@@ -136,7 +136,7 @@ public class RecipeRepository {
         try {
             return recipeJpaRepository.findAll();
         } catch (Exception e) {
-            LOGGER.severe("Error fetching all recipe entities: " + e.getMessage());
+            LOGGER.error("Error fetching all recipe entities: {}", e.getMessage());
             return List.of();
         }
     }

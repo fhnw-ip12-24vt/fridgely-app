@@ -1,5 +1,6 @@
 package ch.primeo.fridgely.config;
 
+import org.slf4j.*;
 import org.springframework.context.annotation.*;
 import org.springframework.core.io.*;
 import org.springframework.stereotype.*;
@@ -11,7 +12,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.io.InputStream;
 import java.util.Enumeration;
-import java.util.logging.Logger;
 
 @Component
 @Scope("singleton")
@@ -32,7 +32,7 @@ public class UIConfig {
      */
     public static final Color DISABLED_COLOR = new Color(193, 193, 193);
 
-    static final Logger LOGGER = Logger.getLogger(UIConfig.class.getName());
+    static final Logger LOGGER = LoggerFactory.getLogger(UIConfig.class.getName());
     /**
      * Default number of rounds in a game.
      */
@@ -69,7 +69,7 @@ public class UIConfig {
             Font font = Font.createFont(Font.TRUETYPE_FONT, fontStream).deriveFont(Font.PLAIN, FONT_SIZE);
             setUIFont(new FontUIResource(font));
         } catch (Exception e) {
-            LOGGER.warning(e.getMessage());
+            LOGGER.warn(e.getMessage());
         }
     }
 }

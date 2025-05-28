@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.*;
 import java.util.stream.Collectors;
 
 /**
@@ -23,8 +22,6 @@ public class RecipeModel {
      * Property name for changes in the selected recipe.
      */
     public static final String PROP_SELECTED_RECIPE = "selectedRecipe";
-
-    private static final Logger LOGGER = Logger.getLogger(RecipeModel.class.getName());
 
     private final List<Recipe> availableRecipes;
 
@@ -52,39 +49,25 @@ public class RecipeModel {
     void loadAvailableRecipes() {
         availableRecipes.clear();
 
-        try {
-            // Directly get recipes using the repository's methods
-            List<RecipeRepository.RecipeDTO> recipeDTOs = recipeRepository.getAllRecipes();
+        // Directly get recipes using the repository's methods
+        List<RecipeRepository.RecipeDTO> recipeDTOs = recipeRepository.getAllRecipes();
 
-            // Convert DTOs to Recipe objects
-            if (recipeDTOs != null && !recipeDTOs.isEmpty()) {
-                for (RecipeRepository.RecipeDTO dto : recipeDTOs) {
-                    try {
-                        recipeRepository.findById(dto.getRecipeId()).ifPresent(availableRecipes::add);
-                    } catch (Exception e) {
-                        System.err.println("Error processing recipe ID " + dto.getRecipeId() + ": " + e.getMessage());
-                    }
+        // Convert DTOs to Recipe objects
+        if (recipeDTOs != null && !recipeDTOs.isEmpty()) {
+            for (RecipeRepository.RecipeDTO dto : recipeDTOs) {
+                try {
+                    recipeRepository.findById(dto.getRecipeId()).ifPresent(availableRecipes::add);
+                } catch (Exception e) {
+                    System.err.println("Error processing recipe ID " + dto.getRecipeId() + ": " + e.getMessage());
                 }
             }
-
-            // If no recipes were loaded, try direct entity query as fallback
-            if (availableRecipes.isEmpty()) {
-                System.out.println("Attempting to load recipes directly from JPA repository...");
-                availableRecipes.addAll(recipeRepository.getAllRecipesEntities());
-            }
-
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error loading recipes", e);
-
-            // Fallback: Create some dummy recipes for testing
-            Recipe dummyRecipe = new Recipe();
-            dummyRecipe.setRecipeId(1);
-            dummyRecipe.setName("Dummy Recipe");
-            dummyRecipe.setDescription("A test recipe");
-            availableRecipes.add(dummyRecipe);
         }
 
-        System.out.println("Loaded " + availableRecipes.size() + " recipes");
+        // If no recipes were loaded, try direct entity query as fallback
+        if (availableRecipes.isEmpty()) {
+            System.out.println("Attempting to load recipes directly from JPA repository...");
+            availableRecipes.addAll(recipeRepository.getAllRecipesEntities());
+        }
     }
 
     /**
