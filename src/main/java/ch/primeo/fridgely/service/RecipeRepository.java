@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -71,11 +68,21 @@ public class RecipeRepository {
             List<Recipe> recipes = queryFactory.selectFrom(qRecipe).fetch();
 
             // Fetch all ingredients for all recipes efficiently
-            Map<Integer, List<String>> ingredientsByRecipeId = queryFactory.select(qRecipeIngredient.recipe.recipeId,
-                    qRecipeIngredient.product.barcode).from(qRecipeIngredient).fetch().stream().collect(
-                    Collectors.groupingBy(tuple -> tuple.get(qRecipeIngredient.recipe.recipeId),
-                            Collectors.mapping(tuple -> tuple.get(qRecipeIngredient.product.barcode),
-                                    Collectors.toList())));
+            Map<Integer, List<String>> ingredientsByRecipeId = queryFactory
+                    .select(qRecipeIngredient.recipe.recipeId, qRecipeIngredient.product.barcode)
+                    .from(qRecipeIngredient)
+                    .fetch()
+                    .stream()
+                    .map(tuple -> {
+                        Integer recipeId = tuple.get(qRecipeIngredient.recipe.recipeId);
+                        String barcode = tuple.get(qRecipeIngredient.product.barcode);
+                        return recipeId != null && barcode != null ? new AbstractMap.SimpleEntry<>(recipeId, barcode) : null;
+                    })
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.groupingBy(
+                            Map.Entry::getKey,
+                            Collectors.mapping(Map.Entry::getValue, Collectors.toList())
+                    ));
 
             // Get stock info once
             Set<String> barcodesInStock = fridgeStockRepository.getAllBarcodesInStockAsSet();
