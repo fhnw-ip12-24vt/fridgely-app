@@ -121,4 +121,12 @@ public class AppLocalizationService {
             observer.onLocaleChanged();
         }
     }
+
+    public static String getLocalizedString(String language, String name, String nameDE, String nameFR) {
+        return switch (language != null ? language.toLowerCase() : "") {
+            case "de" -> nameDE != null ? nameDE : name;
+            case "fr" -> nameFR != null ? nameFR : name;
+            default -> name;
+        };
+    }
 }
