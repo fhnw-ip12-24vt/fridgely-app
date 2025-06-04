@@ -2,6 +2,9 @@
 
 Fridgely is an interactive Java application for managing refrigerator inventory, designed to run on a Raspberry Pi. It tracks food items, suggests recipes, and includes gamified elements like a multiplayer mode. The application supports multiple displays and is localized for English, German, and French.
 
+## Docs
+View the docs here [Fridgely Docu (GitHub Pages)](https://fhnw-ip12-24vt.github.io/fridgely-docu/)
+
 ## Key Functionalities
 
 *   **Inventory Management:** Track products and stock in a refrigerator.
@@ -23,12 +26,17 @@ Fridgely is an interactive Java application for managing refrigerator inventory,
 *   **Utility:** Lombok
 *   **Testing:** JUnit, Mockito
 
----
+## Contributors
 
-Thanks to Klemen Zmahar for the original Fridgely concept and initial development.
+* [Diego Valera Penas](https://github.com/Diego-VP20)
+* [Ben Woodtli](https://github.com/benelwo)
+* [Erik Steinacher](https://github.com/ERRORIK-ai)
+* [Joanna Marin](https://github.com/joannamarin)
+* [Lorenz Voser](https://github.com/Lorenzvoser)
+* [Philipp Eberhard](https://github.com/Pyrodar)
+* [Patrick Heid](https://github.com/hdptrck)
 
----
 
-### Special Thanks
+## Special Thanks
 
-Huge thanks to [**Klemen Zmahar**](https://gitlab.fhnw.ch/klemen.zmahar)  for generously spending over 3 hours helping me set up, debug, and fix my Continuous Deployment pipeline. Especially despite the fact that you are not in our IP12 Team. Your guidance was instrumental in getting it all working — couldn't have done it without you!
+Special thanks to [Klemen Zmahar](https://gitlab.fhnw.ch/klemen.zmahar) for helping setting up the CI/CD GitLab pipeline.
