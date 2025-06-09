@@ -28,7 +28,7 @@ View the docs here [Fridgely Docu (GitHub Pages)](https://fhnw-ip12-24vt.github.
 
 ## Contributors
 
-* [Diego Valera Penas](https://github.com/Diego-VP20)
+* [Diego Varela Penas](https://github.com/Diego-VP20)
 * [Ben Woodtli](https://github.com/benelwo)
 * [Erik Steinacher](https://github.com/ERRORIK-ai)
 * [Joanna Marin](https://github.com/joannamarin)
