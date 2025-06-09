@@ -39,10 +39,10 @@
 		<launcher.class>ch.primeo.fridgely.Fridgely</launcher.class>
 
 		<pi.hostname>raspberrypi</pi.hostname>
-		<pi.ipnumber>10.207.10.169</pi.ipnumber> <!-- Replace with your Raspberry Pi's IP -->
+		<pi.ipnumber>192.168.0.10</pi.ipnumber> <!-- Replace with your Raspberry Pi's IP -->
 		<pi.port>22</pi.port>
-		<pi.username>xxx</pi.username>
-		<pi.password>xxx</pi.password>
+		<pi.username>pi</pi.username>
+		<pi.password>pi</pi.password>
 		<pi.deploydirectory>/home/ip12/deploy</pi.deploydirectory>
 		<pi.startScript>start.sh</pi.startScript>
 		<pi.restartScript>restart.sh</pi.restartScript>
